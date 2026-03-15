@@ -139,17 +139,17 @@ class DMMCameraRouter:
                     "tooltip": "Only consider cameras within this distance from center. 50=all of LA, 5=tight local."
                 }),
                 "scenic_swap_chance": ("FLOAT", {
-                    "default": 0.20,
+                    "default": 0.50,
                     "min": 0.0,
                     "max": 1.0,
                     "step": 0.05,
-                    "tooltip": "Probability (0-1) this slot swaps to a scenic cam. 0.20 = ~1 in 5 runs. Set on all 5 routers for random scenic rotation."
+                    "tooltip": "Probability (0-1) this slot swaps to a scenic cam. 0.50 = ~2-3 scenic per run. Set on all 5 routers for random scenic rotation."
                 }),
             },
         }
 
     def route_camera(self, focus, camera_registry, selection_mode="random",
-                     seed=42, max_radius_miles=50.0, scenic_swap_chance=0.20):
+                     seed=42, max_radius_miles=50.0, scenic_swap_chance=0.50):
         # Scenic rotation: randomly swap this slot to scenic feed
         if scenic_swap_chance > 0 and focus != "scenic":
             # Use seed + focus hash for deterministic but per-slot randomness
