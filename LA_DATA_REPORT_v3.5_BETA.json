@@ -2278,13 +2278,6 @@
           "link": 80
         },
         {
-          "name": "prompt",
-          "type": "STRING",
-          "widget": {
-            "name": "prompt"
-          }
-        },
-        {
           "name": "strength",
           "type": "FLOAT",
           "widget": {
