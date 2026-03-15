@@ -135,13 +135,30 @@ _model_cache = {
 def _get_or_load_model(device: torch.device = None):
     """Load MusicGen-melody processor and model, cached after first call.
 
+    Invalidates and reloads if called with a different device than the
+    cached model (e.g. user switches --cpu or GPU IDs between runs). (R7 fix)
+
     Returns (processor, model) tuple, or (None, None) if not available.
     """
-    if _model_cache["model"] is not None:
-        return _model_cache["processor"], _model_cache["model"]
-
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    # Invalidate cache on device change (R7)
+    if (
+        _model_cache["model"] is not None
+        and _model_cache["device"] is not None
+        and str(_model_cache["device"]) != str(device)
+    ):
+        log.info(
+            "  Device changed (%s -> %s) -- clearing model cache",
+            _model_cache["device"], device,
+        )
+        _model_cache["processor"] = None
+        _model_cache["model"] = None
+        _model_cache["device"] = None
+
+    if _model_cache["model"] is not None:
+        return _model_cache["processor"], _model_cache["model"]
 
     try:
         from transformers import AutoProcessor, MusicgenForConditionalGeneration
@@ -180,26 +197,36 @@ def _get_or_load_model(device: torch.device = None):
 # Audio resampling utility
 # ---------------------------------------------------------------------------
 def _resample_tensor(tensor: torch.Tensor, from_sr: int, to_sr: int) -> torch.Tensor:
-    """Resample audio tensor via linear interpolation.
+    """Resample audio tensor using torchaudio polyphase resampler. (R2 fix)
 
-    Handles both (C, T) and (B, C, T) shapes.
-    Returns same shape as input.
+    Polyphase resampling avoids the high-frequency aliasing that F.interpolate
+    introduces on the 48kHz->32kHz->48kHz round trip.
+    Falls back to linear interpolation if torchaudio is not available.
+
+    Handles both (C, T) and (B, C, T) shapes. Returns same shape as input.
     """
     if from_sr == to_sr:
         return tensor
 
-    new_length = int(tensor.shape[-1] * to_sr / from_sr)
-
     squeezed = tensor.ndim == 2
     if squeezed:
-        tensor = tensor.unsqueeze(0)  # (1, C, T) for interpolate
+        tensor = tensor.unsqueeze(0)
 
-    resampled = torch.nn.functional.interpolate(
-        tensor.float(),
-        size=new_length,
-        mode="linear",
-        align_corners=False,
-    )
+    try:
+        import torchaudio
+        resampler = torchaudio.transforms.Resample(
+            orig_freq=from_sr, new_freq=to_sr,
+        ).to(tensor.device)
+        resampled = resampler(tensor.float())
+    except ImportError:
+        log.warning("torchaudio unavailable -- falling back to linear resampling")
+        new_length = int(tensor.shape[-1] * to_sr / from_sr)
+        resampled = torch.nn.functional.interpolate(
+            tensor.float(),
+            size=new_length,
+            mode="linear",
+            align_corners=False,
+        )
 
     if squeezed:
         resampled = resampled.squeeze(0)
@@ -237,7 +264,10 @@ def crossfade_loop(
 
     if crossfade_samples is None:
         crossfade_samples = min(sample_rate * 2, src_len // 4)
-    crossfade_samples = max(crossfade_samples, 1)
+    # Clamp to src_len // 3 BEFORE computing loop_body_len. (R5 fix)
+    # Without this, crossfade_samples >= src_len makes loop_body_len <= 0
+    # and the while loop never advances pos, spinning to the safety ceiling.
+    crossfade_samples = max(min(crossfade_samples, src_len // 3), 1)
 
     # Raised-cosine fade curves
     fade = torch.linspace(0.0, 1.0, crossfade_samples, device=audio.device)
@@ -564,6 +594,7 @@ class DMM_MusicEnhancer:
                         max_new_tokens=max_new_tokens,
                         guidance_scale=guidance_scale,
                         do_sample=True,
+                        temperature=0.95,  # R6: slight reduction prevents tail noise
                     )
 
                 # audio_values: (1, 1, T) at 32kHz
