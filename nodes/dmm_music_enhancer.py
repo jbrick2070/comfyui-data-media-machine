@@ -574,18 +574,23 @@ class DMM_MusicEnhancer:
                 mono_32k = clip_32k.mean(dim=0).cpu().float().numpy()  # (T,)
 
                 # Build processor inputs
-                inputs = processor(
+                processor_out = processor(
                     text=[prompt],
                     audio=[mono_32k],
                     sampling_rate=MUSICGEN_SR,
                     padding=True,
                     return_tensors="pt",
                 )
-                inputs = {
-                    k: v.to(device)
-                    for k, v in inputs.items()
-                    if hasattr(v, "to")
-                }
+                # Move to device AND cast float tensors to model dtype
+                # (processor outputs float32 but model may be float16 on CUDA)
+                model_dtype = next(model.parameters()).dtype
+                inputs = {}
+                for k, v in processor_out.items():
+                    if hasattr(v, "to"):
+                        v = v.to(device)
+                        if v.is_floating_point():
+                            v = v.to(model_dtype)
+                    inputs[k] = v
 
                 # Generate
                 with torch.no_grad():
