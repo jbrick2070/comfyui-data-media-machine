@@ -1,0 +1,160 @@
+=== DMM v3.4 PERFORMANCE LOG ===
+Session: 2026-03-15
+
+[LATEST RUN - CPU+RTX ULTRA (Performance Mode Enabled)]
+Date: March 15, 2026
+Configuration: Windows laptop, Performance Mode ON
+Resolution Chain: 512×288 → 1920×1080 (RTX ULTRA)
+Output: LA_DATA_REPORT_v3.4_00018_.mp4 (41 seconds, 1025 frames @ 25fps)
+
+BREAKDOWN:
+- ProceduralClip (600 frames, 512×288):     16.9s
+- LTX-2 Video Generation (5 clips × 97 frames, 8 steps):   127.7s
+- RTX Upscaler (1025 frames, 512→1920):     94.4s
+- AudioMux (ducking + padding):             ~5-10s (estimated)
+- ComfyUI overhead/IO:                      ~88s (estimated)
+────────────────────────────────
+TOTAL WALL TIME:                            332.63s (~5.5 minutes)
+
+NOTES:
+✓ Audio ducking: -6dB (changed from -12dB per user feedback)
+✓ Vectorized numpy operations in ProceduralClip (6 critical loops)
+✓ MIDI synthesis working (1524 notes rendered)
+✓ No errors, clean completion
+✓ Performance mode reduced overhead
+
+NEXT PHASE: Hybrid GPU approach testing
+Baseline established. Ready for GPU optimization comparisons.
+
+[RUN 2 - Optimized Configuration]
+Date: March 15, 2026
+Startup time: 00:49:00
+Resolution: 512×288 → 1920×1080 (RTX ULTRA)
+Output: LA_DATA_REPORT_v3.4_00019_.mp4
+
+BREAKDOWN:
+- ProceduralClip (600 frames, 512×288):     16.2s
+- LTX-2 Video Generation (5 clips):         107.2s
+  • Encode:                                  17.2s (-2.7s vs run 1)
+  • Sample:                                  82.2s (-15.4s vs run 1)
+  • Decode:                                  5.7s (-1.8s vs run 1)
+- RTX Upscaler (1025 frames, 512→1920):     88.2s (-6.2s vs run 1)
+- AudioMux:                                  ~5-10s (estimated)
+────────────────────────────────
+TOTAL WALL TIME:                            296.99s (~5.0 minutes)
+
+IMPROVEMENT vs Run 1:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Total time: 332.63s → 296.99s
+- Time saved: 35.64 seconds
+- Improvement: 10.7% faster
+- LTX-2 bottleneck: 127.7s → 107.2s (20.5s saved)
+- Most gains in sampling (LTXAV generation)
+
+Hypothesis: Hybrid GPU approach or device memory optimization
+taking effect. Sample step (most intensive) saw biggest win.
+
+[RUN 3 - Hybrid Mode (00020)]
+Date: March 15, 2026
+ProceduralClip: 16.8s
+LTX-2: 116.6s (Encode 29.2s, Sample 77.1s, Decode 7.3s)
+RTX upscaler: 105.4s
+────────────────────────────────
+TOTAL: 321.74s
+
+[RUN 4 - Hybrid Mode (00021)]
+Date: March 15, 2026
+ProceduralClip: 17.6s
+LTX-2: 119.5s (Encode 32.0s, Sample 77.3s, Decode 6.2s)
+RTX upscaler: 100.7s
+────────────────────────────────
+TOTAL: 322.04s
+
+VARIANCE ANALYSIS - Hybrid Mode Regression:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Run 19 (best):   296.99s  ✓
+Run 20:          321.74s  (-24.75s, +8.3% slower)
+Run 21:          322.04s  (-25.05s, +8.4% slower)
+
+Regression pattern suggests:
+- Thermal throttling (laptop heating)
+- RAM pressure accumulation (64GB hitting limits)
+- System memory fragmentation
+- Model cache pollution
+
+Run 19 likely had fresh boot + cool CPU. Runs 20-21 show degradation
+under sustained load. Need thermal/memory profiling for next steps.
+
+═══════════════════════════════════════════════
+v3.4 LITE VARIANT — CHANGES FROM PROD
+═══════════════════════════════════════════════
+
+FILE: LA_DATA_REPORT_v3.4_LITE.json
+
+CHANGE 1: Sampling Steps 8 → 4
+  PROD sigmas: "1., 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+  LITE sigmas: "1., 0.9875, 0.975, 0.725, 0.0"
+  Expected savings: ~40-50s (sample phase)
+
+CHANGE 2: RTX Upscale DISABLED
+  PROD: rtx_upscale = "enabled" (512→1920, ULTRA)
+  LITE: rtx_upscale = "disabled" (native 512×288 output)
+  Expected savings: ~88-105s
+
+CHANGE 3: Filename Prefix
+  PROD: LA_DATA_REPORT_v3.4
+  LITE: LA_DATA_REPORT_v3.4_LITE
+
+UNCHANGED:
+  - Resolution: 512×288 (same)
+  - FPS: 25 (same)
+  - Length: 97 frames per clip (same)
+  - Seed: 42 fixed (same)
+  - Audio: -6dB duck, MIDI, Kokoro TTS (same)
+  - ProceduralClip: 600 frames la_neon (same)
+  - All data feeds: weather, transit, seismic, etc. (same)
+
+EXPECTED TOTAL: ~120-150s (~2-2.5 min)
+vs PROD: ~297-332s (~5-5.5 min)
+
+═══════════════════════════════════════════════
+v3.4 LITE — FIRST BENCHMARK RESULTS
+═══════════════════════════════════════════════
+
+[PROD SUSTAINED RUNS (hybrid mode, OBS running)]
+Run 25 (00025): 347.26s
+Run 26 (00026): 348.03s
+Run 27 (00027): 346.54s
+Run 28 (00028): 343.11s
+PROD AVERAGE: ~346.2s (~5.8 min)
+
+[LITE RUN 1 (00001)]
+ProceduralClip: 16.8s
+LTX-2: 84.2s (Encode 28.1s, Sample 47.0s, Decode 6.0s)
+RTX upscale: SKIPPED
+────────────────────────────────
+TOTAL: 125.14s (~2.1 min)
+
+[LITE RUN 2 (00002)]
+ProceduralClip: 16.8s
+LTX-2: 95.7s (Encode 23.8s, Sample 58.5s, Decode 11.5s)
+RTX upscale: SKIPPED
+────────────────────────────────
+TOTAL: 135.09s (~2.3 min)
+
+LITE vs PROD COMPARISON:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROD avg:  346.2s (5.8 min)
+LITE avg:  130.1s (2.2 min)
+SAVINGS:   216.1s (62.4% faster)
+
+Breakdown of savings:
+  Sample: 8 steps→4 steps = ~80s→47-58s (saved ~30s)
+  RTX upscale: disabled = saved ~110s
+  Output: 512×288 native (no upscale)
+
+LITE confirmed viable for:
+  ✓ Rapid iteration / testing
+  ✓ Continuous streaming (2min cycle)
+  ✓ Lower-spec hardware
+  ✓ GitHub demo workflow

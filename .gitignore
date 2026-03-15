@@ -1,0 +1,27 @@
+# Large media files
+*.mov
+*.mp4
+*.wav
+*.mp3
+*.avi
+
+# Archives (keep zip out of git - distribute separately)
+*.zip
+
+# Personal / internal docs
+Artist_Statement_2026.docx
+DMM_v2.5_Executive_SignOff.docx
+DMM_v2.5_Technical_Peer_Review.docx
+
+# Junk / temp files
+zimTWUGz
+{.txt
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# OS
+.DS_Store
+Thumbs.db

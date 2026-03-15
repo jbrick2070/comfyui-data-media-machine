@@ -1,0 +1,299 @@
+================================================================================
+  KOKOROTTS NODE REFERENCE — ComfyUI-KokoroTTS (1038lab)
+  For DMM v3.2 Pipeline Integration & Bug Fixing
+  Generated: 2026-03-14
+================================================================================
+
+INSTALLED PACK:  ComfyUI-KokoroTTS by 1038lab
+LOCATION:        ComfyUI\custom_nodes\comfyui-kokorotts\
+MODEL:           kokoro-v1_0.pth (327 MB) at ComfyUI\models\TTS\KokoroTTS\
+SAMPLE RATE:     24000 Hz (fixed, hardcoded in Kokoro pipeline)
+REPO:            https://github.com/1038lab/ComfyUI-KokoroTTS
+HF MODEL REPO:   https://huggingface.co/1038lab/KokoroTTS
+
+================================================================================
+NODE 1:  KokoroTTS  (display name: "Kokoro TTS")
+================================================================================
+
+CATEGORY:    AILab/Audio
+FUNCTION:    tts
+RETURN:      (AUDIO,)  — dict with {"waveform": tensor, "sample_rate": 24000}
+
+--- REQUIRED INPUTS ---
+
+  text        STRING (multiline: True)
+              The narration text to synthesize.
+              - Must not be empty (raises ValueError if blank)
+              - Split on \n+ internally (each paragraph = separate audio segment)
+              - Segments are concatenated into one continuous waveform
+              - For DMM: wire from DMM_NarrationDistiller → narration_text output
+              - Target ~60 words for 24 seconds at speed=1.0
+
+  voice       COMBO (dropdown from Languages.json)
+              Display name string, NOT the voice_id.
+              Current Languages.json (bf-only config):
+                "British Female (Alice)"     → voice_id: bf_alice
+                "British Female (Emma)"      → voice_id: bf_emma
+                "British Female (Isabella)"  → voice_id: bf_isabella
+                "British Female (Lily)"      → voice_id: bf_lily
+              NOTE: The node internally reverse-maps display name → voice_id.
+              Voice .pt files auto-download from HuggingFace on first use.
+              Currently downloaded: bf_lily.pt (523,420 bytes)
+              Missing (will download): bf_alice.pt, bf_emma.pt, bf_isabella.pt
+
+--- OPTIONAL INPUTS ---
+
+  speed       FLOAT  default=1.0  min=0.5  max=2.0  step=0.1
+              Speech rate multiplier.
+              - 1.0 = natural pace (~2.5 words/sec for English)
+              - 0.8 = slower, more deliberate (good for broadcast)
+              - 1.2 = faster, more urgent
+              - For 24-sec target with ~60 words: use 1.0
+              - For 24-sec target with ~80 words: use ~1.3
+              CAUTION: Below 0.7 can sound unnatural. Above 1.5 loses clarity.
+
+  volume      FLOAT  default=1.0  min=0.1  max=2.0  step=0.1
+              Audio volume multiplier applied after normalization.
+              - Waveform is first normalized to [-1, 1] then scaled by volume
+              - 1.0 = full normalized volume (recommended)
+              - Values > 1.0 will clip if waveform already peaks at 1.0
+              - For DMM_AudioMux mix mode: keep at 1.0, control mix there
+
+--- OUTPUT FORMAT ---
+
+  AUDIO = {
+      "waveform": torch.Tensor  shape (1, 1, N)  where N = total samples
+                  - Batch dim 0 = 1 (always single batch)
+                  - Channel dim 1 = 1 (mono)
+                  - Sample dim 2 = N (varies with text length and speed)
+                  - dtype: float32, range [-1.0, 1.0] after normalization
+      "sample_rate": 24000  (int, always 24kHz for Kokoro)
+  }
+
+  Duration formula:  seconds = waveform.shape[2] / 24000
+  Example: 60 words at speed=1.0 ≈ 24 sec ≈ 576,000 samples
+
+--- ERROR BEHAVIOR ---
+
+  On ANY exception during synthesis:
+    - Prints "Kokoro TTS Error: {message}" to console
+    - Returns SILENT fallback: {"waveform": zeros(1,1,16000), "sample_rate": 16000}
+    - NOTE: Fallback sample_rate is 16000, not 24000! This mismatch can cause
+      pitch/speed issues downstream if not handled.
+    - DMM_AudioMux should handle this gracefully (pad_to_video=True normalizes)
+
+  Empty text:
+    - Raises ValueError("Text cannot be empty") — NOT caught by the fallback
+    - This will CRASH the node and halt the workflow
+    - DMM_NarrationDistiller always outputs non-empty text, so this shouldn't hit
+
+--- EXECUTION FLOW ---
+
+  1. Reverse-map display name → voice_id (e.g., "British Female (Lily)" → "bf_lily")
+  2. Load model if not cached (check kokoro-v1_0.pth + config.json)
+  3. Get/create KPipeline for the voice's language code ("b" for British)
+  4. Ensure voice .pt file exists (auto-download if missing)
+  5. Run pipeline(text, voice=voice_id, speed=speed, split_pattern=r'\n+')
+  6. Iterate generator → collect audio segments as float32 tensors
+  7. Concatenate all segments → normalize → apply volume → return AUDIO dict
+
+--- LANGUAGE CODES ---
+
+  "b" = British (bf_ and bm_ prefixes)  ← CURRENT CONFIG
+  "a" = American (af_ and am_)
+  "e" = Spanish (espeak-ng required)
+  "f" = French (espeak-ng required)
+  "h" = Hindi (espeak-ng required)
+  "i" = Italian (espeak-ng required)
+  "j" = Japanese (requires misaki[ja]>=0.7.0)
+  "p" = Portuguese (espeak-ng required)
+  "z" = Chinese (requires misaki[zh]>=0.7.0 + ordered_set)
+
+  British voices need NO extra dependencies — just the base install.
+
+
+================================================================================
+NODE 2:  Save_Audio  (display name: "Save Audio")
+================================================================================
+
+CATEGORY:    AILab/Audio
+FUNCTION:    save_audio
+RETURN:      (STRING, AUDIO)  — (filepath, passthrough audio)
+OUTPUT_NODE: True
+
+--- REQUIRED INPUTS ---
+
+  audio       AUDIO
+              The audio dict from KokoroTTS output.
+
+  filepath    STRING (multiline: True, default: "")
+              Custom save path/filename.
+              - Empty = auto: output/TTS/{YYYY-MM-DD}/TTS-0001.{format}
+              - "my_narration" = output/TTS/{date}/my_narration-0001.{format}
+              - "custom/path/name" = output/custom/path/name-0001.{format}
+              All paths are relative to ComfyUI output directory.
+
+  format      COMBO: ["wav", "mp3", "flac"]  default="mp3"
+              - wav: uncompressed, largest, best quality, no codec needed
+              - mp3: compressed, requires torchaudio mp3 backend
+              - flac: lossless compressed, good middle ground
+              FOR DMM PIPELINE: Use "wav" for reliability (no codec dependency)
+
+  quality     COMBO: ["high", "medium", "low"]  default="high"
+              Bitrate and resample settings:
+              - high:   320 kbps, 48000 Hz resample
+              - medium: 192 kbps, 44100 Hz resample
+              - low:    128 kbps, 32000 Hz resample
+              NOTE: Kokoro outputs at 24000 Hz. All quality levels UPSAMPLE.
+              For wav format, bitrate is irrelevant (uncompressed).
+              FOR DMM PIPELINE: Use "high" — the resample to 48kHz smooths audio.
+
+  overwrite   BOOLEAN  default=False
+              - False: auto-increment filename (TTS-0001, TTS-0002, ...)
+              - True: overwrite same filename each run
+              FOR DMM PIPELINE: True if running in infinite loop mode.
+
+--- OUTPUT ---
+
+  filepath    STRING — absolute path to saved file
+  audio       AUDIO  — passthrough of input (for chaining)
+
+--- SAVE DIRECTORY ---
+
+  Default structure:
+    ComfyUI/output/TTS/2026-03-14/TTS-0001.wav
+    ComfyUI/output/TTS/2026-03-14/TTS-0002.wav
+    ...
+
+
+================================================================================
+DMM PIPELINE WIRING DIAGRAM
+================================================================================
+
+  DMM_WeatherFetch ──(slot 1: weather_summary)──┐
+  DMM_EarthquakeFetch ──(slot 1: quake_summary)──┤
+  DMM_AirQualityFetch ──(slot 1: aq_summary)────┤
+  DMM_MetroFetch ──(slot 1: transit_summary)────┤
+  DMM_AlertsFetch ──(slot 1: alerts_summary)────┘
+                                                 │
+                                                 ▼
+                                   ┌─────────────────────┐
+                                   │ DMM_NarrationDistiller│
+                                   │  city: "Los Angeles" │
+                                   │  style: "broadcast"  │
+                                   └──────┬──────────────┘
+                                          │ narration_text (STRING)
+                                          ▼
+                                   ┌─────────────────────┐
+                                   │     KokoroTTS        │
+                                   │  voice: bf_lily      │
+                                   │  speed: 1.0          │
+                                   │  volume: 1.0         │
+                                   └──────┬──────────────┘
+                                          │ AUDIO
+                                          ▼
+  DMM_VideoConcat ──(VIDEO)──────→ ┌─────────────────────┐
+                                   │   DMM_AudioMux       │
+                                   │  mode: "replace"     │
+                                   │  pad_to_video: True  │
+                                   └──────┬──────────────┘
+                                          │ VIDEO (with TTS audio)
+                                          ▼
+                                   ┌─────────────────────┐
+                                   │     SaveVideo        │
+                                   └─────────────────────┘
+
+
+================================================================================
+COMMON FAILURE MODES & FIXES
+================================================================================
+
+1. "Text cannot be empty" ValueError
+   CAUSE: NarrationDistiller received no connected summaries
+   FIX: Ensure at least 1 fetcher summary STRING is wired to the distiller
+
+2. Silent/empty audio output (zeros tensor at 16kHz)
+   CAUSE: TTS synthesis crashed internally (model load fail, voice missing, etc.)
+   CHECK: Console for "Kokoro TTS Error:" message
+   FIX: Verify model files exist at ComfyUI\models\TTS\KokoroTTS\
+        Verify voice .pt file exists in voices\ subfolder
+
+3. Audio pitch/speed wrong after mux
+   CAUSE: Sample rate mismatch (KokoroTTS outputs 24kHz, error fallback is 16kHz)
+   FIX: DMM_AudioMux reads sample_rate from the AUDIO dict — if it gets 16kHz
+        fallback audio, it will pad/trim correctly but pitch may sound wrong.
+        Root fix: ensure TTS doesn't error (see #2)
+
+4. Audio shorter than video (silence at end)
+   CAUSE: Narration text too short for video duration
+   FIX: pad_to_video=True in AudioMux adds trailing silence automatically.
+        To fill more time: use style="detailed" in NarrationDistiller, or
+        reduce speed to 0.8 in KokoroTTS
+
+5. Audio longer than video (gets trimmed)
+   CAUSE: Narration text too long, or speed too slow
+   FIX: pad_to_video=True trims to video duration. To preserve all narration:
+        set pad_to_video=False (audio will extend past video end — depends
+        on whether SaveVideo truncates or not)
+
+6. Voice file download fails
+   CAUSE: No internet, HuggingFace down, or firewall blocking
+   CHECK: Console for "Failed to download {voice}.pt"
+   FIX: Manually download from https://huggingface.co/1038lab/KokoroTTS/tree/main/voices
+        Place .pt file in ComfyUI\models\TTS\KokoroTTS\voices\
+
+7. Languages.json BOM issue (similar to camera_registry.json BOM bug)
+   CAUSE: Windows editor adding UTF-8 BOM
+   CHECK: First bytes of Languages.json (should be 123 = '{', not 239 = BOM)
+   FIX: Re-save without BOM, or patch KokoroTTS.py load_voices() to use
+        encoding='utf-8-sig'
+
+8. "No module named 'kokoro'" on ComfyUI startup
+   CAUSE: kokoro package not installed in ComfyUI's Python environment
+   FIX: ComfyUI\python_embeded\python.exe -m pip install kokoro>=0.3.4
+
+9. Node not appearing in ComfyUI menu after restart
+   CAUSE: __init__.py load failure (check console for import errors)
+   FIX: Verify all requirements installed. Run:
+        ComfyUI\python_embeded\python.exe -m pip install -r
+        ComfyUI\custom_nodes\comfyui-kokorotts\requirements.txt
+
+
+================================================================================
+VOICE CHARACTERISTICS (British Female — current config)
+================================================================================
+
+  bf_alice     — Clear, professional, slightly formal. Good for news/reports.
+  bf_emma      — Warm, conversational. Good for narration/storytelling.
+  bf_isabella  — Bright, energetic. Good for upbeat content.
+  bf_lily      — Smooth, calm, authoritative. Best for broadcast-style reports.
+                 RECOMMENDED for DMM LA Data Report narration.
+
+  Voice blending is NOT supported in this node pack (no Speaker Combiner).
+  To blend voices, use the stavsap/comfyui-kokoro pack instead (different nodes).
+
+
+================================================================================
+QUICK TEST WORKFLOW (minimal, for debugging)
+================================================================================
+
+  1. Add node: KokoroTTS
+     - text: "This is a test of the British female voice. The weather is clear."
+     - voice: "British Female (Lily)"
+     - speed: 1.0
+     - volume: 1.0
+
+  2. Add node: PreviewAudio (built-in ComfyUI node)
+     - Connect KokoroTTS AUDIO output → PreviewAudio input
+
+  3. Queue prompt. Should hear bf_lily speaking the text.
+     Check console for any errors.
+
+  4. If working: Add Save_Audio node
+     - audio: from KokoroTTS
+     - filepath: "test_narration"
+     - format: wav
+     - quality: high
+     - overwrite: True
+
+  5. Verify output at: ComfyUI\output\TTS\{date}\test_narration.wav
