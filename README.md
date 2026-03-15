@@ -536,3 +536,38 @@ PRs welcome! Focus areas:
 
 **Last updated**: March 2026
 **Stability**: Production-ready for RTX 4090+, tested on RTX 5080
+
+---
+
+## Editing This Workflow With AI (No Coding Required)
+
+If you want to customize or extend this workflow but don't want to write code, you can use AI tools to make edits using plain English prompts.
+
+### Windows — Claude Cowork + Windows MCP
+
+This entire project was built using **Claude Cowork** with the **Windows MCP plugin**. It handles file edits, browser automation, git pushes, and ComfyUI JSON changes — all from natural language instructions.
+
+1. Download the **Claude desktop app** from **https://claude.ai/download**
+2. In the app, enable **Cowork mode**
+3. Install the **Windows MCP plugin** from the plugin marketplace
+4. Point it at your ComfyUI folder and describe what you want changed
+
+Example prompts:
+- *"Change the upscaler quality to ULTRA in the v3.4 workflow"*
+- *"Add a new data source node that pulls live traffic data"*
+- *"Push the updated workflow to my GitHub repo"*
+
+### Mac — Claude + AppleScript MCP or Terminal MCP
+
+On Mac, the same Claude desktop app works with community MCP plugins for file system and terminal access:
+
+1. Download the **Claude desktop app** from **https://claude.ai/download**
+2. Enable Cowork mode
+3. Install a Mac-compatible MCP plugin (search the plugin marketplace for "filesystem" or "terminal")
+4. Use the same plain-English prompting approach
+
+### What is MCP?
+
+MCP (Model Context Protocol) is an open standard that lets Claude connect to tools on your computer — your file system, browser, terminal, and more. It's what makes AI-assisted editing possible without writing any code yourself.
+
+More info: **https://modelcontextprotocol.io**
