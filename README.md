@@ -7,6 +7,17 @@ All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `cu
 
 ---
 
+## 📦 Download
+
+[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
+
+**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
+
+---
+
+---
+
+
 ## 🚀 New to ComfyUI? Start Here
 
 ComfyUI is a free, node-based interface for running AI image and video models locally on your GPU.
@@ -146,15 +157,6 @@ Or clone the repo directly:
 ```bash
 git clone https://github.com/jbrick2070/comfyui-data-media-machine.git
 ```
-
-
-## 📦 Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 
 
 ## 🤖 Editing This Workflow With AI (No Coding Required)
