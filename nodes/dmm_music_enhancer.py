@@ -1,5 +1,5 @@
-"""
-DMM Music Enhancer — MusicGen-melody audio-to-audio music enhancement.
+﻿"""
+DMM Music Enhancer â€” MusicGen-melody audio-to-audio music enhancement.
 
 Takes the background music track from BackgroundMusic and runs it through
 Meta's MusicGen-melody for music-to-music style transfer via chroma/melody
@@ -16,9 +16,9 @@ at the specified mix ratio.
 
 Strength widget maps to MusicGen guidance_scale (how strongly the text
 prompt drives the output vs the input melody):
-  Low  (0.05-0.20): Melody leads — output closely follows input harmony
-  Mid  (0.30-0.50): Balanced — style prompt and melody co-guide output
-  High (0.60-0.95): Prompt dominates — melody is a loose reference
+  Low  (0.05-0.20): Melody leads â€” output closely follows input harmony
+  Mid  (0.30-0.50): Balanced â€” style prompt and melody co-guide output
+  High (0.60-0.95): Prompt dominates â€” melody is a loose reference
 
 num_inference_steps widget = seconds of audio to generate (5-30s).
 Output is looped (with raised-cosine crossfade) or trimmed to match input.
@@ -62,60 +62,60 @@ MUSICGEN_SR = 32000
 # culture and LA indigenous culture.
 # ---------------------------------------------------------------------------
 LA_STYLE_PROMPTS = [
-    # 80s LA synthpop — Oberheim OB-Xa + Sequential Prophet-5
+    # 80s LA synthpop â€” Oberheim OB-Xa + Sequential Prophet-5
     "Los Angeles 1984 synthpop, Oberheim OB-Xa polyphonic pad wash, "
     "Sequential Prophet-5 lead arpeggio, Roland TR-808 drum machine, "
     "Sunset Strip neon, cold-wave pulse",
 
-    # West Coast G-funk — TR-808 + Moog Minimoog
+    # West Coast G-funk â€” TR-808 + Moog Minimoog
     "West coast G-funk, Roland TR-808 bass thump, Moog Minimoog sliding bassline, "
     "talk box melody over pentatonic chords, Parliament-Funkadelic groove, "
     "Compton summer heat",
 
-    # 80s LA R&B — Yamaha DX7 + Linn LM-1
+    # 80s LA R&B â€” Yamaha DX7 + Linn LM-1
     "Los Angeles 1986 R&B slow jam, Yamaha DX7 electric piano, Linn LM-1 snare crack, "
     "Fender Rhodes chord stabs, velvet reverb tail, late-night studio session",
 
-    # Synthwave — Roland Jupiter-8 + Juno-106
+    # Synthwave â€” Roland Jupiter-8 + Juno-106
     "Los Angeles synthwave, Roland Jupiter-8 sweeping pads, Roland Juno-106 chorus shimmer, "
     "analog sequencer pulse, Pacific Coast Highway midnight drive, neon rain reflection",
 
-    # Aztec / East LA indigenous — huehuetl + teponaztli + conchero
+    # Aztec / East LA indigenous â€” huehuetl + teponaztli + conchero
     "East Los Angeles Aztec ceremony fusion, huehuetl heartbeat drum, teponaztli log drum "
     "call-and-response, conchero shell rattle cascade, copal smoke and street murals, "
     "Boyle Heights dusk ritual",
 
-    # Tongva indigenous LA — elderberry flute + deer-hoof rattle + clapstick
+    # Tongva indigenous LA â€” elderberry flute + deer-hoof rattle + clapstick
     "Tongva Gabrielino indigenous soundscape, elderberry flute breathy melody, "
     "deer-hoof rattle shimmer, clapstick rhythm over basket drum pulse, "
     "coastal sage and salt wind, Ballona Creek ceremony",
 
-    # Central Avenue jazz — upright bass + saxophone
+    # Central Avenue jazz â€” upright bass + saxophone
     "Los Angeles Central Avenue jazz 1948, upright bass walking line, wire brushed snare, "
     "Dexter Gordon tenor saxophone blue note improvisation, Steinway grand chord stabs, "
     "after-hours glow and cigarette smoke",
 
-    # LA gospel — Hammond B3 + choir
+    # LA gospel â€” Hammond B3 + choir
     "Los Angeles Black church gospel, Hammond B3 organ full drawbar swell, "
     "soulful soprano lead over four-part choir, tambourine on the two and four, "
     "congregation clap-back, sanctified reverb",
 
-    # Lowrider / Chicano soul — Fender Strat + marimba + doo-wop
+    # Lowrider / Chicano soul â€” Fender Strat + marimba + doo-wop
     "East LA lowrider soul, Fender Stratocaster clean-tone chord strum, "
     "marimba counter-melody, smooth doo-wop harmonies, light conga groove, "
     "cruising Whittier Boulevard on a warm Sunday evening",
 
-    # Chumash coastal indigenous — bone whistle + gourd rattle + split-stick clapper
+    # Chumash coastal indigenous â€” bone whistle + gourd rattle + split-stick clapper
     "Chumash coastal California ceremonial, bone whistle ascending melody, "
     "gourd rattle wash, split-stick clapper steady pulse, ocean drum resonance, "
     "Santa Monica Mountains morning mist and wild sage",
 
-    # LA ambient / Blade Runner — Roland SH-101 + Prophet-VS
+    # LA ambient / Blade Runner â€” Roland SH-101 + Prophet-VS
     "Los Angeles late-night ambient, Roland SH-101 sub-bass drone, "
     "Sequential Circuits Prophet-VS granular shimmer pad, freeway overpass texture, "
     "Blade Runner 2019 skyline, slow evolving resonance",
 
-    # Hollywood cinematic score — strings + French horn + Steinway
+    # Hollywood cinematic score â€” strings + French horn + Steinway
     "Hollywood cinematic score, sweeping string orchestra swell, French horn heroic motif, "
     "Steinway grand piano cascading runs, deep timpani roll, "
     "Bernard Herrmann tension and release, wide-screen grandeur",
@@ -123,7 +123,7 @@ LA_STYLE_PROMPTS = [
 
 
 # ---------------------------------------------------------------------------
-# Model cache (singleton — loads once, reuses across executions)
+# Model cache (singleton â€” loads once, reuses across executions)
 # ---------------------------------------------------------------------------
 _model_cache = {
     "processor": None,
@@ -161,13 +161,13 @@ def _get_or_load_model(device: torch.device = None):
         return _model_cache["processor"], _model_cache["model"]
 
     try:
-        from transformers import AutoProcessor, MusicgenForConditionalGeneration
+        from transformers import AutoProcessor, MusicgenMelodyForConditionalGeneration
 
         log.info("  Loading MusicGen-melody (first run only)...")
         t0 = time.time()
 
         processor = AutoProcessor.from_pretrained("facebook/musicgen-melody")
-        model = MusicgenForConditionalGeneration.from_pretrained(
+        model = MusicgenMelodyForConditionalGeneration.from_pretrained(
             "facebook/musicgen-melody",
             torch_dtype=torch.float16 if device.type == "cuda" else torch.float32,
         )
@@ -235,7 +235,7 @@ def _resample_tensor(tensor: torch.Tensor, from_sr: int, to_sr: int) -> torch.Te
 
 
 # ---------------------------------------------------------------------------
-# Crossfade loop — for generated clips shorter than the input timeline
+# Crossfade loop â€” for generated clips shorter than the input timeline
 # ---------------------------------------------------------------------------
 def crossfade_loop(
     audio: torch.Tensor,
@@ -335,13 +335,13 @@ def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix_val: float) -> torch.Ten
     wet_ch = wet.shape[-2] if wet.ndim >= 2 else 1
 
     if dry_ch != wet_ch:
-        log.info("  Channel mismatch: dry=%dch wet=%dch — adjusting wet", dry_ch, wet_ch)
+        log.info("  Channel mismatch: dry=%dch wet=%dch â€” adjusting wet", dry_ch, wet_ch)
         if dry_ch == 2 and wet_ch == 1:
             wet = wet.repeat(*(1,) * (wet.ndim - 2), 2, 1)
         elif dry_ch == 1 and wet_ch == 2:
             wet = wet[:, :1, :] if wet.ndim == 3 else wet[:1, :]
         else:
-            log.warning("  Unusual channel mismatch (%d vs %d) — truncating wet", dry_ch, wet_ch)
+            log.warning("  Unusual channel mismatch (%d vs %d) â€” truncating wet", dry_ch, wet_ch)
             wet = wet[..., :dry_ch, :]
 
     dry_len = dry.shape[-1]
@@ -490,7 +490,7 @@ class DMM_MusicEnhancer:
         # -------------------------------------------------------------------
         if isinstance(audio, dict):
             if "waveform" not in audio:
-                log.warning("Audio dict missing 'waveform' key — passing through unchanged")
+                log.warning("Audio dict missing 'waveform' key â€” passing through unchanged")
                 return (audio,)
             audio_tensor = audio["waveform"]
             sample_rate = audio.get("sample_rate", 48000)
@@ -499,13 +499,13 @@ class DMM_MusicEnhancer:
             sample_rate = 48000
         else:
             log.warning(
-                "Unexpected audio type %s — passing through unchanged",
+                "Unexpected audio type %s â€” passing through unchanged",
                 type(audio).__name__,
             )
             return (audio,)
 
         if audio_tensor is None or audio_tensor.numel() == 0:
-            log.warning("Empty audio input — passing through unchanged")
+            log.warning("Empty audio input â€” passing through unchanged")
             return (audio,)
 
         original_tensor = audio_tensor.clone()
@@ -538,7 +538,7 @@ class DMM_MusicEnhancer:
 
         if model is None:
             log.warning(
-                "MusicGen-melody not available — passing through unchanged\n"
+                "MusicGen-melody not available â€” passing through unchanged\n"
                 "  Install: pip install transformers"
             )
             return (
@@ -624,7 +624,7 @@ class DMM_MusicEnhancer:
 
             except Exception as e:
                 log.error(
-                    "MusicGen generation failed on batch %d: %s — using original", b, e
+                    "MusicGen generation failed on batch %d: %s â€” using original", b, e
                 )
                 enhanced_batches.append(clip.unsqueeze(0))
 
