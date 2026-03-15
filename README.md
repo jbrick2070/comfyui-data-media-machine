@@ -14,6 +14,8 @@ All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `cu
 **[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
 
 ---
+
+
 ## What's in v3.4
 
 This version adds **live earthquake monitoring**, **NWS alerts**, and a **procedural data visualization node** that generates abstract animations from live data metrics.
@@ -34,13 +36,6 @@ This version adds **live earthquake monitoring**, **NWS alerts**, and a **proced
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## GPU Compatibility Matrix
 
 ### Tier 1: Tested & Optimized (>16GB VRAM)
@@ -55,13 +50,6 @@ This version adds **live earthquake monitoring**, **NWS alerts**, and a **proced
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ### Tier 2: Constrained Mode (8-16GB VRAM)
 
 | GPU | Batch Size | Length (s) | Tile Size | Settings | Notes |
@@ -81,13 +69,6 @@ This version adds **live earthquake monitoring**, **NWS alerts**, and a **proced
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ### Tier 3: API Fallback (â‰¤8GB VRAM)
 
 | GPU | Approach | Notes |
@@ -105,13 +86,6 @@ See "API Integration Nodes" section below.
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Quick Start
 
 ### 1. Install to ComfyUI
@@ -162,13 +136,6 @@ Hit **Queue** in ComfyUI. The workflow:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## API Integration Nodes (Tier 3)
 
 For GPUs without enough VRAM for local LTX-2, use hosted video APIs:
@@ -224,13 +191,6 @@ Outputs:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Node Reference
 
 ### Data Fetchers (all live, zero config needed)
@@ -270,13 +230,6 @@ Outputs:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Widget Offset Prevention (Critical!)
 
 When editing workflows in JSON, follow this widget ordering **exactly**:
@@ -304,13 +257,6 @@ When editing workflows in JSON, follow this widget ordering **exactly**:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## File Structure (GitHub Distribution)
 
 ```
@@ -345,13 +291,6 @@ comfyui-data-media-machine/
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Distribution Strategy: GitHub + ComfyUI Manager
 
 ### Phase 1: GitHub Release
@@ -384,13 +323,6 @@ comfyui-data-media-machine/
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Troubleshooting
 
 ### "NotImplementedError: Got 4D input, but linear mode needs 3D"
@@ -439,13 +371,6 @@ If you want requests:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Performance Tuning
 
 ### For RTX 4090/5080 (24GB+)
@@ -473,13 +398,6 @@ If you want requests:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## What's Different from v2
 
 | Issue | v2 | v3.4 |
@@ -494,13 +412,6 @@ If you want requests:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Author & Attribution
 
 **Concept & Implementation**: Jeffrey A. Brick ([@jbrick2070](https://github.com/jbrick2070))
@@ -517,13 +428,6 @@ If you want requests:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Contributing
 
 PRs welcome! Focus areas:
@@ -535,13 +439,6 @@ PRs welcome! Focus areas:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 ## Links
 
 - **GitHub**: https://github.com/YOUR_ORG/comfyui-data-media-machine
@@ -554,12 +451,5 @@ PRs welcome! Focus areas:
 
 ---
 
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
-
----
 **Last updated**: March 2026
 **Stability**: Production-ready for RTX 4090+, tested on RTX 5080
