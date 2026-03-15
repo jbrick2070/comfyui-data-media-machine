@@ -18,33 +18,62 @@ All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `cu
 
 ## New to ComfyUI? Start Here
 
-ComfyUI is a free, node-based interface for running AI image and video models locally on your GPU. If you've never used it before, here's how to get set up.
+ComfyUI is a free, node-based interface for running AI image and video models locally on your GPU.
+
+> **Already have ComfyUI installed?** Skip to [Installing the DMM Workflow](#installing-the-dmm-workflow) below.
 
 ### Step 1 — Install ComfyUI
 
-The easiest way is the official desktop app:
+Use the official desktop installer — it handles everything automatically:
 
-1. Go to **https://www.comfy.org/download**
-2. Download the installer for Windows (or Mac/Linux)
-3. Run it and follow the prompts — it handles Python, dependencies, and models automatically
+**https://www.comfy.org/download**
 
-Alternatively, advanced users can install manually from the GitHub repo at **https://github.com/comfyanonymous/ComfyUI**
+This installs Python, dependencies, and the base interface. Advanced users can also install manually from https://github.com/comfyanonymous/ComfyUI
 
-### Step 2 — Install the DMM v3.4 Workflow
+### Step 2 — Install ComfyUI Manager
 
-Once ComfyUI is running:
+ComfyUI Manager is a must-have tool that lets you install missing custom nodes with one click.
+
+1. Open a terminal in your ComfyUI folder
+2. Navigate to ComfyUI/custom_nodes/
+3. Run: git clone https://github.com/ltdrdata/ComfyUI-Manager
+4. Restart ComfyUI
+
+Or search for it inside the ComfyUI desktop app's built-in extension manager.
+
+### Step 3 — Install Required Models
+
+DMM uses the following models. Download them and place them in the correct folders:
+
+| Model | Where to get it | Folder |
+|-------|----------------|--------|
+| LTX-Video | [HuggingFace](https://huggingface.co/Lightricks/LTX-Video) | ComfyUI/models/video_models/ |
+| Wav2Vec / TTS model | Included via ComfyUI Manager | auto-installed |
+
+> If you are missing models, nodes will appear **red** in ComfyUI. Use Manager ? **Install Missing Custom Nodes** to resolve them automatically.
+
+### Step 4 — Install the DMM Workflow
 
 1. **[Download the full package](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** and unzip it
-2. Open ComfyUI in your browser (usually http://127.0.0.1:8188)
-3. Click **Load** in the menu and select LA_DATA_REPORT_v3.4.json (or the LITE version if you have less than 24GB VRAM)
-4. Hit **Queue** — the workflow will fetch live LA data and begin generating
+2. Open ComfyUI in your browser at http://127.0.0.1:8188
+3. Click **Load** and select LA_DATA_REPORT_v3.4.json
+   - Use LA_DATA_REPORT_v3.4_LITE.json if you have less than 24GB VRAM
+4. If any nodes appear red, open **Manager ? Install Missing Custom Nodes ? Restart**
+5. Hit **Queue** — the workflow fetches live LA data and generates automatically
 
-That's it. No API keys, no accounts, no configuration required.
+**Which version?**
+| Version | GPU | VRAM |
+|---------|-----|------|
+| LA_DATA_REPORT_v3.4.json | RTX 5080 / 4090 | 24GB |
+| LA_DATA_REPORT_v3.4_LITE.json | RTX 4070 / 3060 | 8–16GB |
 
-> **Which version should I use?**
-> - LA_DATA_REPORT_v3.4.json — RTX 4090 / RTX 5080 (24GB VRAM)
-> - LA_DATA_REPORT_v3.4_LITE.json — RTX 4070 / RTX 3060 (8–16GB VRAM)
+### Troubleshooting
 
+**Nodes are red** ? Open Manager ? Install Missing Custom Nodes ? Restart ComfyUI
+
+**Out of memory / crashed** ? Switch to the LITE version, or lower the video frame count in the workflow
+
+**No data showing up** ? Check your internet connection — the workflow pulls live data from public APIs on each run
 
 
 ## What's in v3.4
