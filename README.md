@@ -14,6 +14,37 @@ All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `cu
 **[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
 
 ---
+---
+
+## New to ComfyUI? Start Here
+
+ComfyUI is a free, node-based interface for running AI image and video models locally on your GPU. If you've never used it before, here's how to get set up.
+
+### Step 1 — Install ComfyUI
+
+The easiest way is the official desktop app:
+
+1. Go to **https://www.comfy.org/download**
+2. Download the installer for Windows (or Mac/Linux)
+3. Run it and follow the prompts — it handles Python, dependencies, and models automatically
+
+Alternatively, advanced users can install manually from the GitHub repo at **https://github.com/comfyanonymous/ComfyUI**
+
+### Step 2 — Install the DMM v3.4 Workflow
+
+Once ComfyUI is running:
+
+1. **[Download the full package](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** and unzip it
+2. Open ComfyUI in your browser (usually http://127.0.0.1:8188)
+3. Click **Load** in the menu and select LA_DATA_REPORT_v3.4.json (or the LITE version if you have less than 24GB VRAM)
+4. Hit **Queue** — the workflow will fetch live LA data and begin generating
+
+That's it. No API keys, no accounts, no configuration required.
+
+> **Which version should I use?**
+> - LA_DATA_REPORT_v3.4.json — RTX 4090 / RTX 5080 (24GB VRAM)
+> - LA_DATA_REPORT_v3.4_LITE.json — RTX 4070 / RTX 3060 (8–16GB VRAM)
+
 
 
 ## What's in v3.4
