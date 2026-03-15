@@ -34,80 +34,88 @@ git clone https://github.com/jbrick2070/comfyui-data-media-machine.git
 
 [![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
 
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** — includes both workflow files + community guide.
+**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** ï¿½ includes both workflow files + community guide.
 
 ---
 ---
 
-## New to ComfyUI? Start Here
+ï»¿## New to ComfyUI? Start Here
 
 ComfyUI is a free, node-based interface for running AI image and video models locally on your GPU.
 
-> **Already have ComfyUI installed?** Skip to [Installing the DMM Workflow](#installing-the-dmm-workflow) below.
+> **Already have ComfyUI installed?** Skip to Step 3 below.
 
-### Step 1 — Install ComfyUI
+### Step 1 - Install Git
 
-Use the official desktop installer — it handles everything automatically:
+ComfyUI and its tools require Git to install extensions.
+
+- **Windows**: Download from **https://git-scm.com/download/win** and run the installer (keep all default settings)
+- **Mac**: Open Terminal and type `git` - it will prompt you to install automatically
+- **Linux**: `sudo apt install git`
+
+You only need to do this once.
+
+### Step 2 - Install ComfyUI
+
+Use the official desktop installer - it handles Python, dependencies, and the interface automatically:
 
 **https://www.comfy.org/download**
 
-This installs Python, dependencies, and the base interface. Advanced users can also install manually from https://github.com/comfyanonymous/ComfyUI
+Advanced users can also install manually from https://github.com/comfyanonymous/ComfyUI
 
-### Step 2 — Install ComfyUI Manager
+### Step 3 - Install Required Models
 
-ComfyUI Manager is a must-have tool that lets you install missing custom nodes with one click.
+> **Be prepared for large downloads.** Plan for 15 minutes to 2 hours depending on your internet speed and which models you choose.
+
+| Model | Download | Size | Est. Time (100Mbps) | Save To |
+|-------|----------|------|---------------------|---------|
+| **LTX-Video v0.9.5** (required) | [HuggingFace](https://huggingface.co/Lightricks/LTX-Video/resolve/main/ltx-video-2b-v0.9.5.safetensors) | ~9.5 GB | ~15-20 min | `ComfyUI/models/checkpoints/` |
+| **LTX-Video 13B** (optional, higher quality) | [HuggingFace](https://huggingface.co/Lightricks/LTX-Video/resolve/main/ltxv-13b-0.9.7-distilled.safetensors) | ~26 GB | ~45-60 min | `ComfyUI/models/checkpoints/` |
+| **Kokoro TTS voice model** | Auto via ComfyUI Manager | ~500 MB | 2-5 min | auto |
+
+> Slower connections (25Mbps or under): expect 1-3 hours for the main model. Start the download before you go to bed.
+
+### Step 4 - Install ComfyUI Manager
+
+ComfyUI Manager lets you install missing custom nodes with one click - essential for getting DMM running.
 
 1. Open a terminal in your ComfyUI folder
-2. Navigate to ComfyUI/custom_nodes/
-3. Run: git clone https://github.com/ltdrdata/ComfyUI-Manager
-4. Restart ComfyUI
+2. Run: `git clone https://github.com/ltdrdata/ComfyUI-Manager ComfyUI/custom_nodes/ComfyUI-Manager`
+3. Restart ComfyUI
 
-Or search for it inside the ComfyUI desktop app's built-in extension manager.
+Or use the built-in extension manager in the ComfyUI desktop app.
 
-### Step 3 — Install Required Models
-
-DMM uses the following models. Download them and place them in the correct folders:
-
-| Model | Where to get it | Folder |
-|-------|----------------|--------|
-| LTX-Video | [HuggingFace](https://huggingface.co/Lightricks/LTX-Video) | ComfyUI/models/video_models/ |
-| Wav2Vec / TTS model | Included via ComfyUI Manager | auto-installed |
-
-> If you are missing models, nodes will appear **red** in ComfyUI. Use Manager ? **Install Missing Custom Nodes** to resolve them automatically.
-
-### Step 4 — Install the DMM Workflow
+### Step 5 - Load the DMM Workflow
 
 1. **[Download the full package](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** and unzip it
-2. Open ComfyUI in your browser at http://127.0.0.1:8188
-3. Click **Load** and select LA_DATA_REPORT_v3.4.json
-   - Use LA_DATA_REPORT_v3.4_LITE.json if you have less than 24GB VRAM
-4. If any nodes appear red, open **Manager ? Install Missing Custom Nodes ? Restart**
-5. Hit **Queue** — the workflow fetches live LA data and generates automatically
+2. Open ComfyUI at `http://127.0.0.1:8188`
+3. Click **Load** and select `LA_DATA_REPORT_v3.4.json`
+   - Use `LA_DATA_REPORT_v3.4_LITE.json` if you have less than 24GB VRAM
+4. If any nodes appear red, open **Manager -> Install Missing Custom Nodes -> Restart**
+5. Hit **Queue** - the workflow fetches live LA data and begins generating
 
 **Which version?**
 | Version | GPU | VRAM |
 |---------|-----|------|
-| LA_DATA_REPORT_v3.4.json | RTX 5080 / 4090 | 24GB |
-| LA_DATA_REPORT_v3.4_LITE.json | RTX 4070 / 3060 | 8–16GB |
+| `LA_DATA_REPORT_v3.4.json` | RTX 5080 / 4090 | 24GB |
+| `LA_DATA_REPORT_v3.4_LITE.json` | RTX 4070 / 3060 | 8-16GB |
 
 ### Troubleshooting
 
-**Nodes are red** ? Open Manager ? Install Missing Custom Nodes ? Restart ComfyUI
+**Nodes are red** -> Open Manager -> Install Missing Custom Nodes -> Restart ComfyUI
 
-**Out of memory / crashed** ? Switch to the LITE version, or lower the video frame count in the workflow
+**Out of memory / crashed** -> Switch to the LITE version, or reduce the video frame count in the workflow
 
-**No data showing up** ? Check your internet connection — the workflow pulls live data from public APIs on each run
+**No data showing up** -> Check your internet connection - the workflow pulls live data from public APIs on each run
 
-
----
 
 ## Editing This Workflow With AI (No Coding Required)
 
 If you want to customize or extend this workflow but don't want to write code, you can use AI tools to make edits using plain English prompts.
 
-### Windows — Claude Cowork + Windows MCP
+### Windows ï¿½ Claude Cowork + Windows MCP
 
-This entire project was built using **Claude Cowork** with the **Windows MCP plugin**. It handles file edits, browser automation, git pushes, and ComfyUI JSON changes — all from natural language instructions.
+This entire project was built using **Claude Cowork** with the **Windows MCP plugin**. It handles file edits, browser automation, git pushes, and ComfyUI JSON changes ï¿½ all from natural language instructions.
 
 1. Download the **Claude desktop app** from **https://claude.ai/download**
 2. In the app, enable **Cowork mode**
@@ -119,7 +127,7 @@ Example prompts:
 - *"Add a new data source node that pulls live traffic data"*
 - *"Push the updated workflow to my GitHub repo"*
 
-### Mac — Claude + Terminal MCP
+### Mac ï¿½ Claude + Terminal MCP
 
 On Mac, the same Claude desktop app works with community MCP plugins for file system and terminal access:
 
@@ -130,7 +138,7 @@ On Mac, the same Claude desktop app works with community MCP plugins for file sy
 
 ### What is MCP?
 
-MCP (Model Context Protocol) is an open standard that lets Claude connect to tools on your computer — your file system, browser, terminal, and more. No coding required.
+MCP (Model Context Protocol) is an open standard that lets Claude connect to tools on your computer ï¿½ your file system, browser, terminal, and more. No coding required.
 
 More info: **https://modelcontextprotocol.io**
 
