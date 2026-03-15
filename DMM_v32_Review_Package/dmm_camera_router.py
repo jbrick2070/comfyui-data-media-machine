@@ -1,5 +1,5 @@
-"""
-DMMCameraRouter — Maps data focus types to webcam URLs from a JSON registry.
+﻿"""
+DMMCameraRouter Ã¢â‚¬â€ Maps data focus types to webcam URLs from a JSON registry.
 
 v3.1 changes:
   - DMMCameraRegistry: added IS_CHANGED using file mtime (auto-reloads on edit)
@@ -16,7 +16,7 @@ v3.2 changes:
 Supports multiple cameras per category with random, round-robin, or fixed
 selection.  Returns the selected URL plus fallback URLs for retry logic.
 
-DMMCameraRegistry — Loads camera_registry.json and outputs DMM_CAMERAS.
+DMMCameraRegistry Ã¢â‚¬â€ Loads camera_registry.json and outputs DMM_CAMERAS.
 
 Author: Jeffrey A. Brick
 """
@@ -138,11 +138,29 @@ class DMMCameraRouter:
                     "step": 1.0,
                     "tooltip": "Only consider cameras within this distance from center. 50=all of LA, 5=tight local."
                 }),
+                "scenic_swap_chance": ("FLOAT", {
+                    "default": 0.20,
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05,
+                    "tooltip": "Probability (0-1) this slot swaps to a scenic cam. 0.20 = ~1 in 5 runs. Set on all 5 routers for random scenic rotation."
+                }),
             },
         }
 
     def route_camera(self, focus, camera_registry, selection_mode="random",
-                     seed=42, max_radius_miles=50.0):
+                     seed=42, max_radius_miles=50.0, scenic_swap_chance=0.20):
+        # Scenic rotation: randomly swap this slot to scenic feed
+        if scenic_swap_chance > 0 and focus != "scenic":
+            # Use seed + focus hash for deterministic but per-slot randomness
+            swap_rng = random.Random(seed + hash(focus))
+            if swap_rng.random() < scenic_swap_chance:
+                scenic_cams = camera_registry.get("scenic", [])
+                if scenic_cams:
+                    log.info("Scenic swap triggered for '%s' slot (%.0f%% chance)",
+                             focus, scenic_swap_chance * 100)
+                    focus = "scenic"
+
         cameras = camera_registry.get(focus, [])
 
         # Filter by radius if cameras have distance_miles metadata
