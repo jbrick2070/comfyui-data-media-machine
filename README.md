@@ -6,6 +6,29 @@
 All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `custom_nodes/` and queue.
 
 ---
+---
+
+## Quick Install (Command Line)
+
+If you prefer the terminal, paste this into PowerShell (Windows) or your terminal (Mac/Linux):
+
+**Windows (PowerShell):**
+```powershell
+Invoke-WebRequest -Uri "https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip" -OutFile "DMM_v3.4.zip"; Expand-Archive "DMM_v3.4.zip" -DestinationPath "DMM_v3.4"
+```
+
+**Mac / Linux:**
+```bash
+curl -L https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip -o DMM_v3.4.zip && unzip DMM_v3.4.zip -d DMM_v3.4
+```
+
+Then load the .json file from the extracted folder into ComfyUI.
+
+Or clone the repo directly:
+```bash
+git clone https://github.com/jbrick2070/comfyui-data-media-machine.git
+```
+
 
 ## Download
 
