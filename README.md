@@ -24,23 +24,16 @@ ComfyUI is a free, node-based interface for running AI image and video models lo
 
 > **Already have ComfyUI installed?** Skip to Step 2 below.
 
-### Step 1 - Install Git
 
-ComfyUI and its tools require Git to install extensions.
+### Step 1 - Install ComfyUI
 
-- **Windows**: Download from **https://git-scm.com/download/win** and run the installer (keep all default settings)
-- **Mac**: Open Terminal and type `git` - it will prompt you to install automatically
-- **Linux**: `sudo apt install git`
-
-You only need to do this once.
-
-### Step 2 - Install ComfyUI
-
-Use the official desktop installer - it handles Python, dependencies, and the interface automatically:
+Use the official desktop installer - it handles Python, Git, dependencies, and the interface automatically:
 
 **https://www.comfy.org/download**
 
 Advanced users can also install manually from https://github.com/comfyanonymous/ComfyUI
+
+> The installer will prompt you to install Git if you don’t have it yet — just follow the prompts.
 
 ### Step 2 - Install Required Models
 
