@@ -1,8 +1,8 @@
 {
   "id": "c35a0af8-5080-437e-8c4a-b14e321bd288",
   "revision": 0,
-  "last_node_id": 45,
-  "last_link_id": 79,
+  "last_node_id": 46,
+  "last_link_id": 81,
   "nodes": [
     {
       "id": 1,
@@ -2302,7 +2302,7 @@
           "slot_index": 0
         }
       ],
-      "title": "Music Enhancer (Stable Audio)",
+      "title": "Music Enhancer (MusicGen)",
       "properties": {
         "Node name for S&R": "DMM_MusicEnhancer"
       },
