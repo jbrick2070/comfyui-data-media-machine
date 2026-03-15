@@ -1,48 +1,65 @@
-﻿"""
-DMM Music Enhancer — Stable Audio Open native audio-to-audio enhancement.
+"""
+DMM Music Enhancer — MusicGen-melody audio-to-audio music enhancement.
 
 Takes the background music track from BackgroundMusic and runs it through
-Stable Audio Open's latent diffusion for music-to-music style transfer.
-Each run randomly selects an LA-themed style prompt (deep house, choir,
-noir jazz, etc.) to add cinematic texture — without replacing the original.
+Meta's MusicGen-melody for music-to-music style transfer via chroma/melody
+conditioning. Each run randomly selects one of 12 LA-themed style prompts
+and generates music that follows the harmonic contour of the original.
 
 Architecture:
   BackgroundMusic (48kHz stereo) -> MusicEnhancer -> AudioMux -> SaveVideo
 
-No external API required. Model loads directly into VRAM as a standard
-ComfyUI checkpoint. Cached after first load.
+Melody conditioning: MusicGen reads the chroma (pitch/harmonic) features
+of the input audio and generates new music that tracks those shapes while
+adopting the prompted style. The result is blended back with the original
+at the specified mix ratio.
+
+Strength widget maps to MusicGen guidance_scale (how strongly the text
+prompt drives the output vs the input melody):
+  Low  (0.05-0.20): Melody leads — output closely follows input harmony
+  Mid  (0.30-0.50): Balanced — style prompt and melody co-guide output
+  High (0.60-0.95): Prompt dominates — melody is a loose reference
+
+num_inference_steps widget = seconds of audio to generate (5-30s).
+Output is looped (with raised-cosine crossfade) or trimmed to match input.
+
+No external API required. Model loads directly into VRAM (~1.5GB).
+Cached after first load.
 
 Requirements:
-  - Stable Audio Open checkpoint (stabilityai/stable-audio-open-1.0)
-  - torch, torchaudio, diffusers, transformers
+  - transformers >= 4.35.0
+  - Install: pip install transformers
 
 VRAM Budget:
-  - Stable Audio Open: ~2-3GB VRAM
-  - LTX-Video will be unloaded by this point in the pipeline
-  - Safe on RTX 5080 (24GB) and RTX 4070+ (12GB+)
+  - MusicGen-melody: ~1.5GB VRAM
+  - Much lighter than Stable Audio Open (2-3GB)
+  - Safe on RTX 5080 (24GB), RTX 4070+ (12GB+), RTX 3060 (12GB)
 
 Author: Jeffrey A. Brick
-Version: 3.5-beta (rewrite: native Stable Audio Open, no external API)
+Version: 3.5-beta (rewrite: MusicGen-melody, no external API)
 """
 
 import gc
 import io
 import logging
-import os
 import random
 import time
 import wave
-from pathlib import Path
 
 import numpy as np
 import torch
 
 log = logging.getLogger("DMM.MusicEnhancer")
 
+# MusicGen-melody native sample rate
+MUSICGEN_SR = 32000
+
 
 # ---------------------------------------------------------------------------
 # LA-themed style prompt pool
-# Each run randomly picks one to guide the audio-to-audio style transfer.
+# Each run randomly picks one to guide the music-to-music style transfer.
+# References real synthesizer models and instruments native to LA 80s
+# culture and LA indigenous culture.
 # ---------------------------------------------------------------------------
 LA_STYLE_PROMPTS = [
     # 80s LA synthpop — Oberheim OB-Xa + Sequential Prophet-5
@@ -109,160 +126,126 @@ LA_STYLE_PROMPTS = [
 # Model cache (singleton — loads once, reuses across executions)
 # ---------------------------------------------------------------------------
 _model_cache = {
-    "pipe": None,
+    "processor": None,
+    "model": None,
     "device": None,
 }
 
 
 def _get_or_load_model(device: torch.device = None):
-    """Load Stable Audio Open pipeline, cached after first call.
+    """Load MusicGen-melody processor and model, cached after first call.
 
-    Uses diffusers StableAudioPipeline for native PyTorch inference.
-    Falls back gracefully if the model isn't installed.
+    Returns (processor, model) tuple, or (None, None) if not available.
     """
-    if _model_cache["pipe"] is not None:
-        return _model_cache["pipe"]
+    if _model_cache["model"] is not None:
+        return _model_cache["processor"], _model_cache["model"]
 
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     try:
-        from diffusers import StableAudioPipeline
+        from transformers import AutoProcessor, MusicgenForConditionalGeneration
 
-        log.info("  Loading Stable Audio Open model (first run only)...")
+        log.info("  Loading MusicGen-melody (first run only)...")
         t0 = time.time()
 
-        pipe = StableAudioPipeline.from_pretrained(
-            "stabilityai/stable-audio-open-1.0",
+        processor = AutoProcessor.from_pretrained("facebook/musicgen-melody")
+        model = MusicgenForConditionalGeneration.from_pretrained(
+            "facebook/musicgen-melody",
             torch_dtype=torch.float16 if device.type == "cuda" else torch.float32,
         )
-        pipe = pipe.to(device)
+        model = model.to(device)
+        model.eval()
 
         elapsed = time.time() - t0
-        log.info("  Model loaded in %.1fs on %s", elapsed, device)
+        log.info("  MusicGen-melody loaded in %.1fs on %s", elapsed, device)
 
-        _model_cache["pipe"] = pipe
+        _model_cache["processor"] = processor
+        _model_cache["model"] = model
         _model_cache["device"] = device
-        return pipe
+        return processor, model
 
     except ImportError:
-        log.error(
-            "diffusers not installed. Run: pip install diffusers transformers accelerate"
+        log.warning(
+            "transformers not installed. "
+            "Run: pip install transformers"
         )
-        return None
+        return None, None
     except Exception as e:
-        log.error("Failed to load Stable Audio Open: %s", e)
-        return None
+        log.error("Failed to load MusicGen-melody: %s", e)
+        return None, None
 
 
 # ---------------------------------------------------------------------------
-# Audio tensor <-> WAV conversion utilities
+# Audio resampling utility
 # ---------------------------------------------------------------------------
-def tensor_to_wav_bytes(audio_tensor: torch.Tensor, sample_rate: int = 48000) -> bytes:
-    """Convert a single audio tensor (channels, samples) to WAV bytes.
+def _resample_tensor(tensor: torch.Tensor, from_sr: int, to_sr: int) -> torch.Tensor:
+    """Resample audio tensor via linear interpolation.
 
-    Expects shape (channels, samples) or (1, channels, samples).
-    Values should be in [-1.0, 1.0] float32.
+    Handles both (C, T) and (B, C, T) shapes.
+    Returns same shape as input.
     """
-    if audio_tensor.ndim == 3:
-        audio = audio_tensor[0]
-    elif audio_tensor.ndim == 2:
-        audio = audio_tensor
-    else:
-        raise ValueError(f"Unexpected audio tensor shape: {audio_tensor.shape}")
+    if from_sr == to_sr:
+        return tensor
 
-    channels = audio.shape[0]
-    samples = audio.shape[1]
+    new_length = int(tensor.shape[-1] * to_sr / from_sr)
 
-    audio_np = audio.cpu().numpy()
-    audio_np = np.clip(audio_np, -1.0, 1.0)
-    audio_int16 = (audio_np * 32767).astype(np.int16)
+    squeezed = tensor.ndim == 2
+    if squeezed:
+        tensor = tensor.unsqueeze(0)  # (1, C, T) for interpolate
 
-    interleaved = np.empty(channels * samples, dtype=np.int16)
-    for ch in range(channels):
-        interleaved[ch::channels] = audio_int16[ch]
+    resampled = torch.nn.functional.interpolate(
+        tensor.float(),
+        size=new_length,
+        mode="linear",
+        align_corners=False,
+    )
 
-    buf = io.BytesIO()
-    with wave.open(buf, "wb") as wf:
-        wf.setnchannels(channels)
-        wf.setsampwidth(2)
-        wf.setframerate(sample_rate)
-        wf.writeframes(interleaved.tobytes())
+    if squeezed:
+        resampled = resampled.squeeze(0)
 
-    return buf.getvalue()
-
-
-def wav_bytes_to_tensor(wav_bytes: bytes) -> tuple[torch.Tensor, int]:
-    """Convert WAV bytes back to audio tensor.
-
-    Returns (tensor, sample_rate) where tensor is (1, channels, samples).
-    """
-    buf = io.BytesIO(wav_bytes)
-    with wave.open(buf, "rb") as wf:
-        channels = wf.getnchannels()
-        sample_rate = wf.getframerate()
-        sample_width = wf.getsampwidth()
-        n_frames = wf.getnframes()
-        raw = wf.readframes(n_frames)
-
-    if sample_width == 2:
-        dtype = np.int16
-        max_val = 32767.0
-    elif sample_width == 4:
-        dtype = np.int32
-        max_val = 2147483647.0
-    else:
-        raise ValueError(f"Unsupported sample width: {sample_width}")
-
-    audio_np = np.frombuffer(raw, dtype=dtype).astype(np.float32) / max_val
-    audio_np = audio_np.reshape(-1, channels).T  # (channels, samples)
-
-    tensor = torch.from_numpy(audio_np).unsqueeze(0)  # (1, channels, samples)
-    return tensor, sample_rate
+    return resampled
 
 
 # ---------------------------------------------------------------------------
-# Dry/wet mix utility (with channel matching)
+# Crossfade loop — for generated clips shorter than the input timeline
 # ---------------------------------------------------------------------------
-def crossfade_loop(audio: torch.Tensor, target_samples: int,
-                    crossfade_samples: int = None,
-                    sample_rate: int = 48000) -> torch.Tensor:
-    """Seamlessly loop audio to reach target_samples using crossfade.
+def crossfade_loop(
+    audio: torch.Tensor,
+    target_samples: int,
+    crossfade_samples: int = None,
+    sample_rate: int = 48000,
+) -> torch.Tensor:
+    """Seamlessly loop audio to reach target_samples using raised-cosine crossfade.
 
-    If the generated audio (capped at 47s by Stable Audio Open) is shorter
-    than the video timeline, this function loops it with smooth crossfades
-    at the boundaries to avoid audible cuts.
+    If MusicGen's generated clip is shorter than the video timeline,
+    this loops it with smooth crossfades at boundaries.
 
     Args:
-        audio: Tensor of shape (..., samples) — the generated clip.
+        audio: Tensor (..., samples)
         target_samples: Desired total length in samples.
-        crossfade_samples: Overlap region in samples. Defaults to 2s worth.
-        sample_rate: For calculating default crossfade duration.
+        crossfade_samples: Overlap region. Defaults to 2s or 25% of clip.
+        sample_rate: Used to calculate default crossfade duration.
 
     Returns:
-        Tensor of shape (..., target_samples) with seamless loops.
+        Tensor (..., target_samples) with seamless loops.
     """
     src_len = audio.shape[-1]
 
-    # If already long enough, just trim
     if src_len >= target_samples:
         return audio[..., :target_samples]
 
-    # Default crossfade: 2 seconds, but never more than 25% of the clip
     if crossfade_samples is None:
         crossfade_samples = min(sample_rate * 2, src_len // 4)
-    crossfade_samples = max(crossfade_samples, 1)  # Safety floor
+    crossfade_samples = max(crossfade_samples, 1)
 
-    # Build fade curves (raised cosine for smooth energy-preserving transition)
+    # Raised-cosine fade curves
     fade = torch.linspace(0.0, 1.0, crossfade_samples, device=audio.device)
-    fade = 0.5 * (1.0 - torch.cos(fade * torch.pi))  # Raised cosine
+    fade = 0.5 * (1.0 - torch.cos(fade * torch.pi))
     fade_in = fade
     fade_out = 1.0 - fade
 
-    # The loopable body excludes the crossfade tail (which blends into the head)
     loop_body_len = src_len - crossfade_samples
-
-    # Pre-allocate output
     result = torch.zeros(*audio.shape[:-1], target_samples, device=audio.device)
 
     pos = 0
@@ -271,25 +254,17 @@ def crossfade_loop(audio: torch.Tensor, target_samples: int,
         remaining = target_samples - pos
 
         if iteration == 0:
-            # First pass: copy the full clip (up to what fits)
             copy_len = min(src_len, remaining)
             result[..., pos:pos + copy_len] = audio[..., :copy_len]
-            pos += loop_body_len  # Next write starts where crossfade begins
+            pos += loop_body_len
         else:
-            # Subsequent passes: crossfade the head into the tail of previous
             if pos - crossfade_samples >= 0 and remaining > 0:
-                # Apply crossfade at the join point
                 xf_start = pos - crossfade_samples
                 xf_end = pos
-
-                # Tail of previous iteration fades out
                 result[..., xf_start:xf_end] *= fade_out
-
-                # Head of new iteration fades in
                 head = audio[..., :crossfade_samples] * fade_in
                 result[..., xf_start:xf_end] += head
 
-            # Copy the rest of the loop body (after crossfade region)
             body_remaining = min(loop_body_len, remaining)
             copy_src = audio[..., crossfade_samples:crossfade_samples + body_remaining]
             copy_len = copy_src.shape[-1]
@@ -298,45 +273,47 @@ def crossfade_loop(audio: torch.Tensor, target_samples: int,
                 copy_len = target_samples - pos
 
             if copy_len > 0:
-                result[..., pos:pos + copy_len] = audio[..., crossfade_samples:crossfade_samples + copy_len]
+                result[..., pos:pos + copy_len] = (
+                    audio[..., crossfade_samples:crossfade_samples + copy_len]
+                )
 
             pos += loop_body_len
 
         iteration += 1
-
-        # Safety valve: prevent infinite loop on degenerate input
         if iteration > (target_samples // max(loop_body_len, 1)) + 2:
             break
 
-    log.info("  Crossfade loop: %d iterations, %.1fs → %.1fs",
-             iteration, src_len / sample_rate, target_samples / sample_rate)
-
+    log.info(
+        "  Crossfade loop: %d iterations, %.1fs -> %.1fs",
+        iteration,
+        src_len / sample_rate,
+        target_samples / sample_rate,
+    )
     return result[..., :target_samples]
 
 
+# ---------------------------------------------------------------------------
+# Dry/wet mix utility (channel + length matching)
+# ---------------------------------------------------------------------------
 def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix_val: float) -> torch.Tensor:
-    """Blend original (dry) and enhanced (wet) audio.
+    """Blend original (dry) and generated (wet) audio.
 
     Handles channel count and length mismatches automatically.
+    Applies soft clip (tanh) to prevent overs.
     """
-    # --- Channel matching ---
     dry_ch = dry.shape[-2] if dry.ndim >= 2 else 1
     wet_ch = wet.shape[-2] if wet.ndim >= 2 else 1
 
     if dry_ch != wet_ch:
-        log.info("  Channel mismatch: dry=%dch, wet=%dch — adjusting wet", dry_ch, wet_ch)
+        log.info("  Channel mismatch: dry=%dch wet=%dch — adjusting wet", dry_ch, wet_ch)
         if dry_ch == 2 and wet_ch == 1:
             wet = wet.repeat(*(1,) * (wet.ndim - 2), 2, 1)
         elif dry_ch == 1 and wet_ch == 2:
-            if wet.ndim == 3:
-                wet = wet[:, :1, :]
-            else:
-                wet = wet[:1, :]
+            wet = wet[:, :1, :] if wet.ndim == 3 else wet[:1, :]
         else:
-            log.warning("  Unusual channel mismatch (%d vs %d), truncating wet", dry_ch, wet_ch)
+            log.warning("  Unusual channel mismatch (%d vs %d) — truncating wet", dry_ch, wet_ch)
             wet = wet[..., :dry_ch, :]
 
-    # --- Length matching ---
     dry_len = dry.shape[-1]
     wet_len = wet.shape[-1]
     if dry_len > wet_len:
@@ -346,33 +323,28 @@ def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix_val: float) -> torch.Ten
         wet = wet[..., :dry_len]
 
     mixed = (1.0 - mix_val) * dry + mix_val * wet
-
-    # Soft clip to prevent overs
-    mixed = torch.tanh(mixed)
-
-    return mixed
+    return torch.tanh(mixed)
 
 
 # ---------------------------------------------------------------------------
 # ComfyUI Node: DMM_MusicEnhancer
 # ---------------------------------------------------------------------------
 class DMM_MusicEnhancer:
-    """Music-to-music enhancement using native Stable Audio Open.
+    """Music-to-music enhancement using MusicGen-melody.
 
-    Sits between BackgroundMusic and AudioMux in the DMM pipeline. Takes
-    the background music, encodes it into Stable Audio's latent space,
-    applies noise at the specified strength, denoises with a randomly
-    selected LA-themed style prompt, and decodes back to audio.
+    Sits between BackgroundMusic and AudioMux in the DMM pipeline.
+    Extracts the harmonic/chroma contour of the input music and generates
+    new music conditioned on both the contour and a randomly selected
+    LA-themed style prompt. Result is dry/wet blended with the original.
 
-    No external API. Model loads directly into VRAM (cached after first run).
-
-    Strength controls how much the style transfer changes the audio:
-    - 0.10-0.20: Subtle texture (ambient shimmer, warmth)
-    - 0.20-0.35: Moderate enhancement (new instrumentation blended in)
-    - 0.35-0.50: Strong transformation (significant new character)
-    - 0.50+: Heavy regen (original becomes a loose reference)
-
-    Recommended: 0.20 for production, 0.15 for narration-heavy content.
+    Widget mapping:
+      strength          -> guidance_scale (0.05->1.5, 0.20->2.8, 0.50->5.5)
+                          Low = melody-driven | High = style-driven
+      mix               -> dry/wet blend (0=original, 1=MusicGen only)
+      prompt_override   -> leave blank for random LA prompt
+      seed              -> -1 for random each run
+      num_inference_steps -> seconds of audio to generate (5-30s)
+                            looped or trimmed to match input length
     """
 
     CATEGORY = "DMM/Audio"
@@ -394,6 +366,10 @@ class DMM_MusicEnhancer:
                         "max": 0.95,
                         "step": 0.05,
                         "display": "slider",
+                        "tooltip": (
+                            "Prompt guidance strength. "
+                            "Low=melody leads. High=style prompt leads."
+                        ),
                     },
                 ),
                 "mix": (
@@ -404,7 +380,7 @@ class DMM_MusicEnhancer:
                         "max": 1.0,
                         "step": 0.05,
                         "display": "slider",
-                        "tooltip": "Dry/wet mix. 0=original only, 1=enhanced only",
+                        "tooltip": "Dry/wet blend. 0=original only, 1=MusicGen only.",
                     },
                 ),
             },
@@ -414,7 +390,7 @@ class DMM_MusicEnhancer:
                     {
                         "default": "",
                         "multiline": True,
-                        "tooltip": "Leave empty for random LA style. Set to override with a specific prompt.",
+                        "tooltip": "Leave empty for random LA style prompt each run.",
                     },
                 ),
                 "seed": (
@@ -430,9 +406,12 @@ class DMM_MusicEnhancer:
                     {
                         "default": 20,
                         "min": 5,
-                        "max": 100,
-                        "step": 5,
-                        "tooltip": "More steps = better quality, slower. 20 is a good balance.",
+                        "max": 30,
+                        "step": 1,
+                        "tooltip": (
+                            "Seconds of music to generate per pass (5-30s). "
+                            "Output is looped/trimmed to match input clip length."
+                        ),
                     },
                 ),
             },
@@ -449,9 +428,9 @@ class DMM_MusicEnhancer:
     ) -> tuple:
         """Main enhancement function called by ComfyUI."""
 
-        # -----------------------------------------------------------
-        # 1. Select style prompt (random from pool or user override)
-        # -----------------------------------------------------------
+        # -------------------------------------------------------------------
+        # 1. Seed + prompt selection
+        # -------------------------------------------------------------------
         if seed == -1:
             actual_seed = random.randint(0, 2**32 - 1)
         else:
@@ -466,13 +445,19 @@ class DMM_MusicEnhancer:
             prompt = rng.choice(LA_STYLE_PROMPTS)
             log.info("DMM_MusicEnhancer: Random LA style selected")
 
-        log.info("  Prompt: %s", prompt[:80])
-        log.info("  Strength: %.2f | Mix: %.2f | Seed: %d | Steps: %d",
-                 strength, mix, actual_seed, num_inference_steps)
+        # Map strength (0.05-0.95) -> guidance_scale (1.5-9.55)
+        # MusicGen default is 3.0; strength=0.20 -> ~3.3 (close to default)
+        guidance_scale = 1.5 + strength * 8.5
 
-        # -----------------------------------------------------------
+        log.info("  Prompt: %s", prompt[:80])
+        log.info(
+            "  Guidance: %.1f (strength=%.2f) | Mix: %.2f | Seed: %d | Duration: %ds",
+            guidance_scale, strength, mix, actual_seed, num_inference_steps,
+        )
+
+        # -------------------------------------------------------------------
         # 2. Unpack ComfyUI AUDIO dict
-        # -----------------------------------------------------------
+        # -------------------------------------------------------------------
         if isinstance(audio, dict):
             if "waveform" not in audio:
                 log.warning("Audio dict missing 'waveform' key — passing through unchanged")
@@ -483,7 +468,10 @@ class DMM_MusicEnhancer:
             audio_tensor = audio
             sample_rate = 48000
         else:
-            log.warning("Unexpected audio type %s — passing through unchanged", type(audio).__name__)
+            log.warning(
+                "Unexpected audio type %s — passing through unchanged",
+                type(audio).__name__,
+            )
             return (audio,)
 
         if audio_tensor is None or audio_tensor.numel() == 0:
@@ -492,17 +480,18 @@ class DMM_MusicEnhancer:
 
         original_tensor = audio_tensor.clone()
 
-        # Ensure 3D: (batch, channels, samples)
         if audio_tensor.ndim == 2:
-            audio_tensor = audio_tensor.unsqueeze(0)
+            audio_tensor = audio_tensor.unsqueeze(0)  # (1, C, T)
 
         input_duration = audio_tensor.shape[-1] / sample_rate
-        log.info("  Input: %.1fs, %d channels, %d Hz, batch=%d",
-                 input_duration, audio_tensor.shape[-2], sample_rate, audio_tensor.shape[0])
+        log.info(
+            "  Input: %.1fs, %dch, %dHz, batch=%d",
+            input_duration, audio_tensor.shape[-2], sample_rate, audio_tensor.shape[0],
+        )
 
-        # -----------------------------------------------------------
-        # 3. VRAM flush before model load
-        # -----------------------------------------------------------
+        # -------------------------------------------------------------------
+        # 3. VRAM flush
+        # -------------------------------------------------------------------
         log.info("  Flushing VRAM...")
         gc.collect()
         if torch.cuda.is_available():
@@ -511,131 +500,132 @@ class DMM_MusicEnhancer:
             free_mb = torch.cuda.mem_get_info()[0] / (1024 ** 2)
             log.info("  VRAM free after flush: %.0f MB", free_mb)
 
-        # -----------------------------------------------------------
-        # 4. Load Stable Audio Open (cached after first call)
-        # -----------------------------------------------------------
+        # -------------------------------------------------------------------
+        # 4. Load MusicGen-melody (cached after first call)
+        # -------------------------------------------------------------------
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        pipe = _get_or_load_model(device)
+        processor, model = _get_or_load_model(device)
 
-        if pipe is None:
-            log.warning("Stable Audio Open not available — passing through unchanged")
-            return (audio if isinstance(audio, dict) else {"waveform": original_tensor, "sample_rate": sample_rate},)
+        if model is None:
+            log.warning(
+                "MusicGen-melody not available — passing through unchanged\n"
+                "  Install: pip install transformers"
+            )
+            return (
+                audio
+                if isinstance(audio, dict)
+                else {"waveform": original_tensor, "sample_rate": sample_rate},
+            )
 
-        # -----------------------------------------------------------
-        # 5. Audio-to-audio style transfer per batch item
-        #    - Cap generation at 47s (Stable Audio Open limit)
-        #    - Trim or pad output to match original input length
-        # -----------------------------------------------------------
-        gen_duration = min(input_duration, 47.0)
+        # -------------------------------------------------------------------
+        # 5. Generate per batch item
+        # -------------------------------------------------------------------
+        # num_inference_steps is repurposed as generation duration (seconds).
+        # MusicGen outputs 50 tokens/sec at its 32kHz / 320-sample frame rate.
+        duration_s = max(5, min(30, num_inference_steps))
+        max_new_tokens = int(duration_s * 50)
+
         batch_size = audio_tensor.shape[0]
         enhanced_batches = []
-
-        generator = torch.Generator(device=device).manual_seed(actual_seed)
-
         t0 = time.time()
+
         for b in range(batch_size):
-            single_track = audio_tensor[b:b + 1]  # (1, channels, samples)
+            clip = audio_tensor[b]  # (C, T)
+            orig_samples = clip.shape[-1]
 
             if batch_size > 1:
                 log.info("  Processing batch item %d/%d", b + 1, batch_size)
 
             try:
-                # Run Stable Audio Open audio-to-audio
-                # The pipeline handles encoding to latent, adding noise at
-                # strength, denoising with prompt conditioning, and decoding
-                result = pipe(
-                    prompt=prompt,
-                    audio=single_track,
-                    audio_end_in_s=gen_duration,
-                    num_inference_steps=num_inference_steps,
-                    strength=strength,
-                    generator=generator,
+                # Resample input to MusicGen's 32kHz for melody conditioning
+                clip_32k = _resample_tensor(clip, sample_rate, MUSICGEN_SR)
+
+                # Mono numpy for melody conditioning (processor expects 1-D)
+                mono_32k = clip_32k.mean(dim=0).cpu().float().numpy()  # (T,)
+
+                # Build processor inputs
+                inputs = processor(
+                    text=[prompt],
+                    audio=[mono_32k],
+                    sampling_rate=MUSICGEN_SR,
+                    padding=True,
+                    return_tensors="pt",
                 )
+                inputs = {
+                    k: v.to(device)
+                    for k, v in inputs.items()
+                    if hasattr(v, "to")
+                }
 
-                # Extract audio tensor from pipeline output
-                if hasattr(result, "audios"):
-                    enh = result.audios  # (batch, channels, samples) numpy or tensor
-                    if isinstance(enh, np.ndarray):
-                        enh = torch.from_numpy(enh)
-                    if enh.ndim == 2:
-                        enh = enh.unsqueeze(0)
-                elif hasattr(result, "audio"):
-                    enh = result.audio
-                    if isinstance(enh, np.ndarray):
-                        enh = torch.from_numpy(enh)
-                    if enh.ndim == 2:
-                        enh = enh.unsqueeze(0)
+                # Generate
+                with torch.no_grad():
+                    audio_values = model.generate(
+                        **inputs,
+                        max_new_tokens=max_new_tokens,
+                        guidance_scale=guidance_scale,
+                        do_sample=True,
+                    )
+
+                # audio_values: (1, 1, T) at 32kHz
+                generated = audio_values[0, 0].float()  # (T,)
+
+                # Resample back to original sample rate
+                generated = generated.unsqueeze(0)  # (1, T)
+                generated = _resample_tensor(generated, MUSICGEN_SR, sample_rate)
+                # generated: (1, T)
+
+                # Expand to match original channel count
+                orig_channels = clip.shape[0]
+                if orig_channels == 2:
+                    generated = generated.repeat(2, 1)  # (2, T)
+                # else stays (1, T)
+
+                # Trim or crossfade-loop to match original length
+                gen_samples = generated.shape[-1]
+                if gen_samples >= orig_samples:
+                    generated = generated[..., :orig_samples]
                 else:
-                    log.error("Unexpected pipeline output: %s — using original", type(result))
-                    enhanced_batches.append(single_track)
-                    continue
+                    generated = crossfade_loop(
+                        generated, orig_samples, sample_rate=sample_rate
+                    )
 
-                # Match length to original: trim if longer, crossfade-loop if shorter
-                orig_samples = single_track.shape[-1]
-                enh_samples = enh.shape[-1]
-                if enh_samples >= orig_samples:
-                    enh = enh[..., :orig_samples]
-                else:
-                    # Enhanced clip is shorter than input (47s cap hit).
-                    # Use crossfade loop for seamless extension.
-                    enh = crossfade_loop(enh, orig_samples, sample_rate=sample_rate)
-
-                enhanced_batches.append(enh)
+                enhanced_batches.append(generated.unsqueeze(0))  # (1, C, T)
 
             except Exception as e:
-                log.error("Enhancement failed on batch %d: %s — using original", b, e)
-                enhanced_batches.append(single_track)
-                continue
-
-            # Vary seed for next batch item
-            if b < batch_size - 1:
-                generator = torch.Generator(device=device).manual_seed(actual_seed + b + 1)
+                log.error(
+                    "MusicGen generation failed on batch %d: %s — using original", b, e
+                )
+                enhanced_batches.append(clip.unsqueeze(0))
 
         elapsed = time.time() - t0
-        log.info("  Stable Audio processing: %.1fs (%d batch items)", elapsed, batch_size)
+        log.info("  MusicGen processing: %.1fs (%d batch items)", elapsed, batch_size)
 
-        # Stack enhanced batches
-        enhanced_full = torch.cat(enhanced_batches, dim=0)
-
-        # -----------------------------------------------------------
-        # 6. Dry/wet mix
-        # -----------------------------------------------------------
+        # -------------------------------------------------------------------
+        # 6. Stack + dry/wet mix
+        # -------------------------------------------------------------------
+        enhanced_full = torch.cat(enhanced_batches, dim=0)  # (B, C, T)
         result_tensor = mix_audio(original_tensor, enhanced_full, mix)
 
-        output_duration = result_tensor.shape[-1] / sample_rate
-        log.info("  Output: %.1fs, batch=%d | Enhancement complete", output_duration, result_tensor.shape[0])
-
-        # -----------------------------------------------------------
-        # 7. Repack into ComfyUI AUDIO dict
-        # -----------------------------------------------------------
-        result_audio = {"waveform": result_tensor, "sample_rate": sample_rate}
-        return (result_audio,)
-
-    @staticmethod
-    def _resample(tensor: torch.Tensor, from_sr: int, to_sr: int) -> torch.Tensor:
-        """Simple linear resampling."""
-        if from_sr == to_sr:
-            return tensor
-
-        new_length = int(tensor.shape[-1] * (to_sr / from_sr))
-
-        if tensor.ndim == 2:
-            tensor = tensor.unsqueeze(0)
-
-        resampled = torch.nn.functional.interpolate(
-            tensor.float(), size=new_length, mode="linear", align_corners=False
+        log.info(
+            "  Output: %.1fs, batch=%d | Enhancement complete",
+            result_tensor.shape[-1] / sample_rate,
+            result_tensor.shape[0],
         )
-        return resampled
+
+        # -------------------------------------------------------------------
+        # 7. Repack ComfyUI AUDIO dict
+        # -------------------------------------------------------------------
+        return ({"waveform": result_tensor, "sample_rate": sample_rate},)
 
 
 # ---------------------------------------------------------------------------
 # ComfyUI Node: DMM_MusicEnhancerBypass
 # ---------------------------------------------------------------------------
 class DMM_MusicEnhancerBypass:
-    """Simple bypass/passthrough node for A/B testing the enhancer.
+    """Simple bypass/passthrough for A/B testing.
 
-    Wire this in place of DMM_MusicEnhancer to hear the original mix
-    without enhancement, for comparison purposes.
+    Wire in place of DMM_MusicEnhancer to hear the original mix
+    without enhancement.
     """
 
     CATEGORY = "DMM/Audio"
@@ -665,6 +655,6 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "DMM_MusicEnhancer": "DMM Music Enhancer (Stable Audio)",
+    "DMM_MusicEnhancer": "DMM Music Enhancer (MusicGen)",
     "DMM_MusicEnhancerBypass": "DMM Music Enhancer Bypass",
 }
