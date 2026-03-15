@@ -11,7 +11,7 @@ All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `cu
 
 ComfyUI is a free, node-based interface for running AI image and video models locally on your GPU.
 
-> **Already have ComfyUI installed?** Skip to Step 3 below.
+> **Already have ComfyUI installed?** Skip to Step 2 below.
 
 ### Step 1 - Install Git
 
@@ -31,7 +31,7 @@ Use the official desktop installer - it handles Python, dependencies, and the in
 
 Advanced users can also install manually from https://github.com/comfyanonymous/ComfyUI
 
-### Step 3 - Install Required Models
+### Step 2 - Install Required Models
 
 > **☕ Grab a coffee — these are big downloads.** The main model is ~9.5 GB. Plan for 15–20 min on fast internet, or 1–2 hours on slower connections.
 
@@ -43,7 +43,7 @@ Advanced users can also install manually from https://github.com/comfyanonymous/
 
 > 😴 **Slower connections (25 Mbps or under)?** Expect 1–3 hours for the main model. Start the download before bed — it’ll be ready in the morning.
 
-### Step 4 - Install ComfyUI Manager
+### Step 3 - Install ComfyUI Manager
 
 ComfyUI Manager lets you install missing custom nodes with one click - essential for getting DMM running.
 
@@ -53,7 +53,7 @@ ComfyUI Manager lets you install missing custom nodes with one click - essential
 
 Or use the built-in extension manager in the ComfyUI desktop app.
 
-### Step 5 - Load the DMM Workflow
+### Step 4 - Load the DMM Workflow
 
 1. **[Download the full package](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** and unzip it
 2. Open ComfyUI at `http://127.0.0.1:8188`
