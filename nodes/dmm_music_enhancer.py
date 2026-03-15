@@ -331,6 +331,13 @@ def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix_val: float) -> torch.Ten
     Handles channel count and length mismatches automatically.
     Applies soft clip (tanh) to prevent overs.
     """
+    # Ensure both tensors are on the same device
+    if dry.device != wet.device:
+        wet = wet.to(dry.device)
+    # Also ensure matching dtype
+    if dry.dtype != wet.dtype:
+        wet = wet.to(dry.dtype)
+
     dry_ch = dry.shape[-2] if dry.ndim >= 2 else 1
     wet_ch = wet.shape[-2] if wet.ndim >= 2 else 1
 
