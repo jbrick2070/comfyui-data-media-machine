@@ -1,4 +1,4 @@
-"""
+﻿"""
 DMM Music Enhancer — Stable Audio Open native audio-to-audio enhancement.
 
 Takes the background music track from BackgroundMusic and runs it through
@@ -45,41 +45,63 @@ log = logging.getLogger("DMM.MusicEnhancer")
 # Each run randomly picks one to guide the audio-to-audio style transfer.
 # ---------------------------------------------------------------------------
 LA_STYLE_PROMPTS = [
-    "Los Angeles deep house, warm analog bassline, sunset strip vibes, "
-    "layered synth pads, four-on-the-floor kick",
+    # 80s LA synthpop — Oberheim OB-Xa + Sequential Prophet-5
+    "Los Angeles 1984 synthpop, Oberheim OB-Xa polyphonic pad wash, "
+    "Sequential Prophet-5 lead arpeggio, Roland TR-808 drum machine, "
+    "Sunset Strip neon, cold-wave pulse",
 
-    "LA noir cinematic underscore, subtle strings and ambient synth pads, "
-    "warm analog feel, late-night detective drama",
+    # West Coast G-funk — TR-808 + Moog Minimoog
+    "West coast G-funk, Roland TR-808 bass thump, Moog Minimoog sliding bassline, "
+    "talk box melody over pentatonic chords, Parliament-Funkadelic groove, "
+    "Compton summer heat",
 
-    "Los Angeles gospel choir, soulful harmonies, reverb-drenched vocals, "
-    "uplifting organ chords, Sunday morning warmth",
+    # 80s LA R&B — Yamaha DX7 + Linn LM-1
+    "Los Angeles 1986 R&B slow jam, Yamaha DX7 electric piano, Linn LM-1 snare crack, "
+    "Fender Rhodes chord stabs, velvet reverb tail, late-night studio session",
 
-    "West coast G-funk instrumental, slow rolling bassline, talk box melody, "
-    "Moog synthesizer, laid-back tempo",
+    # Synthwave — Roland Jupiter-8 + Juno-106
+    "Los Angeles synthwave, Roland Jupiter-8 sweeping pads, Roland Juno-106 chorus shimmer, "
+    "analog sequencer pulse, Pacific Coast Highway midnight drive, neon rain reflection",
 
-    "LA lowrider oldies soul, smooth doo-wop harmonies, gentle guitar strum, "
-    "warm vinyl crackle, cruising Whittier Boulevard",
+    # Aztec / East LA indigenous — huehuetl + teponaztli + conchero
+    "East Los Angeles Aztec ceremony fusion, huehuetl heartbeat drum, teponaztli log drum "
+    "call-and-response, conchero shell rattle cascade, copal smoke and street murals, "
+    "Boyle Heights dusk ritual",
 
-    "Laurel Canyon folk rock, acoustic fingerpicking, canyon echo reverb, "
-    "gentle tambourine, 1970s Topanga warmth",
+    # Tongva indigenous LA — elderberry flute + deer-hoof rattle + clapstick
+    "Tongva Gabrielino indigenous soundscape, elderberry flute breathy melody, "
+    "deer-hoof rattle shimmer, clapstick rhythm over basket drum pulse, "
+    "coastal sage and salt wind, Ballona Creek ceremony",
 
-    "Los Angeles ambient electronic, shimmering granular textures, "
-    "slow evolving pads, distant freeway hum, Blade Runner atmosphere",
+    # Central Avenue jazz — upright bass + saxophone
+    "Los Angeles Central Avenue jazz 1948, upright bass walking line, wire brushed snare, "
+    "Dexter Gordon tenor saxophone blue note improvisation, Steinway grand chord stabs, "
+    "after-hours glow and cigarette smoke",
 
-    "LA jazz club, smoky upright bass, brushed snare, cool trumpet solo, "
-    "blue note chords, midnight on Central Avenue",
+    # LA gospel — Hammond B3 + choir
+    "Los Angeles Black church gospel, Hammond B3 organ full drawbar swell, "
+    "soulful soprano lead over four-part choir, tambourine on the two and four, "
+    "congregation clap-back, sanctified reverb",
 
-    "East LA cumbia fusion, accordion melody, congas and timbales, "
-    "electric guitar twang, dancehall energy, Boyle Heights night",
+    # Lowrider / Chicano soul — Fender Strat + marimba + doo-wop
+    "East LA lowrider soul, Fender Stratocaster clean-tone chord strum, "
+    "marimba counter-melody, smooth doo-wop harmonies, light conga groove, "
+    "cruising Whittier Boulevard on a warm Sunday evening",
 
-    "Los Angeles synthwave, pulsing arpeggios, neon-lit drive, "
-    "retro drum machine, analog chorus, Pacific Coast Highway midnight",
+    # Chumash coastal indigenous — bone whistle + gourd rattle + split-stick clapper
+    "Chumash coastal California ceremonial, bone whistle ascending melody, "
+    "gourd rattle wash, split-stick clapper steady pulse, ocean drum resonance, "
+    "Santa Monica Mountains morning mist and wild sage",
 
-    "Venice Beach drum circle, djembe and bongos, ocean waves background, "
-    "organic percussion groove, golden hour energy",
+    # LA ambient / Blade Runner — Roland SH-101 + Prophet-VS
+    "Los Angeles late-night ambient, Roland SH-101 sub-bass drone, "
+    "Sequential Circuits Prophet-VS granular shimmer pad, freeway overpass texture, "
+    "Blade Runner 2019 skyline, slow evolving resonance",
 
-    "LA philharmonic cinematic, sweeping orchestral strings, French horn, "
-    "timpani roll, epic wide-screen score, Hollywood grandeur",
+    # Hollywood cinematic score — strings + French horn + Steinway
+    "Hollywood cinematic score, sweeping string orchestra swell, French horn heroic motif, "
+    "Steinway grand piano cascading runs, deep timpani roll, "
+    "Bernard Herrmann tension and release, wide-screen grandeur",
 ]
 
 
