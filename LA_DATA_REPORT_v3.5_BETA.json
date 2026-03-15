@@ -2309,16 +2309,16 @@
           "slot_index": 0
         }
       ],
-      "title": "Music Enhancer (ACE-Step)",
+      "title": "Music Enhancer (Stable Audio)",
       "properties": {
         "Node name for S&R": "DMM_MusicEnhancer"
       },
       "widgets_values": [
-        "LA noir cinematic underscore, subtle strings and ambient synth pads, warm analog feel",
-        0.3,
+        0.2,
         0.65,
+        "",
         -1,
-        "http://localhost:8001"
+        20
       ],
       "color": "#2a363b",
       "bgcolor": "#3f5159"

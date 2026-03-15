@@ -1,36 +1,35 @@
 """
-DMM Music Enhancer — ACE-Step 1.5 audio enhancement for the DMM pipeline.
+DMM Music Enhancer — Stable Audio Open native audio-to-audio enhancement.
 
-Takes the final mixed audio (narration + background music) from AudioMux
-and runs it through ACE-Step's audio-to-audio mode to add cinematic texture,
-richer orchestration, and generative depth — without replacing the original.
+Takes the background music track from BackgroundMusic and runs it through
+Stable Audio Open's latent diffusion for music-to-music style transfer.
+Each run randomly selects an LA-themed style prompt (deep house, choir,
+noir jazz, etc.) to add cinematic texture — without replacing the original.
 
 Architecture:
-  AudioMux output (48kHz stereo) -> ACE-Step audio2audio -> Enhanced audio
-  -> feeds into SaveVideo node
+  BackgroundMusic (48kHz stereo) -> MusicEnhancer -> AudioMux -> SaveVideo
+
+No external API required. Model loads directly into VRAM as a standard
+ComfyUI checkpoint. Cached after first load.
 
 Requirements:
-  - ACE-Step 1.5 installed (git clone https://github.com/ACE-Step/ACE-Step-1.5)
-  - OR ACE-Step REST API running on localhost:8001
-  - Model: acestep-v15-turbo (8 steps, fast inference, ~4GB VRAM)
+  - Stable Audio Open checkpoint (stabilityai/stable-audio-open-1.0)
+  - torch, torchaudio, diffusers, transformers
 
 VRAM Budget:
-  - ACE-Step turbo: ~3-4GB VRAM
+  - Stable Audio Open: ~2-3GB VRAM
   - LTX-Video will be unloaded by this point in the pipeline
   - Safe on RTX 5080 (24GB) and RTX 4070+ (12GB+)
 
 Author: Jeffrey A. Brick
-Version: 3.5-beta
+Version: 3.5-beta (rewrite: native Stable Audio Open, no external API)
 """
 
+import gc
 import io
-import json
 import logging
 import os
-import struct
-import subprocess
-import sys
-import tempfile
+import random
 import time
 import wave
 from pathlib import Path
@@ -38,163 +37,113 @@ from pathlib import Path
 import numpy as np
 import torch
 
-try:
-    import requests
-    HAS_REQUESTS = True
-except ImportError:
-    HAS_REQUESTS = False
-    import urllib.request
-    import urllib.error
-
 log = logging.getLogger("DMM.MusicEnhancer")
 
 
 # ---------------------------------------------------------------------------
-# ACE-Step API client (connects to the REST API)
+# LA-themed style prompt pool
+# Each run randomly picks one to guide the audio-to-audio style transfer.
 # ---------------------------------------------------------------------------
-class ACEStepClient:
-    """Client for ACE-Step 1.5 REST API (localhost:8001 by default).
+LA_STYLE_PROMPTS = [
+    "Los Angeles deep house, warm analog bassline, sunset strip vibes, "
+    "layered synth pads, four-on-the-floor kick",
 
-    Uses the audio-to-audio endpoint to enhance existing audio with
-    generative music textures while preserving the original structure.
+    "LA noir cinematic underscore, subtle strings and ambient synth pads, "
+    "warm analog feel, late-night detective drama",
+
+    "Los Angeles gospel choir, soulful harmonies, reverb-drenched vocals, "
+    "uplifting organ chords, Sunday morning warmth",
+
+    "West coast G-funk instrumental, slow rolling bassline, talk box melody, "
+    "Moog synthesizer, laid-back tempo",
+
+    "LA lowrider oldies soul, smooth doo-wop harmonies, gentle guitar strum, "
+    "warm vinyl crackle, cruising Whittier Boulevard",
+
+    "Laurel Canyon folk rock, acoustic fingerpicking, canyon echo reverb, "
+    "gentle tambourine, 1970s Topanga warmth",
+
+    "Los Angeles ambient electronic, shimmering granular textures, "
+    "slow evolving pads, distant freeway hum, Blade Runner atmosphere",
+
+    "LA jazz club, smoky upright bass, brushed snare, cool trumpet solo, "
+    "blue note chords, midnight on Central Avenue",
+
+    "East LA cumbia fusion, accordion melody, congas and timbales, "
+    "electric guitar twang, dancehall energy, Boyle Heights night",
+
+    "Los Angeles synthwave, pulsing arpeggios, neon-lit drive, "
+    "retro drum machine, analog chorus, Pacific Coast Highway midnight",
+
+    "Venice Beach drum circle, djembe and bongos, ocean waves background, "
+    "organic percussion groove, golden hour energy",
+
+    "LA philharmonic cinematic, sweeping orchestral strings, French horn, "
+    "timpani roll, epic wide-screen score, Hollywood grandeur",
+]
+
+
+# ---------------------------------------------------------------------------
+# Model cache (singleton — loads once, reuses across executions)
+# ---------------------------------------------------------------------------
+_model_cache = {
+    "pipe": None,
+    "device": None,
+}
+
+
+def _get_or_load_model(device: torch.device = None):
+    """Load Stable Audio Open pipeline, cached after first call.
+
+    Uses diffusers StableAudioPipeline for native PyTorch inference.
+    Falls back gracefully if the model isn't installed.
     """
+    if _model_cache["pipe"] is not None:
+        return _model_cache["pipe"]
 
-    def __init__(self, api_url: str = "http://localhost:8001"):
-        self.api_url = api_url.rstrip("/")
-        self.timeout = 120  # seconds — generous for long audio
+    if device is None:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    def health_check(self) -> bool:
-        """Check if ACE-Step API is running."""
-        try:
-            url = f"{self.api_url}/health"
-            if HAS_REQUESTS:
-                r = requests.get(url, timeout=5)
-                return r.status_code == 200
-            else:
-                req = urllib.request.Request(url)
-                resp = urllib.request.urlopen(req, timeout=5)
-                return resp.status == 200
-        except Exception:
-            return False
+    try:
+        from diffusers import StableAudioPipeline
 
-    def enhance_audio(
-        self,
-        audio_bytes: bytes,
-        prompt: str,
-        strength: float = 0.35,
-        duration: float = None,
-        seed: int = -1,
-    ) -> bytes:
-        """Send audio to ACE-Step for enhancement via audio-to-audio.
+        log.info("  Loading Stable Audio Open model (first run only)...")
+        t0 = time.time()
 
-        Args:
-            audio_bytes: WAV file bytes (48kHz stereo)
-            prompt: Style prompt, e.g. "LA noir cinematic underscore,
-                    subtle strings and ambient synth pads"
-            strength: How much to transform (0.0 = no change, 1.0 = full regen).
-                      0.25-0.40 is the sweet spot for enhancement.
-            duration: Target duration in seconds (None = match input)
-            seed: Random seed (-1 = random)
-
-        Returns:
-            Enhanced WAV file bytes
-        """
-        if HAS_REQUESTS:
-            return self._enhance_requests(audio_bytes, prompt, strength, duration, seed)
-        else:
-            return self._enhance_urllib(audio_bytes, prompt, strength, duration, seed)
-
-    def _enhance_requests(self, audio_bytes, prompt, strength, duration, seed):
-        url = f"{self.api_url}/generate"
-        files = {"audio": ("input.wav", audio_bytes, "audio/wav")}
-        data = {
-            "prompt": prompt,
-            "audio2audio_strength": strength,
-            "seed": seed,
-            "model": "acestep-v15-turbo",
-            "steps": 8,
-        }
-        if duration is not None:
-            data["duration"] = duration
-
-        r = requests.post(url, files=files, data=data, timeout=self.timeout)
-        if r.status_code != 200:
-            raise RuntimeError(f"ACE-Step API error {r.status_code}: {r.text[:200]}")
-
-        # Response may be JSON with a file path or direct audio bytes
-        content_type = r.headers.get("content-type", "")
-        if "audio" in content_type:
-            return r.content
-        else:
-            # JSON response with file path or base64
-            result = r.json()
-            if "audio_path" in result:
-                with open(result["audio_path"], "rb") as f:
-                    return f.read()
-            elif "audio" in result:
-                import base64
-                return base64.b64decode(result["audio"])
-            else:
-                raise RuntimeError(f"Unexpected API response: {list(result.keys())}")
-
-    def _enhance_urllib(self, audio_bytes, prompt, strength, duration, seed):
-        """Fallback for systems without requests library."""
-        url = f"{self.api_url}/generate"
-
-        # Build multipart form data manually
-        boundary = "----DMMAceStepBoundary"
-        body = b""
-
-        # Add audio file
-        body += f"--{boundary}\r\n".encode()
-        body += b'Content-Disposition: form-data; name="audio"; filename="input.wav"\r\n'
-        body += b"Content-Type: audio/wav\r\n\r\n"
-        body += audio_bytes
-        body += b"\r\n"
-
-        # Add text fields
-        fields = {
-            "prompt": prompt,
-            "audio2audio_strength": str(strength),
-            "seed": str(seed),
-            "model": "acestep-v15-turbo",
-            "steps": "8",
-        }
-        if duration is not None:
-            fields["duration"] = str(duration)
-
-        for key, val in fields.items():
-            body += f"--{boundary}\r\n".encode()
-            body += f'Content-Disposition: form-data; name="{key}"\r\n\r\n'.encode()
-            body += val.encode()
-            body += b"\r\n"
-
-        body += f"--{boundary}--\r\n".encode()
-
-        req = urllib.request.Request(
-            url,
-            data=body,
-            headers={"Content-Type": f"multipart/form-data; boundary={boundary}"},
-            method="POST",
+        pipe = StableAudioPipeline.from_pretrained(
+            "stabilityai/stable-audio-open-1.0",
+            torch_dtype=torch.float16 if device.type == "cuda" else torch.float32,
         )
-        resp = urllib.request.urlopen(req, timeout=self.timeout)
+        pipe = pipe.to(device)
 
-        if resp.status != 200:
-            raise RuntimeError(f"ACE-Step API error {resp.status}")
-        return resp.read()
+        elapsed = time.time() - t0
+        log.info("  Model loaded in %.1fs on %s", elapsed, device)
+
+        _model_cache["pipe"] = pipe
+        _model_cache["device"] = device
+        return pipe
+
+    except ImportError:
+        log.error(
+            "diffusers not installed. Run: pip install diffusers transformers accelerate"
+        )
+        return None
+    except Exception as e:
+        log.error("Failed to load Stable Audio Open: %s", e)
+        return None
 
 
 # ---------------------------------------------------------------------------
 # Audio tensor <-> WAV conversion utilities
 # ---------------------------------------------------------------------------
 def tensor_to_wav_bytes(audio_tensor: torch.Tensor, sample_rate: int = 48000) -> bytes:
-    """Convert ComfyUI audio tensor to WAV bytes.
+    """Convert a single audio tensor (channels, samples) to WAV bytes.
 
-    ComfyUI audio tensors are typically shape (batch, channels, samples)
-    with values in [-1.0, 1.0] float32.
+    Expects shape (channels, samples) or (1, channels, samples).
+    Values should be in [-1.0, 1.0] float32.
     """
     if audio_tensor.ndim == 3:
-        audio = audio_tensor[0]  # Take first batch
+        audio = audio_tensor[0]
     elif audio_tensor.ndim == 2:
         audio = audio_tensor
     else:
@@ -203,12 +152,10 @@ def tensor_to_wav_bytes(audio_tensor: torch.Tensor, sample_rate: int = 48000) ->
     channels = audio.shape[0]
     samples = audio.shape[1]
 
-    # Convert to int16
     audio_np = audio.cpu().numpy()
     audio_np = np.clip(audio_np, -1.0, 1.0)
     audio_int16 = (audio_np * 32767).astype(np.int16)
 
-    # Interleave channels for WAV format
     interleaved = np.empty(channels * samples, dtype=np.int16)
     for ch in range(channels):
         interleaved[ch::channels] = audio_int16[ch]
@@ -216,7 +163,7 @@ def tensor_to_wav_bytes(audio_tensor: torch.Tensor, sample_rate: int = 48000) ->
     buf = io.BytesIO()
     with wave.open(buf, "wb") as wf:
         wf.setnchannels(channels)
-        wf.setsampwidth(2)  # 16-bit
+        wf.setsampwidth(2)
         wf.setframerate(sample_rate)
         wf.writeframes(interleaved.tobytes())
 
@@ -224,7 +171,7 @@ def tensor_to_wav_bytes(audio_tensor: torch.Tensor, sample_rate: int = 48000) ->
 
 
 def wav_bytes_to_tensor(wav_bytes: bytes) -> tuple[torch.Tensor, int]:
-    """Convert WAV bytes back to ComfyUI audio tensor.
+    """Convert WAV bytes back to audio tensor.
 
     Returns (tensor, sample_rate) where tensor is (1, channels, samples).
     """
@@ -246,8 +193,6 @@ def wav_bytes_to_tensor(wav_bytes: bytes) -> tuple[torch.Tensor, int]:
         raise ValueError(f"Unsupported sample width: {sample_width}")
 
     audio_np = np.frombuffer(raw, dtype=dtype).astype(np.float32) / max_val
-
-    # De-interleave
     audio_np = audio_np.reshape(-1, channels).T  # (channels, samples)
 
     tensor = torch.from_numpy(audio_np).unsqueeze(0)  # (1, channels, samples)
@@ -255,16 +200,121 @@ def wav_bytes_to_tensor(wav_bytes: bytes) -> tuple[torch.Tensor, int]:
 
 
 # ---------------------------------------------------------------------------
-# Dry/wet mix utility
+# Dry/wet mix utility (with channel matching)
 # ---------------------------------------------------------------------------
-def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix: float) -> torch.Tensor:
+def crossfade_loop(audio: torch.Tensor, target_samples: int,
+                    crossfade_samples: int = None,
+                    sample_rate: int = 48000) -> torch.Tensor:
+    """Seamlessly loop audio to reach target_samples using crossfade.
+
+    If the generated audio (capped at 47s by Stable Audio Open) is shorter
+    than the video timeline, this function loops it with smooth crossfades
+    at the boundaries to avoid audible cuts.
+
+    Args:
+        audio: Tensor of shape (..., samples) — the generated clip.
+        target_samples: Desired total length in samples.
+        crossfade_samples: Overlap region in samples. Defaults to 2s worth.
+        sample_rate: For calculating default crossfade duration.
+
+    Returns:
+        Tensor of shape (..., target_samples) with seamless loops.
+    """
+    src_len = audio.shape[-1]
+
+    # If already long enough, just trim
+    if src_len >= target_samples:
+        return audio[..., :target_samples]
+
+    # Default crossfade: 2 seconds, but never more than 25% of the clip
+    if crossfade_samples is None:
+        crossfade_samples = min(sample_rate * 2, src_len // 4)
+    crossfade_samples = max(crossfade_samples, 1)  # Safety floor
+
+    # Build fade curves (raised cosine for smooth energy-preserving transition)
+    fade = torch.linspace(0.0, 1.0, crossfade_samples, device=audio.device)
+    fade = 0.5 * (1.0 - torch.cos(fade * torch.pi))  # Raised cosine
+    fade_in = fade
+    fade_out = 1.0 - fade
+
+    # The loopable body excludes the crossfade tail (which blends into the head)
+    loop_body_len = src_len - crossfade_samples
+
+    # Pre-allocate output
+    result = torch.zeros(*audio.shape[:-1], target_samples, device=audio.device)
+
+    pos = 0
+    iteration = 0
+    while pos < target_samples:
+        remaining = target_samples - pos
+
+        if iteration == 0:
+            # First pass: copy the full clip (up to what fits)
+            copy_len = min(src_len, remaining)
+            result[..., pos:pos + copy_len] = audio[..., :copy_len]
+            pos += loop_body_len  # Next write starts where crossfade begins
+        else:
+            # Subsequent passes: crossfade the head into the tail of previous
+            if pos - crossfade_samples >= 0 and remaining > 0:
+                # Apply crossfade at the join point
+                xf_start = pos - crossfade_samples
+                xf_end = pos
+
+                # Tail of previous iteration fades out
+                result[..., xf_start:xf_end] *= fade_out
+
+                # Head of new iteration fades in
+                head = audio[..., :crossfade_samples] * fade_in
+                result[..., xf_start:xf_end] += head
+
+            # Copy the rest of the loop body (after crossfade region)
+            body_remaining = min(loop_body_len, remaining)
+            copy_src = audio[..., crossfade_samples:crossfade_samples + body_remaining]
+            copy_len = copy_src.shape[-1]
+
+            if pos + copy_len > target_samples:
+                copy_len = target_samples - pos
+
+            if copy_len > 0:
+                result[..., pos:pos + copy_len] = audio[..., crossfade_samples:crossfade_samples + copy_len]
+
+            pos += loop_body_len
+
+        iteration += 1
+
+        # Safety valve: prevent infinite loop on degenerate input
+        if iteration > (target_samples // max(loop_body_len, 1)) + 2:
+            break
+
+    log.info("  Crossfade loop: %d iterations, %.1fs → %.1fs",
+             iteration, src_len / sample_rate, target_samples / sample_rate)
+
+    return result[..., :target_samples]
+
+
+def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix_val: float) -> torch.Tensor:
     """Blend original (dry) and enhanced (wet) audio.
 
-    mix=0.0 -> 100% original
-    mix=1.0 -> 100% enhanced
-    mix=0.5 -> equal blend
+    Handles channel count and length mismatches automatically.
     """
-    # Match lengths (pad shorter with zeros)
+    # --- Channel matching ---
+    dry_ch = dry.shape[-2] if dry.ndim >= 2 else 1
+    wet_ch = wet.shape[-2] if wet.ndim >= 2 else 1
+
+    if dry_ch != wet_ch:
+        log.info("  Channel mismatch: dry=%dch, wet=%dch — adjusting wet", dry_ch, wet_ch)
+        if dry_ch == 2 and wet_ch == 1:
+            wet = wet.repeat(*(1,) * (wet.ndim - 2), 2, 1)
+        elif dry_ch == 1 and wet_ch == 2:
+            if wet.ndim == 3:
+                wet = wet[:, :1, :]
+            else:
+                wet = wet[:1, :]
+        else:
+            log.warning("  Unusual channel mismatch (%d vs %d), truncating wet", dry_ch, wet_ch)
+            wet = wet[..., :dry_ch, :]
+
+    # --- Length matching ---
     dry_len = dry.shape[-1]
     wet_len = wet.shape[-1]
     if dry_len > wet_len:
@@ -273,7 +323,7 @@ def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix: float) -> torch.Tensor:
     elif wet_len > dry_len:
         wet = wet[..., :dry_len]
 
-    mixed = (1.0 - mix) * dry + mix * wet
+    mixed = (1.0 - mix_val) * dry + mix_val * wet
 
     # Soft clip to prevent overs
     mixed = torch.tanh(mixed)
@@ -285,18 +335,22 @@ def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix: float) -> torch.Tensor:
 # ComfyUI Node: DMM_MusicEnhancer
 # ---------------------------------------------------------------------------
 class DMM_MusicEnhancer:
-    """Enhances the pipeline's mixed audio using ACE-Step 1.5.
+    """Music-to-music enhancement using native Stable Audio Open.
 
-    Sits after AudioMux in the DMM pipeline. Takes the narration+music mix
-    and adds generative cinematic texture via audio-to-audio transformation.
+    Sits between BackgroundMusic and AudioMux in the DMM pipeline. Takes
+    the background music, encodes it into Stable Audio's latent space,
+    applies noise at the specified strength, denoises with a randomly
+    selected LA-themed style prompt, and decodes back to audio.
 
-    The strength parameter controls how much ACE-Step changes the audio:
-    - 0.15-0.25: Subtle texture (ambient pads, harmonic shimmer)
-    - 0.25-0.40: Moderate enhancement (added instrumentation, richer feel)
-    - 0.40-0.60: Strong transformation (significant new elements)
-    - 0.60+: Heavy regen (original becomes a loose reference)
+    No external API. Model loads directly into VRAM (cached after first run).
 
-    Recommended: 0.30 for production, 0.20 for narration-heavy content.
+    Strength controls how much the style transfer changes the audio:
+    - 0.10-0.20: Subtle texture (ambient shimmer, warmth)
+    - 0.20-0.35: Moderate enhancement (new instrumentation blended in)
+    - 0.35-0.50: Strong transformation (significant new character)
+    - 0.50+: Heavy regen (original becomes a loose reference)
+
+    Recommended: 0.20 for production, 0.15 for narration-heavy content.
     """
 
     CATEGORY = "DMM/Audio"
@@ -310,17 +364,10 @@ class DMM_MusicEnhancer:
         return {
             "required": {
                 "audio": ("AUDIO",),
-                "prompt": (
-                    "STRING",
-                    {
-                        "default": "LA noir cinematic underscore, subtle strings and ambient synth pads, warm analog feel",
-                        "multiline": True,
-                    },
-                ),
                 "strength": (
                     "FLOAT",
                     {
-                        "default": 0.30,
+                        "default": 0.20,
                         "min": 0.05,
                         "max": 0.95,
                         "step": 0.05,
@@ -340,6 +387,14 @@ class DMM_MusicEnhancer:
                 ),
             },
             "optional": {
+                "prompt_override": (
+                    "STRING",
+                    {
+                        "default": "",
+                        "multiline": True,
+                        "tooltip": "Leave empty for random LA style. Set to override with a specific prompt.",
+                    },
+                ),
                 "seed": (
                     "INT",
                     {
@@ -348,10 +403,14 @@ class DMM_MusicEnhancer:
                         "max": 2**32 - 1,
                     },
                 ),
-                "api_url": (
-                    "STRING",
+                "num_inference_steps": (
+                    "INT",
                     {
-                        "default": "http://localhost:8001",
+                        "default": 20,
+                        "min": 5,
+                        "max": 100,
+                        "step": 5,
+                        "tooltip": "More steps = better quality, slower. 20 is a good balance.",
                     },
                 ),
             },
@@ -359,106 +418,185 @@ class DMM_MusicEnhancer:
 
     def enhance(
         self,
-        audio: torch.Tensor,
-        prompt: str,
-        strength: float = 0.30,
+        audio,
+        strength: float = 0.20,
         mix: float = 0.65,
+        prompt_override: str = "",
         seed: int = -1,
-        api_url: str = "http://localhost:8001",
-    ) -> tuple[torch.Tensor]:
+        num_inference_steps: int = 20,
+    ) -> tuple:
         """Main enhancement function called by ComfyUI."""
 
-        log.info("DMM_MusicEnhancer: Starting audio enhancement")
-        log.info("  Prompt: %s", prompt[:80])
-        log.info("  Strength: %.2f | Mix: %.2f | Seed: %d", strength, mix, seed)
+        # -----------------------------------------------------------
+        # 1. Select style prompt (random from pool or user override)
+        # -----------------------------------------------------------
+        if seed == -1:
+            actual_seed = random.randint(0, 2**32 - 1)
+        else:
+            actual_seed = seed
 
-        # Validate input
-        if audio is None or (isinstance(audio, torch.Tensor) and audio.numel() == 0):
+        rng = random.Random(actual_seed)
+
+        if prompt_override and prompt_override.strip():
+            prompt = prompt_override.strip()
+            log.info("DMM_MusicEnhancer: Using custom prompt")
+        else:
+            prompt = rng.choice(LA_STYLE_PROMPTS)
+            log.info("DMM_MusicEnhancer: Random LA style selected")
+
+        log.info("  Prompt: %s", prompt[:80])
+        log.info("  Strength: %.2f | Mix: %.2f | Seed: %d | Steps: %d",
+                 strength, mix, actual_seed, num_inference_steps)
+
+        # -----------------------------------------------------------
+        # 2. Unpack ComfyUI AUDIO dict
+        # -----------------------------------------------------------
+        if isinstance(audio, dict):
+            if "waveform" not in audio:
+                log.warning("Audio dict missing 'waveform' key — passing through unchanged")
+                return (audio,)
+            audio_tensor = audio["waveform"]
+            sample_rate = audio.get("sample_rate", 48000)
+        elif isinstance(audio, torch.Tensor):
+            audio_tensor = audio
+            sample_rate = 48000
+        else:
+            log.warning("Unexpected audio type %s — passing through unchanged", type(audio).__name__)
+            return (audio,)
+
+        if audio_tensor is None or audio_tensor.numel() == 0:
             log.warning("Empty audio input — passing through unchanged")
             return (audio,)
 
-        # Store original for dry/wet mix
-        original = audio.clone()
+        original_tensor = audio_tensor.clone()
 
-        # Convert tensor to WAV bytes
-        sample_rate = 48000  # DMM pipeline standard
-        try:
-            wav_bytes = tensor_to_wav_bytes(audio, sample_rate)
-        except Exception as e:
-            log.error("Failed to convert audio tensor to WAV: %s", e)
-            return (audio,)
+        # Ensure 3D: (batch, channels, samples)
+        if audio_tensor.ndim == 2:
+            audio_tensor = audio_tensor.unsqueeze(0)
 
-        input_duration = audio.shape[-1] / sample_rate
-        log.info("  Input: %.1fs, %d channels, %d Hz",
-                 input_duration, audio.shape[-2] if audio.ndim >= 2 else 1, sample_rate)
+        input_duration = audio_tensor.shape[-1] / sample_rate
+        log.info("  Input: %.1fs, %d channels, %d Hz, batch=%d",
+                 input_duration, audio_tensor.shape[-2], sample_rate, audio_tensor.shape[0])
 
-        # Connect to ACE-Step API
-        client = ACEStepClient(api_url)
+        # -----------------------------------------------------------
+        # 3. VRAM flush before model load
+        # -----------------------------------------------------------
+        log.info("  Flushing VRAM...")
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
+            free_mb = torch.cuda.mem_get_info()[0] / (1024 ** 2)
+            log.info("  VRAM free after flush: %.0f MB", free_mb)
 
-        if not client.health_check():
-            log.warning(
-                "ACE-Step API not available at %s — passing audio through unchanged. "
-                "Start ACE-Step with: cd ACE-Step-1.5 && uv run acestep-api",
-                api_url,
-            )
-            return (audio,)
+        # -----------------------------------------------------------
+        # 4. Load Stable Audio Open (cached after first call)
+        # -----------------------------------------------------------
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        pipe = _get_or_load_model(device)
 
-        # Send to ACE-Step for enhancement
+        if pipe is None:
+            log.warning("Stable Audio Open not available — passing through unchanged")
+            return (audio if isinstance(audio, dict) else {"waveform": original_tensor, "sample_rate": sample_rate},)
+
+        # -----------------------------------------------------------
+        # 5. Audio-to-audio style transfer per batch item
+        #    - Cap generation at 47s (Stable Audio Open limit)
+        #    - Trim or pad output to match original input length
+        # -----------------------------------------------------------
+        gen_duration = min(input_duration, 47.0)
+        batch_size = audio_tensor.shape[0]
+        enhanced_batches = []
+
+        generator = torch.Generator(device=device).manual_seed(actual_seed)
+
         t0 = time.time()
-        try:
-            enhanced_wav = client.enhance_audio(
-                audio_bytes=wav_bytes,
-                prompt=prompt,
-                strength=strength,
-                duration=input_duration,
-                seed=seed,
-            )
-        except Exception as e:
-            log.error("ACE-Step enhancement failed: %s — passing through original", e)
-            return (audio,)
+        for b in range(batch_size):
+            single_track = audio_tensor[b:b + 1]  # (1, channels, samples)
+
+            if batch_size > 1:
+                log.info("  Processing batch item %d/%d", b + 1, batch_size)
+
+            try:
+                # Run Stable Audio Open audio-to-audio
+                # The pipeline handles encoding to latent, adding noise at
+                # strength, denoising with prompt conditioning, and decoding
+                result = pipe(
+                    prompt=prompt,
+                    audio=single_track,
+                    audio_end_in_s=gen_duration,
+                    num_inference_steps=num_inference_steps,
+                    strength=strength,
+                    generator=generator,
+                )
+
+                # Extract audio tensor from pipeline output
+                if hasattr(result, "audios"):
+                    enh = result.audios  # (batch, channels, samples) numpy or tensor
+                    if isinstance(enh, np.ndarray):
+                        enh = torch.from_numpy(enh)
+                    if enh.ndim == 2:
+                        enh = enh.unsqueeze(0)
+                elif hasattr(result, "audio"):
+                    enh = result.audio
+                    if isinstance(enh, np.ndarray):
+                        enh = torch.from_numpy(enh)
+                    if enh.ndim == 2:
+                        enh = enh.unsqueeze(0)
+                else:
+                    log.error("Unexpected pipeline output: %s — using original", type(result))
+                    enhanced_batches.append(single_track)
+                    continue
+
+                # Match length to original: trim if longer, crossfade-loop if shorter
+                orig_samples = single_track.shape[-1]
+                enh_samples = enh.shape[-1]
+                if enh_samples >= orig_samples:
+                    enh = enh[..., :orig_samples]
+                else:
+                    # Enhanced clip is shorter than input (47s cap hit).
+                    # Use crossfade loop for seamless extension.
+                    enh = crossfade_loop(enh, orig_samples, sample_rate=sample_rate)
+
+                enhanced_batches.append(enh)
+
+            except Exception as e:
+                log.error("Enhancement failed on batch %d: %s — using original", b, e)
+                enhanced_batches.append(single_track)
+                continue
+
+            # Vary seed for next batch item
+            if b < batch_size - 1:
+                generator = torch.Generator(device=device).manual_seed(actual_seed + b + 1)
 
         elapsed = time.time() - t0
-        log.info("  ACE-Step processing: %.1fs", elapsed)
+        log.info("  Stable Audio processing: %.1fs (%d batch items)", elapsed, batch_size)
 
-        # Convert enhanced WAV back to tensor
-        try:
-            enhanced_tensor, enhanced_sr = wav_bytes_to_tensor(enhanced_wav)
-        except Exception as e:
-            log.error("Failed to decode enhanced audio: %s — passing through original", e)
-            return (audio,)
+        # Stack enhanced batches
+        enhanced_full = torch.cat(enhanced_batches, dim=0)
 
-        # Resample if needed (ACE-Step might output at different rate)
-        if enhanced_sr != sample_rate:
-            log.info("  Resampling from %d to %d Hz", enhanced_sr, sample_rate)
-            enhanced_tensor = self._resample(enhanced_tensor, enhanced_sr, sample_rate)
+        # -----------------------------------------------------------
+        # 6. Dry/wet mix
+        # -----------------------------------------------------------
+        result_tensor = mix_audio(original_tensor, enhanced_full, mix)
 
-        # Match channel count to original
-        orig_channels = original.shape[-2] if original.ndim >= 2 else 1
-        enh_channels = enhanced_tensor.shape[-2] if enhanced_tensor.ndim >= 2 else 1
-        if enh_channels != orig_channels:
-            if orig_channels == 2 and enh_channels == 1:
-                enhanced_tensor = enhanced_tensor.repeat(1, 2, 1)
-            elif orig_channels == 1 and enh_channels == 2:
-                enhanced_tensor = enhanced_tensor[:, :1, :]
+        output_duration = result_tensor.shape[-1] / sample_rate
+        log.info("  Output: %.1fs, batch=%d | Enhancement complete", output_duration, result_tensor.shape[0])
 
-        # Dry/wet mix
-        result = mix_audio(original, enhanced_tensor, mix)
-
-        output_duration = result.shape[-1] / sample_rate
-        log.info("  Output: %.1fs | Enhancement complete", output_duration)
-
-        return (result,)
+        # -----------------------------------------------------------
+        # 7. Repack into ComfyUI AUDIO dict
+        # -----------------------------------------------------------
+        result_audio = {"waveform": result_tensor, "sample_rate": sample_rate}
+        return (result_audio,)
 
     @staticmethod
     def _resample(tensor: torch.Tensor, from_sr: int, to_sr: int) -> torch.Tensor:
-        """Simple linear resampling. For production, consider torchaudio.transforms.Resample."""
+        """Simple linear resampling."""
         if from_sr == to_sr:
             return tensor
 
-        ratio = to_sr / from_sr
-        new_length = int(tensor.shape[-1] * ratio)
+        new_length = int(tensor.shape[-1] * (to_sr / from_sr))
 
-        # Use torch interpolate for resampling
         if tensor.ndim == 2:
             tensor = tensor.unsqueeze(0)
 
@@ -491,7 +629,7 @@ class DMM_MusicEnhancerBypass:
             },
         }
 
-    def passthrough(self, audio: torch.Tensor) -> tuple[torch.Tensor]:
+    def passthrough(self, audio) -> tuple:
         log.info("DMM_MusicEnhancerBypass: Passing audio through unchanged")
         return (audio,)
 
@@ -505,6 +643,6 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "DMM_MusicEnhancer": "DMM Music Enhancer (ACE-Step)",
+    "DMM_MusicEnhancer": "DMM Music Enhancer (Stable Audio)",
     "DMM_MusicEnhancerBypass": "DMM Music Enhancer Bypass",
 }
