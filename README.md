@@ -6,40 +6,8 @@
 All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `custom_nodes/` and queue.
 
 ---
----
 
-## Quick Install (Command Line)
-
-If you prefer the terminal, paste this into PowerShell (Windows) or your terminal (Mac/Linux):
-
-**Windows (PowerShell):**
-```powershell
-Invoke-WebRequest -Uri "https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip" -OutFile "DMM_v3.4.zip"; Expand-Archive "DMM_v3.4.zip" -DestinationPath "DMM_v3.4"
-```
-
-**Mac / Linux:**
-```bash
-curl -L https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip -o DMM_v3.4.zip && unzip DMM_v3.4.zip -d DMM_v3.4
-```
-
-Then load the .json file from the extracted folder into ComfyUI.
-
-Or clone the repo directly:
-```bash
-git clone https://github.com/jbrick2070/comfyui-data-media-machine.git
-```
-
-
-## Download
-
-[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
-
-**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** � includes both workflow files + community guide.
-
----
----
-
-﻿## New to ComfyUI? Start Here
+## 🚀 New to ComfyUI? Start Here
 
 ComfyUI is a free, node-based interface for running AI image and video models locally on your GPU.
 
@@ -65,7 +33,7 @@ Advanced users can also install manually from https://github.com/comfyanonymous/
 
 ### Step 3 - Install Required Models
 
-> **Be prepared for large downloads.** Plan for 15 minutes to 2 hours depending on your internet speed and which models you choose.
+> **☕ Grab a coffee — these are big downloads.** The main model is ~9.5 GB. Plan for 15–20 min on fast internet, or 1–2 hours on slower connections.
 
 | Model | Download | Size | Est. Time (100Mbps) | Save To |
 |-------|----------|------|---------------------|---------|
@@ -73,7 +41,7 @@ Advanced users can also install manually from https://github.com/comfyanonymous/
 | **LTX-Video 13B** (optional, higher quality) | [HuggingFace](https://huggingface.co/Lightricks/LTX-Video/resolve/main/ltxv-13b-0.9.7-distilled.safetensors) | ~26 GB | ~45-60 min | `ComfyUI/models/checkpoints/` |
 | **Kokoro TTS voice model** | Auto via ComfyUI Manager | ~500 MB | 2-5 min | auto |
 
-> Slower connections (25Mbps or under): expect 1-3 hours for the main model. Start the download before you go to bed.
+> 😴 **Slower connections (25 Mbps or under)?** Expect 1–3 hours for the main model. Start the download before bed — it’ll be ready in the morning.
 
 ### Step 4 - Install ComfyUI Manager
 
@@ -100,16 +68,96 @@ Or use the built-in extension manager in the ComfyUI desktop app.
 | `LA_DATA_REPORT_v3.4.json` | RTX 5080 / 4090 | 24GB |
 | `LA_DATA_REPORT_v3.4_LITE.json` | RTX 4070 / 3060 | 8-16GB |
 
-### Troubleshooting
+> **How do I check my VRAM?** On Windows: **Task Manager** (Ctrl+Shift+Esc) → **Performance** tab → **GPU** → look for "Dedicated GPU memory." On Linux: run `nvidia-smi` in a terminal.
 
-**Nodes are red** -> Open Manager -> Install Missing Custom Nodes -> Restart ComfyUI
-
-**Out of memory / crashed** -> Switch to the LITE version, or reduce the video frame count in the workflow
-
-**No data showing up** -> Check your internet connection - the workflow pulls live data from public APIs on each run
+### 🔧 Troubleshooting
 
 
-## Editing This Workflow With AI (No Coding Required)
+<details>
+<summary><strong>"NotImplementedError: Got 4D input, but linear mode needs 3D"</strong></summary>
+
+**Cause**: Audio tensor shape mismatch in crossfade resampling.
+**Fix**: Ensure `dmm_video_concat.py` has ndim checking (line 437-449).
+```python
+if wf.ndim == 2:
+    wf_3d = wf.unsqueeze(0)
+elif wf.ndim == 3:
+    wf_3d = wf
+resampled = F.interpolate(wf_3d.float(), size=new_len, mode="linear", align_corners=False)
+```
+</details>
+
+<details>
+<summary><strong>"RuntimeError: Sizes of tensors must match except in dimension 2"</strong></summary>
+
+**Cause**: ProceduralClip generating mono audio while LTX output is stereo.
+**Fix**: Ensure `dmm_procedural_clip.py` line 360 generates stereo:
+```python
+silence = torch.zeros(1, 2, n_samples)  # stereo to match LTX-2 audio VAE output
+```
+</details>
+
+<details>
+<summary><strong>"CUDA out of memory" / "RuntimeError: CUDA error"</strong></summary>
+
+**Cause**: Batch size or tile size too large for your GPU.
+**Solution**:
+1. Try LITE version first: `LA_DATA_REPORT_v3.4_LITE.json`
+2. Reduce `batch_size` from 2 to 1
+3. Reduce `length` from 24 to 12 seconds
+4. Reduce `tile_size` from 256 to 192 or 128
+5. Enable `--lowvram` flag: `python.exe launch.py --lowvram --normalvram`
+</details>
+
+<details>
+<summary><strong>"ImportError: No module named 'requests'"</strong></summary>
+
+**Cause**: `requests` library not installed (optional).
+**Solution**: The nodes fall back to `urllib.request` automatically. No action needed.
+</details>
+
+<details>
+<summary><strong>"No data returned from weather API"</strong></summary>
+
+**Cause**: API rate limit or network issue.
+**Solution**: Check your internet connection, wait 60 seconds and retry, or try `demo_*` source modes for offline test data.
+</details>
+
+
+---
+
+## ⚡ Quick Install (Command Line)
+
+If you prefer the terminal, paste this into PowerShell (Windows) or your terminal (Mac/Linux):
+
+**Windows (PowerShell):**
+```powershell
+Invoke-WebRequest -Uri "https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip" -OutFile "DMM_v3.4.zip"; Expand-Archive "DMM_v3.4.zip" -DestinationPath "DMM_v3.4"
+```
+
+**Mac / Linux:**
+```bash
+curl -L https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip -o DMM_v3.4.zip && unzip DMM_v3.4.zip -d DMM_v3.4
+```
+
+Then load the .json file from the extracted folder into ComfyUI.
+
+Or clone the repo directly:
+```bash
+git clone https://github.com/jbrick2070/comfyui-data-media-machine.git
+```
+
+
+## 📦 Download
+
+[![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
+
+**[Click here to download the full package (v3.4)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** � includes both workflow files + community guide.
+
+---
+
+
+## 🤖 Editing This Workflow With AI (No Coding Required)
 
 If you want to customize or extend this workflow but don't want to write code, you can use AI tools to make edits using plain English prompts.
 
@@ -142,7 +190,7 @@ MCP (Model Context Protocol) is an open standard that lets Claude connect to too
 
 More info: **https://modelcontextprotocol.io**
 
-## What's in v3.4
+## 📋 What’s in v3.4
 
 This version adds **live earthquake monitoring**, **NWS alerts**, and a **procedural data visualization node** that generates abstract animations from live data metrics.
 
@@ -162,7 +210,7 @@ This version adds **live earthquake monitoring**, **NWS alerts**, and a **proced
 
 ---
 
-## GPU Compatibility Matrix
+## 🎮 GPU Compatibility Matrix
 
 ### Tier 1: Tested & Optimized (>16GB VRAM)
 | GPU | Batch Size | Length (s) | Tile Size | Settings | Notes |
@@ -212,7 +260,7 @@ See "API Integration Nodes" section below.
 
 ---
 
-## Quick Start
+## ▶️ Quick Start
 
 ### 1. Install to ComfyUI
 
@@ -317,7 +365,7 @@ Outputs:
 
 ---
 
-## Node Reference
+## 📖 Node Reference
 
 ### Data Fetchers (all live, zero config needed)
 
@@ -449,7 +497,7 @@ comfyui-data-media-machine/
 
 ---
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
 ### "NotImplementedError: Got 4D input, but linear mode needs 3D"
 **Cause**: Audio tensor shape mismatch in crossfade resampling.
@@ -497,7 +545,7 @@ If you want requests:
 
 ---
 
-## Performance Tuning
+## ⚙️ Performance Tuning
 
 ### For RTX 4090/5080 (24GB+)
 ```
@@ -554,7 +602,7 @@ If you want requests:
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 PRs welcome! Focus areas:
 - Additional data feeds (stock prices, sports scores, NASA imagery)
