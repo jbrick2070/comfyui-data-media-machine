@@ -66,7 +66,7 @@ Or use the built-in extension manager in the ComfyUI desktop app.
 
 | Version | GPU | VRAM |
 |---------|-----|------|
-| `LA_DATA_REPORT_v3.4.json` | RTX 5080 / 4090 | 24GB |
+| `LA_DATA_REPORT_v3.4.json` | RTX 5080 / 4090 | 16GB+ |
 | `LA_DATA_REPORT_v3.4_LITE.json` | RTX 4070 / 3060 | 8-16GB |
 
 > **How do I check my VRAM?** On Windows: **Task Manager** (Ctrl+Shift+Esc) â†’ **Performance** tab â†’ **GPU** â†’ look for "Dedicated GPU memory." On Linux: run `nvidia-smi` in a terminal.
