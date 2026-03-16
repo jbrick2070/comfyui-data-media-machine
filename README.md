@@ -7,7 +7,7 @@ All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `cu
 
 ---
 
-## ðŸ“¦ Download
+## Download
 
 [![Download DMM v3.4](https://img.shields.io/badge/Download-DMM_v3.4_Full_Package-blue?style=for-the-badge)](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)
 
@@ -15,7 +15,7 @@ All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `cu
 
 ---
 
-## ðŸš€ New to ComfyUI? Start Here
+## New to ComfyUI? Start Here
 
 ComfyUI is a free, node-based interface for running AI image and video models locally on your GPU.
 
@@ -58,7 +58,7 @@ Or use the built-in extension manager in the ComfyUI desktop app.
 1. **[Download the full package](https://github.com/jbrick2070/comfyui-data-media-machine/releases/download/v3.4/DMM_v3.4_full_package.zip)** and unzip it
 2. Open ComfyUI at `http://127.0.0.1:8188`
 3. Click **Load** and select `LA_DATA_REPORT_v3.4.json`
-   - Use `LA_DATA_REPORT_v3.4_LITE.json` if you have less than 24GB VRAM
+ - Use `LA_DATA_REPORT_v3.4_LITE.json` if you have less than 24GB VRAM
 4. If any nodes appear red, open **Manager -> Install Missing Custom Nodes -> Restart**
 5. Hit **Queue** - the workflow fetches live LA data and begins generating
 
@@ -71,7 +71,7 @@ Or use the built-in extension manager in the ComfyUI desktop app.
 
 > **How do I check my VRAM?** On Windows: **Task Manager** (Ctrl+Shift+Esc) â†’ **Performance** tab â†’ **GPU** â†’ look for "Dedicated GPU memory." On Linux: run `nvidia-smi` in a terminal.
 
-### ðŸ”§ Troubleshooting
+### Troubleshooting
 
 <details>
 <summary><strong>"NotImplementedError: Got 4D input, but linear mode needs 3D"</strong></summary>
@@ -80,9 +80,9 @@ Or use the built-in extension manager in the ComfyUI desktop app.
 **Fix**: Ensure `dmm_video_concat.py` has ndim checking (line 437-449).
 ```python
 if wf.ndim == 2:
-    wf_3d = wf.unsqueeze(0)
+ wf_3d = wf.unsqueeze(0)
 elif wf.ndim == 3:
-    wf_3d = wf
+ wf_3d = wf
 resampled = F.interpolate(wf_3d.float(), size=new_len, mode="linear", align_corners=False)
 ```
 </details>
@@ -90,16 +90,16 @@ resampled = F.interpolate(wf_3d.float(), size=new_len, mode="linear", align_corn
 ---
 
 
-## 🚀 Setting Up Your Own Machine
+## Setting Up Your Own Machine
 
 If you want to set up your own machine to run this, you will need to configure OBS Studio to handle the outputs dynamically.
 
 ### Prerequisites
 
-- OBS Studio
-- Python 3.11 (Version 3.11.9 is confirmed to work)
-- Media Playlist Source Plugin
-- Directory Sorter for OBS Script
+- [OBS Studio](https://obsproject.com/download)
+- [Python 3.11.9](https://www.python.org/downloads/release/python-3119/) (3.11.x confirmed to work)
+- [Media Playlist Source Plugin](https://obsproject.com/forum/resources/media-playlist-source.1524/)
+- [Directory Sorter for OBS Script](https://obsproject.com/forum/resources/directory-watch-media-sorter.1767/)
 
 ### Installation & Setup
 
@@ -109,10 +109,10 @@ If you want to set up your own machine to run this, you will need to configure O
 4. **Configure Directories**: Point the OBS directory sorter script to your designated output folder.
 5. **Add the Media Source**: Add the Media Playlist Source to your OBS scene. Point it to your output folder, and you will see it automatically pulsing and updating your output as new media is generated!
 
-### 💡 Pro-Tip for Hardware Acceleration
+### Pro-Tip for Hardware Acceleration
 
 If you are on a system where your main GPU is busy doing heavy batch rendering for updates, set OBS to use your **Integrated GPU (iGPU)** for encoding. Select **QSV AV1** (or another integrated encoder). This ensures your OBS stream won't lag while your main GPU is maxed out!
 
 ---
 
-*Built by Jeffrey A. Brick — Los Angeles, 2025-2026*
+*Built by Jeffrey A. Brick -- Los Angeles, 2025-2026*
