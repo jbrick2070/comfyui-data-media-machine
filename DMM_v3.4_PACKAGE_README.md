@@ -326,8 +326,7 @@ This folder (COmfy/) contains:
 | v3.0 | Mar 1 | Beta | Full architecture |
 | v3.2 | Mar 14 | Beta | Video gen added, bugs found |
 | **v3.4** | **Mar 14** | **Production** | **All bugs fixed, community ready** |
-| v3.5 | Apr 2026 | Planned | API fallbacks, more data sources |
-| v3.6 | May 2026 | Planned | Batch processing, streaming |
+| v3.5 | Apr 2026 | Beta | SeedVR2 4K upscaler, API fallbacks, more data sources |
 
 ---
 

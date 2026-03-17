@@ -326,12 +326,6 @@ except Exception as e:
 - [ ] Sports scores feed
 - [ ] NASA satellite imagery
 
-### Planned for v3.6
-- [ ] Web dashboard for batch processing
-- [ ] YouTube/Twitch direct streaming output
-- [ ] Custom data source template system
-- [ ] Advanced procedural animation library
-
 ### Community Wish List
 - [ ] Workflow auto-assembly from data types
 - [ ] GPU auto-detection and LITE mode selection

@@ -33,7 +33,7 @@ Requirements:
 VRAM Budget:
   - MusicGen-melody: ~1.5GB VRAM
   - Much lighter than Stable Audio Open (2-3GB)
-  - Safe on RTX 5080 (24GB), RTX 4070+ (12GB+), RTX 3060 (12GB)
+  - Safe on RTX 5080 (16GB), RTX 4070+ (12GB+), RTX 3060 (12GB)
 
 Author: Jeffrey A. Brick
 Version: 3.5-beta (rewrite: MusicGen-melody, no external API)

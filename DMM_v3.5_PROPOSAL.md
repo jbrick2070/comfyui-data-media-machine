@@ -157,7 +157,8 @@ v3.5 (1 month):
   - GPU Fallback API nodes (optional)
   - Singing Synthesis (if we go that route)
 
-v3.6 (future):
+v3.5-beta (current):
+  - SeedVR2 4K diffusion upscaler (replaces RTX)
   - Batch processing dashboard
   - Streaming mode
   - Multi-location support
