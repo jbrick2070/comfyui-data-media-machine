@@ -1,22 +1,10 @@
 """
 DMM_VideoConcat – Concatenate up to 6 VIDEO clips into one inside ComfyUI.
 
-v3.5-beta changes:
-  - REPLACED RTX Video Super Resolution with SeedVR2 diffusion upscaler
-  - SeedVR2 generates new detail (diffusion-based) vs RTX which only sharpens
-  - Supports FP8/FP16 precision selection based on VRAM budget
-  - Temporal-aware upscaling: no flicker between frames
-  - Lazy-loads SeedVR2 only when upscale is enabled, unloads after
-
-v3.4.1 changes:
-  - Exposed RTX upscaler quality and target resolution as widgets
-
-v3.4 changes:
-  - Added crossfade dissolve transition between clips (configurable overlap frames)
+v3.5-beta:
+  - SeedVR2 diffusion upscaler (FP8/FP16, temporal-aware, lazy-loaded)
+  - Crossfade dissolve transitions between clips (configurable overlap)
   - Audio crossfade matches video overlap for seamless transitions
-
-v3.2 changes:
-  - Original RTX Video Super Resolution batch upscale (replaced in v3.5)
 
 The VIDEO type is a VideoFromComponents object from comfy_api with methods:
   - get_components() → (images, audio, ...)
@@ -305,8 +293,8 @@ def _seedvr2_upscale(images, target_resolution=2160, precision="fp8",
     Lazy-loads the SeedVR2 pipeline (DIT + VAE), processes frames in
     temporal-aware batches, then unloads to free VRAM for downstream nodes.
 
-    SeedVR2 is a diffusion-based upscaler that GENERATES new detail
-    (unlike RTX Video SR which only sharpens/deartifacts).
+    SeedVR2 is a diffusion-based upscaler that generates new detail
+    rather than simple sharpening.
 
     Args:
         images: (N, H, W, C) float tensor in NHWC format, values 0-1
@@ -660,9 +648,9 @@ class DMMVideoConcat:
                 "upscale_resolution": (["1080", "1440", "2160", "4320"], {"default": "2160",
                                        "tooltip": "Target height: 1080=HD, 1440=2K, 2160=4K, 4320=8K (VRAM-dependent)"}),
                 "upscale_precision": (["fp8", "fp16"], {"default": "fp8",
-                                      "tooltip": "fp8 = 12-16GB VRAM (RTX 5080), fp16 = 24GB+ VRAM (best quality)"}),
-                "upscale_batch_size": ("INT", {"default": 8, "min": 1, "max": 32, "step": 1,
-                                       "tooltip": "Frames per SeedVR2 batch. Lower = less VRAM but slower. 8 is safe for 16GB."}),
+                                      "tooltip": "fp8 = 12-16GB VRAM, fp16 = 24GB+ VRAM (best quality)"}),
+                "upscale_batch_size": ("INT", {"default": 2, "min": 1, "max": 32, "step": 1,
+                                       "tooltip": "Frames per SeedVR2 batch. Lower = less VRAM but slower. 2 is safe for 16GB at 4K, increase for HD."}),
             },
             "optional": {
                 "video_2": ("VIDEO",),
@@ -676,7 +664,7 @@ class DMMVideoConcat:
             },
         }
 
-    def concatenate(self, video_1, upscale_4k="disabled", upscale_resolution="2160", upscale_precision="fp8", upscale_batch_size=8, video_2=None, video_3=None, video_4=None, video_5=None, video_6=None, crossfade_frames=0):
+    def concatenate(self, video_1, upscale_4k="disabled", upscale_resolution="2160", upscale_precision="fp8", upscale_batch_size=2, video_2=None, video_3=None, video_4=None, video_5=None, video_6=None, crossfade_frames=0):
         clips = [v for v in [video_1, video_2, video_3, video_4, video_5, video_6] if v is not None]
         logger.info("DMM_VideoConcat: concatenating %d clips", len(clips))
 
@@ -740,7 +728,7 @@ class DMMVideoConcat:
         else:
             combined_audio = _concat_audio(all_audio)
 
-        # SeedVR2 diffusion upscale if enabled (v3.5-beta: replaces RTX)
+        # SeedVR2 diffusion upscale if enabled
         if upscale_4k == "enabled":
             try:
                 combined_images = _seedvr2_upscale(

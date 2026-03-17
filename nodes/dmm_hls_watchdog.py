@@ -1,0 +1,99 @@
+import os, time, subprocess, argparse, tempfile, shutil, logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
+log = logging.getLogger("DMM.HLSWatchdog")
+
+def get_duration(filepath):
+    try:
+        cmd = [
+            "ffprobe.exe",
+            "-v", "error",
+            "-show_entries", "format=duration",
+            "-of", "default=noprint_wrappers=1:nokey=1",
+            filepath,
+        ]
+        out = subprocess.check_output(
+            cmd, timeout=5, stderr=subprocess.STDOUT
+        ).decode("utf-8").strip()
+        return float(out) if out and out != "N/A" else -1.0
+    except Exception:
+        return -1.0
+
+def run_watchdog(render_dir, playlist_path, max_clips, poll):
+    log.info(
+        "=" * 60
+        + "\n DMM HLS Stream Watchdog\n Monitoring: "
+        + render_dir
+        + "\n" + "=" * 60
+    )
+
+    playlist_dir = os.path.dirname(os.path.abspath(playlist_path))
+
+    while True:
+        files = []
+        for root, _, filenames in os.walk(render_dir):
+            for f in filenames:
+                if f.lower().endswith((".mp4", ".webm")):
+                    files.append(os.path.join(root, f))
+
+        valid_files = []
+        now = time.time()
+
+        for f in files:
+            # avoid files still being written
+            if (now - os.path.getmtime(f)) > 2.0:
+                duration = get_duration(f)
+                if 0.1 <= duration <= 300.0:
+                    valid_files.append((os.path.getmtime(f), f, duration))
+
+        valid_files.sort(key=lambda x: x[0], reverse=True)
+        selected = valid_files[:max_clips]
+        selected.reverse()  # oldest to newest for nice playback order
+
+        if selected:
+            max_dur = max(d for _, _, d in selected)
+            target_duration = int(max_dur) + 1
+
+            temp_fd, temp_path = tempfile.mkstemp(
+                dir=playlist_dir, text=True
+            )
+            with os.fdopen(temp_fd, "w", encoding="utf-8") as f:
+                f.write("#EXTM3U\n")
+                f.write("#EXT-X-VERSION:3\n")
+                f.write(f"#EXT-X-TARGETDURATION:{target_duration}\n")
+                f.write("#EXT-X-PLAYLIST-TYPE:EVENT\n")
+
+                for _, clip_path, duration in selected:
+                    # path relative to playlist, HLS-style slashes
+                    rel_path = os.path.relpath(
+                        os.path.abspath(clip_path), playlist_dir
+                    ).replace("\\", "/")
+                    f.write(f"#EXTINF:{duration:.3f},\n{rel_path}\n")
+
+            shutil.move(temp_path, playlist_path)
+            log.info(
+                f"Playlist updated: {len(selected)} clips, "
+                f"TARGETDURATION={target_duration}"
+            )
+        else:
+            log.warning(
+                "No valid clips found yet — check render_dir and durations."
+            )
+
+        time.sleep(poll)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--render-dir", required=True,
+                        help="Folder where ComfyUI renders clips")
+    parser.add_argument("--playlist", required=True,
+                        help="Output HLS playlist path (e.g. live_playlist.m3u8)")
+    parser.add_argument("--max-clips", type=int, default=50)
+    parser.add_argument("--poll", type=float, default=3.0)
+    args = parser.parse_args()
+
+    run_watchdog(args.render_dir, args.playlist, args.max_clips, args.poll)
