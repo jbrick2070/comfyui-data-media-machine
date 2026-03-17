@@ -1,4 +1,4 @@
-﻿"""
+"""
 DMM Music Enhancer â€” MusicGen-melody audio-to-audio music enhancement.
 
 Takes the background music track from BackgroundMusic and runs it through

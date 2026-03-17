@@ -1,4 +1,4 @@
-﻿# ComfyUI Data-Driven Media Machine v3.4
+# ComfyUI Data-Driven Media Machine v3.4
 ## Community Edition Guide
 
 **Real-time LA data (weather, air quality, earthquakes, transit) â†’ AI-generated video, narration, procedural visualization, audio.**
