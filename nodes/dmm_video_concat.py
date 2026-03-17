@@ -521,8 +521,7 @@ def _crossfade_audio(audio_list, overlap_frames, fps):
             else:
                 wf_3d = wf.view(1, 1, -1)
             resampled = F.interpolate(wf_3d.float(),
-                                       size=new_len, mode="linear",
-                                       align_corners=False)
+                                       size=new_len, mode="linear")
             # Restore original dimensionality
             if len(orig_shape) == 2:
                 resampled = resampled.squeeze(0)
@@ -606,8 +605,7 @@ def _concat_audio(audio_list):
                 else:
                     wf_3d = wf.view(1, 1, -1)
                 resampled = F.interpolate(wf_3d.float(),
-                                           size=new_len, mode="linear",
-                                           align_corners=False)
+                                           size=new_len, mode="linear")
                 if len(orig_shape) == 2:
                     resampled = resampled.squeeze(0)
                 a["waveform"] = resampled
