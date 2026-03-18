@@ -60,12 +60,15 @@ _DOMAIN_STALE_AGE = 86400  # 24 hours — prune domains not seen in a day
 
 
 def _domain_throttle(url):
-    """Sleep if needed to respect per-domain rate limit."""
+    """Sleep if needed to respect per-domain rate limit.
+    v3.5 fix: sleep OUTSIDE the lock so parallel fetches to different
+    domains aren't blocked while one domain is being throttled."""
     import random
     from urllib.parse import urlparse
     domain = urlparse(url).netloc
     if not domain:
         return
+    wait = 0.0
     with _domain_lock:
         now = time.time()
         # v3.5: Prune stale domain entries (>24h old) to prevent unbounded growth
@@ -78,9 +81,14 @@ def _domain_throttle(url):
         elapsed = now - last
         if elapsed < _DOMAIN_MIN_DELAY:
             wait = _DOMAIN_MIN_DELAY - elapsed + random.uniform(0.1, 0.4)
-            time.sleep(wait)
-            log.debug("Domain throttle: waited %.2fs for %s", wait, domain)
-        _domain_last_fetch[domain] = time.time()
+            # Pre-book the future timestamp so subsequent threads queue correctly
+            _domain_last_fetch[domain] = now + wait
+        else:
+            _domain_last_fetch[domain] = now
+    # Sleep OUTSIDE the lock so other domains aren't blocked
+    if wait > 0:
+        time.sleep(wait)
+        log.debug("Domain throttle: waited %.2fs for %s", wait, domain)
 
 
 class DMMWebcamFetch:

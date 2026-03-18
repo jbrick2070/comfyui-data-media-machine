@@ -146,8 +146,20 @@ class DMMEnergyGrid:
         if not hourly:
             return self._demo_grid("demo_peak", config)
 
-        # Get current hour's demand
-        local_hour = (now.hour - 7) % 24  # rough UTC→PST
+        # Get current hour in Pacific Time (DST-aware)
+        try:
+            import zoneinfo
+            tz_pt = zoneinfo.ZoneInfo("America/Los_Angeles")
+        except ImportError:
+            try:
+                import pytz
+                tz_pt = pytz.timezone("America/Los_Angeles")
+            except ImportError:
+                tz_pt = None
+        if tz_pt:
+            local_hour = datetime.datetime.now(tz_pt).hour
+        else:
+            local_hour = (now.hour - 7) % 24  # fallback: assume PST
         # Find closest hour in data
         current_hr = min(hourly.keys(), key=lambda h: abs(h - local_hour))
         current_mw = hourly[current_hr]
