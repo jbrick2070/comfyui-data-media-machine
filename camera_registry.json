@@ -384,6 +384,13 @@
                         "url":  "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
                         "nearby":  "Angeles National Forest",
                         "distance_miles":  28.5
+                    },
+                    {
+                        "label":  "YouTube Live: LAX Plane Spotting Runways 25L/25R",
+                        "url":  "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg",
+                        "nearby":  "Los Angeles Intl Airport",
+                        "distance_miles":  12.5,
+                        "source":  "youtube"
                     }
                 ],
     "earthquake":  [
@@ -1278,6 +1285,13 @@
                         "distance_miles":  4.9,
                         "nearby":  "Figueroa Street",
                         "source":  "caltrans"
+                    },
+                    {
+                        "label":  "YouTube Live: LAX Plane Spotting Runways 25L/25R",
+                        "url":  "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg",
+                        "nearby":  "Los Angeles Intl Airport",
+                        "distance_miles":  12.5,
+                        "source":  "youtube"
                     }
                 ],
     "alerts":  [
@@ -1658,6 +1672,13 @@
                        "distance_miles":  4.2,
                        "nearby":  "Skid Row / Downtown LA",
                        "source":  "youtube"
+                   },
+                   {
+                       "label":  "YouTube Live: Venice Beach Ocean Front Walk",
+                       "url":  "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg",
+                       "nearby":  "Venice",
+                       "distance_miles":  7.8,
+                       "source":  "youtube"
                    }
                ],
     "scenic":  [
@@ -2016,6 +2037,13 @@
                        "url":  "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
                        "nearby":  "Angeles National Forest",
                        "distance_miles":  28.5
+                   },
+                   {
+                       "label":  "YouTube Live: Venice Beach Ocean Front Walk",
+                       "url":  "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg",
+                       "nearby":  "Venice",
+                       "distance_miles":  7.8,
+                       "source":  "youtube"
                    }
                ]
 }

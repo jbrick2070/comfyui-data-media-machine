@@ -46,6 +46,32 @@ _dark_camera_cache = {}
 _DARK_CAMERA_TTL = 3600  # seconds — skip dark cameras for 1 hour
 _dark_cache_lock = threading.Lock()
 
+# v3.5: Domain rate limiter — prevents hammering any single host.
+# Tracks last fetch time per domain; enforces minimum delay between requests
+# to the same netloc.  Protects against 429s from Caltrans, EarthCam,
+# YouTube CDN, ipcamlive, HPWREN, etc.
+_domain_last_fetch = {}
+_domain_lock = threading.Lock()
+_DOMAIN_MIN_DELAY = 2.0  # seconds between requests to the same domain
+
+
+def _domain_throttle(url):
+    """Sleep if needed to respect per-domain rate limit."""
+    import random
+    from urllib.parse import urlparse
+    domain = urlparse(url).netloc
+    if not domain:
+        return
+    with _domain_lock:
+        now = time.time()
+        last = _domain_last_fetch.get(domain, 0)
+        elapsed = now - last
+        if elapsed < _DOMAIN_MIN_DELAY:
+            wait = _DOMAIN_MIN_DELAY - elapsed + random.uniform(0.1, 0.4)
+            time.sleep(wait)
+            log.debug("Domain throttle: waited %.2fs for %s", wait, domain)
+        _domain_last_fetch[domain] = time.time()
+
 
 class DMMWebcamFetch:
     """Fetches a live JPEG frame from a public webcam, with full fallback support."""
@@ -137,6 +163,8 @@ class DMMWebcamFetch:
 
             for attempt in range(retry_count + 1):
                 try:
+                    # v3.5: Per-domain rate limiting
+                    _domain_throttle(url)
                     log.info("Fetching webcam [%d/%d] attempt %d/%d: %s",
                              url_idx + 1, len(url_list), attempt + 1, retry_count + 1, url[:80])
                     resp = requests.get(url, timeout=timeout_sec, headers={
