@@ -144,6 +144,23 @@ class DMMWebcamFetch:
                     })
                     resp.raise_for_status()
 
+                    # v3.5: MIME type validation — reject non-image responses.
+                    # Some firewalls return 200 OK with an HTML error page that
+                    # passes the filesize heuristic but crashes tensor conversion.
+                    content_type = resp.headers.get("Content-Type", "")
+                    if content_type and not content_type.startswith("image/"):
+                        log.warning("Non-image MIME type '%s' from %s — skipping",
+                                    content_type, url[:60])
+                        frame_arr = None
+                        break  # try next URL
+
+                    # Reject tiny responses (< 2KB = likely error page or placeholder)
+                    if len(resp.content) < 2048:
+                        log.warning("Response too small (%d bytes) from %s — skipping",
+                                    len(resp.content), url[:60])
+                        frame_arr = None
+                        break  # try next URL
+
                     img = Image.open(io.BytesIO(resp.content)).convert("RGB")
                     frame_arr = np.array(img).astype(np.float32) / 255.0
 
@@ -184,17 +201,26 @@ class DMMWebcamFetch:
             return self._fallback(fallback_width, fallback_height, fallback_images_dir)
 
         # SSIM stale detection (crop top/bottom to ignore timestamps)
+        # v3.5: Luminance gate — skip SSIM for very dark frames (nighttime cams).
+        # At night, static dark frames legitimately look identical frame-to-frame;
+        # SSIM > threshold would false-positive into procedural fallback.
         ssim_score = 0.0
         is_stale = False
+        mean_lum = float(frame_arr.mean())
         with _cache_lock:
             cached_entry = _frame_cache.get(fetched_url)
         if cached_entry is not None:
             _, cached_arr = cached_entry
-            ssim_score = self._compute_ssim(cached_arr, frame_arr, crop_pct)
-            if ssim_score > ssim_threshold:
-                log.warning("Frame STALE (SSIM=%.4f > %.4f) — forcing t2v fallback",
-                            ssim_score, ssim_threshold)
-                is_stale = True
+            if mean_lum < 0.12:
+                log.info("Night-mode bypass: mean luminance %.3f < 0.12, skipping SSIM",
+                         mean_lum)
+                ssim_score = -2.0  # sentinel: SSIM skipped (night mode)
+            else:
+                ssim_score = self._compute_ssim(cached_arr, frame_arr, crop_pct)
+                if ssim_score > ssim_threshold:
+                    log.warning("Frame STALE (SSIM=%.4f > %.4f) — forcing t2v fallback",
+                                ssim_score, ssim_threshold)
+                    is_stale = True
 
         # Update cache (evict oldest if full)
         self._cache_put(fetched_url, now, frame_arr)

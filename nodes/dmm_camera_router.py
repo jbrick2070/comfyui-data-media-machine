@@ -205,10 +205,21 @@ class DMMCameraRouter:
         url = selected.get("url", "")
         label = selected.get("label", f"camera_{idx}")
 
+        # v3.5: Cache-buster for YouTube thumbnail URLs.
+        # Google CDNs aggressively cache maxresdefault.jpg; appending a timestamp
+        # query param forces edge nodes to serve a fresh copy.
+        import time as _time
+        def _cache_bust(u):
+            if "img.youtube.com" in u:
+                sep = "&" if "?" in u else "?"
+                return f"{u}{sep}t={int(_time.time())}"
+            return u
+
         # Build pipe-delimited URL string: selected first, then fallbacks
         # This feeds directly into DMMWebcamFetch.urls which tries each in order
-        all_urls = [url] + [c.get("url", "") for i, c in enumerate(cameras)
-                            if i != idx and c.get("url")]
+        all_urls = [_cache_bust(url)] + [_cache_bust(c.get("url", ""))
+                    for i, c in enumerate(cameras)
+                    if i != idx and c.get("url")]
         urls_str = "|".join(u for u in all_urls if u)
 
         log.info("Selected camera for '%s': %s [%d/%d] (%s) + %d fallbacks (%s mode)",
