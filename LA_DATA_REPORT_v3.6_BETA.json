@@ -2349,7 +2349,10 @@
       "widgets_values": [
         "Phi-3-mini",
         "late_night_radio"
-      ]
+      ],
+      "properties": {
+        "Node name for S&R": "DMM_NarrationRefiner"
+      }
     }
   ],
   "links": [
