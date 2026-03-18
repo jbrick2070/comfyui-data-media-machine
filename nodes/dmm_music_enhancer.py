@@ -1,4 +1,4 @@
-"""
+﻿"""
 DMM Music Enhancer â€” MusicGen-melody audio-to-audio music enhancement.
 
 Takes the background music track from BackgroundMusic and runs it through
@@ -33,7 +33,7 @@ Requirements:
 VRAM Budget:
   - MusicGen-melody: ~1.5GB VRAM
   - Much lighter than Stable Audio Open (2-3GB)
-  - Safe on RTX 5080 (16GB), RTX 4070+ (12GB+), RTX 3060 (12GB)
+  - Safe on RTX 5080 (24GB), RTX 4070+ (12GB+), RTX 3060 (12GB)
 
 Author: Jeffrey A. Brick
 Version: 3.5-beta (rewrite: MusicGen-melody, no external API)
@@ -161,7 +161,22 @@ def _get_or_load_model(device: torch.device = None):
         return _model_cache["processor"], _model_cache["model"]
 
     try:
+        # Suppress HF hub / httpx / transformers verbosity before any network calls.
+        # Eliminates: HTTP HEAD spam, unauthenticated-request warnings,
+        # weight-loading tqdm bar, and LOAD REPORT unexpected-key table.
+        import logging as _stdlib_logging
+        for _noisy in (
+            "httpx",
+            "httpcore",
+            "huggingface_hub",
+            "huggingface_hub.utils._headers",
+            "filelock",
+        ):
+            _stdlib_logging.getLogger(_noisy).setLevel(_stdlib_logging.WARNING)
+
         from transformers import AutoProcessor, MusicgenMelodyForConditionalGeneration
+        import transformers as _transformers
+        _transformers.logging.set_verbosity_error()
 
         log.info("  Loading MusicGen-melody (first run only)...")
         t0 = time.time()
