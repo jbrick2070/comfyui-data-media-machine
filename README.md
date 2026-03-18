@@ -17,10 +17,12 @@ All data feeds are **LIVE, FREE, and require ZERO API keys**. Drop this into `cu
 
 ## What's New in v3.6
 
-### RTX Video Super Resolution
-The upscaler in VideoConcat has been replaced with NVIDIA RTX Video Super Resolution (`nvvfx`). This uses hardware-accelerated Tensor Core upscaling instead of the previous SeedVR2 diffusion upscaler — significantly faster, uses far less VRAM, and requires no large model downloads. Quality levels: LOW, MEDIUM, HIGH, ULTRA.
+### 3-Tier Video Upscaler
+VideoConcat now uses a 3-tier upscale strategy with automatic fallback. Default target: 1080p. Quality levels: LOW, MEDIUM, HIGH, ULTRA.
 
-**New dependency:** Requires [Nvidia_RTX_Nodes_ComfyUI](https://github.com/NVIDIAGameWorks/Nvidia_RTX_Nodes_ComfyUI) and its `nvvfx` package.
+1. **nvvfx RTX VSR** (primary) — Hardware-accelerated Tensor Core upscaling via NVIDIA Video Effects SDK. Fastest option on RTX GPUs, batch processing, no large model downloads. Requires [Nvidia_RTX_Nodes_ComfyUI](https://github.com/NVIDIAGameWorks/Nvidia_RTX_Nodes_ComfyUI).
+2. **Real-ESRGAN** (fallback) — Frame-by-frame neural upscaling. Auto-downloads ~64 MB model weights on first run. Slower but available without RTX SDK. Install: `pip install realesrgan`
+3. **Bicubic** (last resort) — Torch-native, always available, no extra dependencies. Lower quality but guaranteed to work.
 
 ### AI Narration Refiner (Phi-3-mini)
 New `DMM_NarrationRefiner` node sits between the NarrationDistiller and Kokoro TTS. It uses Microsoft Phi-3-mini-4k-instruct to rewrite template narration into natural broadcast-quality prose. All data facts are preserved exactly — only phrasing and cadence are improved. VRAM is automatically freed after each refinement. Five broadcast styles: late night radio, morning news, calm documentary, weather channel, noir dispatch.
@@ -30,6 +32,8 @@ New `DMM_NarrationRefiner` node sits between the NarrationDistiller and Kokoro T
 ### Breaking Changes from v3.5
 - `DMM_VideoConcat` removed `upscale_precision` (fp8/fp16) and `upscale_batch_size` parameters
 - `DMM_VideoConcat` added `upscale_quality` (LOW/MEDIUM/HIGH/ULTRA)
+- `DMM_VideoConcat` default resolution changed from 2160 to 1080
+- `DMM_VideoConcat` upscaler now uses 3-tier fallback (nvvfx → Real-ESRGAN → bicubic)
 - Saved v3.4/v3.5 workflows will show red widgets on VideoConcat — use the included v3.6 workflows
 
 ---
@@ -70,7 +74,7 @@ New `DMM_NarrationRefiner` node sits between the NarrationDistiller and Kokoro T
 | DMM_CinematicVideoPrompt / V2 | Camera-aware cinematic prompt generation |
 | DMM_BatchVideoGenerator | Multi-clip LTX-Video generation pipeline |
 | DMM_ProceduralClip | Procedural motion graphics (data overlays) |
-| DMM_VideoConcat | Stitches clips + crossfade + **RTX VSR upscaling** |
+| DMM_VideoConcat | Stitches clips + crossfade + **3-tier upscaling** (nvvfx → Real-ESRGAN → bicubic) |
 
 ---
 
@@ -155,10 +159,12 @@ resampled = F.interpolate(wf_3d.float(), size=new_len, mode="linear", align_corn
 </details>
 
 <details>
-<summary><strong>RTX upscaler fails with "nvvfx not installed"</strong></summary>
+<summary><strong>Upscaler falls back to bicubic / lower quality</strong></summary>
 
-**Cause**: Missing NVIDIA Video Effects SDK dependency.
-**Fix**: Install [Nvidia_RTX_Nodes_ComfyUI](https://github.com/NVIDIAGameWorks/Nvidia_RTX_Nodes_ComfyUI) into `custom_nodes/` and install its requirements. RTX upscaling requires an NVIDIA RTX GPU (20-series or newer).
+**Cause**: Neither nvvfx nor Real-ESRGAN is installed.
+**Fix (best quality)**: Install [Nvidia_RTX_Nodes_ComfyUI](https://github.com/NVIDIAGameWorks/Nvidia_RTX_Nodes_ComfyUI) into `custom_nodes/` for RTX VSR (requires RTX 20-series or newer).
+**Fix (fallback)**: `pip install realesrgan` for Real-ESRGAN (works on any CUDA GPU, auto-downloads ~64 MB model).
+The upscaler tries nvvfx first, then Real-ESRGAN, then bicubic. Check the console log to see which strategy was used.
 </details>
 
 ---
