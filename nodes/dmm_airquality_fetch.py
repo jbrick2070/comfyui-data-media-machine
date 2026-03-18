@@ -44,10 +44,14 @@ class DMMAirQualityFetch:
         return {
             "required": {
                 "config": ("DMM_CONFIG",),
-                "source": (["open_meteo", "airnow_sensor", "demo_clean",
-                            "demo_smoggy", "demo_hazardous", "demo_random"],),
+                "source": (["open_meteo", "demo_clean", "demo_smoggy",
+                            "demo_hazardous", "demo_random", "airnow_sensor"],),
             },
         }
+
+    @classmethod
+    def IS_CHANGED(cls, **kwargs):
+        return float("nan")  # always re-fetch live AQ data
 
     def fetch_air_quality(self, config, source):
         if source.startswith("demo_"):

@@ -42,6 +42,10 @@ class DMMAlertsFetch:
             },
         }
 
+    @classmethod
+    def IS_CHANGED(cls, **kwargs):
+        return float("nan")  # always re-fetch live alerts
+
     def fetch_alerts(self, config, source):
         if source.startswith("demo_"):
             data = self._demo_alerts(source, config)

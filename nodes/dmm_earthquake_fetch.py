@@ -53,6 +53,10 @@ class DMMEarthquakeFetch:
             },
         }
 
+    @classmethod
+    def IS_CHANGED(cls, **kwargs):
+        return float("nan")  # always re-fetch live seismic data
+
     def fetch_earthquakes(self, config, source, lookback_hours,
                            radius_km, min_magnitude):
         if source.startswith("demo_"):
