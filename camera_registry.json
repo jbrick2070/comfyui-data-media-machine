@@ -2045,5 +2045,18 @@
                        "distance_miles":  7.8,
                        "source":  "youtube"
                    }
-               ]
+               ],
+    "_meta":  {
+                  "generated_at":  "2026-03-17T20:30:00-07:00",
+                  "center_lon":  -118.2437,
+                  "version":  "3.5-beta",
+                  "center_lat":  34.0522,
+                  "source_counts":  {
+                                        "weingart":  3,
+                                        "caltrans":  275,
+                                        "youtube":  5,
+                                        "hpwren":  1,
+                                        "abc7":  4
+                                    }
+              }
 }

@@ -173,6 +173,9 @@ class DMMCameraRouter:
 
         cameras = camera_registry.get(focus, [])
 
+        # v3.5: Skip disabled cameras (set by healthcheck or manual curation)
+        cameras = [c for c in cameras if not c.get("disabled", False)]
+
         # Filter by radius if cameras have distance_miles metadata
         if max_radius_miles > 0:
             filtered = [c for c in cameras
