@@ -1,5 +1,5 @@
 ﻿{
-    "_comment":  "DMM Camera Registry v3.5-beta. Caltrans D7 CCTV + Weingart Skid Row + ABC7 KABC + YouTube live thumbnails. Generated 2026-03-17.",
+    "_comment":  "DMM Camera Registry v3.5-beta. Caltrans D7 CCTV + Weingart Skid Row + ABC7 KABC + YouTube live thumbnails + HPWREN Mt. Wilson. Generated 2026-03-17.",
     "weather":  [
                     {
                         "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405368waterfordst/i405368waterfordst.jpg",
@@ -378,6 +378,12 @@
                         "distance_miles":  3.5,
                         "nearby":  "Los Angeles",
                         "source":  "abc7"
+                    },
+                    {
+                        "label":  "Mt. Wilson Observatory North (HPWREN)",
+                        "url":  "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
+                        "nearby":  "Angeles National Forest",
+                        "distance_miles":  28.5
                     }
                 ],
     "earthquake":  [
@@ -914,6 +920,12 @@
                             "distance_miles":  17,
                             "nearby":  "Norwalk",
                             "source":  "caltrans"
+                        },
+                        {
+                            "label":  "Mt. Wilson Observatory North (HPWREN)",
+                            "url":  "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
+                            "nearby":  "Angeles National Forest",
+                            "distance_miles":  28.5
                         }
                     ],
     "transit":  [
@@ -1998,6 +2010,12 @@
                        "distance_miles":  8.5,
                        "nearby":  "Santa Monica Beach",
                        "source":  "youtube"
+                   },
+                   {
+                       "label":  "Mt. Wilson Observatory North (HPWREN)",
+                       "url":  "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
+                       "nearby":  "Angeles National Forest",
+                       "distance_miles":  28.5
                    }
                ]
 }
