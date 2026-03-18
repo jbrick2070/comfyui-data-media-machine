@@ -23,7 +23,7 @@ Author: Jeffrey A. Brick
 Hardware target: Lenovo Legion Pro 7i Gen 10 (RTX 5080 / Win11)
 """
 
-DMM_VERSION = "3.5-beta"
+DMM_VERSION = "3.6-beta"
 
 import os
 import traceback
@@ -70,6 +70,8 @@ _NODE_MODULES = {
     "DMM_BackgroundMusic":     (".nodes.dmm_background_music", "DMMBackgroundMusic"),
     # v3.5 energy grid (CAISO)
     "DMM_EnergyGrid":          (".nodes.dmm_energy_grid", "DMMEnergyGrid"),
+    # v3.6 narration AI refiner (Phi-3-mini)
+    "DMM_NarrationRefiner":    (".nodes.dmm_narration_refiner", "DMMNarrationRefiner"),
 }
 
 # Display names with emoji for the ComfyUI menu
@@ -106,6 +108,8 @@ _DISPLAY_NAMES = {
     "DMM_BackgroundMusic":     "\U0001f3b5 DMM: Background Music (MIDI)",
     # v3.5 energy grid
     "DMM_EnergyGrid":          "\u26a1 DMM: Energy Grid (CAISO Live)",
+    # v3.6 narration AI refiner
+    "DMM_NarrationRefiner":    "\U0001f4dd DMM: Narration Refiner (Phi-3)",
 }
 
 for node_name, (module_path, class_name) in _NODE_MODULES.items():

@@ -1,10 +1,13 @@
 """
 DMM_VideoConcat – Concatenate up to 6 VIDEO clips into one inside ComfyUI.
 
-v3.5-beta:
-  - SeedVR2 diffusion upscaler (FP8/FP16, temporal-aware, lazy-loaded)
+v3.6-beta:
+  - RTX Video Super Resolution upscaler (nvvfx, hardware-accelerated Tensor Cores)
   - Crossfade dissolve transitions between clips (configurable overlap)
   - Audio crossfade matches video overlap for seamless transitions
+
+v3.5-beta (legacy):
+  - SeedVR2 diffusion upscaler replaced with RTX VSR for faster, lighter upscaling
 
 The VIDEO type is a VideoFromComponents object from comfy_api with methods:
   - get_components() → (images, audio, ...)
@@ -14,8 +17,8 @@ The VIDEO type is a VideoFromComponents object from comfy_api with methods:
   - get_duration() → float
 
 This node extracts components from each clip, concatenates frames + audio,
-optionally applies crossfade transitions, optionally upscales via SeedVR2
-diffusion upscaler, and rebuilds a new VideoFromComponents for SaveVideo.
+optionally applies crossfade transitions, optionally upscales via NVIDIA RTX
+Video Super Resolution, and rebuilds a new VideoFromComponents for SaveVideo.
 """
 
 from __future__ import annotations
@@ -286,123 +289,85 @@ def _build_video(images, audio, fps):
     return _ConcatVideo(images, audio, fps)
 
 
-def _seedvr2_upscale(images, target_resolution=2160, precision="fp8",
-                      batch_size=8, blocks_to_swap=16):
-    """Upscale concatenated frame tensor via SeedVR2 diffusion upscaler.
+def _rtx_upscale(images, target_resolution=2160, quality="ULTRA"):
+    """Upscale concatenated frame tensor via NVIDIA RTX Video Super Resolution.
 
-    Lazy-loads the SeedVR2 pipeline (DIT + VAE), processes frames in
-    temporal-aware batches, then unloads to free VRAM for downstream nodes.
-
-    SeedVR2 is a diffusion-based upscaler that generates new detail
-    rather than simple sharpening.
+    Uses nvvfx hardware-accelerated Tensor Core upscaling — much faster and
+    lighter than diffusion-based upscalers. No large model downloads required.
 
     Args:
         images: (N, H, W, C) float tensor in NHWC format, values 0-1
         target_resolution: target height in pixels (2160=4K, 1080=HD)
-        precision: "fp8" (12-16GB VRAM) or "fp16" (24GB+ VRAM)
-        batch_size: frames per SeedVR2 pass (lower = less VRAM)
-        blocks_to_swap: BlockSwap count for VRAM optimization (0=disabled, 16=default)
+        quality: "LOW", "MEDIUM", "HIGH", or "ULTRA"
     Returns:
         Upscaled (N, H_new, W_new, C) float tensor
     """
     import time
+
+    try:
+        import nvvfx
+    except ImportError:
+        raise ImportError(
+            "nvvfx not installed. RTX Video Super Resolution requires the "
+            "NVIDIA Video Effects SDK. Install Nvidia_RTX_Nodes_ComfyUI and "
+            "its requirements."
+        )
 
     n_frames, h, w, c = images.shape
     scale = target_resolution / h
     target_w = max(8, round((w * scale) / 8) * 8)
     target_h = max(8, round(target_resolution / 8) * 8)
 
-    logger.info("SeedVR2 upscale: %dx%d → %dx%d (%s) — %d frames",
-                w, h, target_w, target_h, precision, n_frames)
+    logger.info("RTX VSR upscale: %dx%d -> %dx%d (quality=%s) -- %d frames",
+                w, h, target_w, target_h, quality, n_frames)
     t0 = time.time()
 
-    # --- Lazy import SeedVR2 nodes ---
-    try:
-        from ComfyUI_SeedVR2_VideoUpscaler.nodes import (
-            SeedVR2DITLoader,
-            SeedVR2VAELoader,
-            SeedVR2VideoUpscaler,
-        )
-    except ImportError:
-        try:
-            # Alternative import path (some installs use hyphenated folder)
-            import importlib
-            svr2_mod = importlib.import_module("ComfyUI-SeedVR2_VideoUpscaler.nodes")
-            SeedVR2DITLoader = getattr(svr2_mod, "SeedVR2DITLoader")
-            SeedVR2VAELoader = getattr(svr2_mod, "SeedVR2VAELoader")
-            SeedVR2VideoUpscaler = getattr(svr2_mod, "SeedVR2VideoUpscaler")
-        except (ImportError, AttributeError):
-            raise ImportError(
-                "SeedVR2 not installed. Install via:\n"
-                "  cd ComfyUI/custom_nodes\n"
-                "  git clone https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler\n"
-                "  pip install -r ComfyUI-SeedVR2_VideoUpscaler/requirements.txt"
-            )
-
-    # --- Load DIT model (3B for fp8, 7B for fp16) ---
-    dit_loader = SeedVR2DITLoader()
-    model_variant = "3B-FP8" if precision == "fp8" else "7B-FP16"
-    logger.info("  Loading SeedVR2 DIT model: %s", model_variant)
-    dit_result = dit_loader.load_model(model_variant)
-    dit_model = dit_result[0] if isinstance(dit_result, tuple) else dit_result
-
-    # --- Load VAE ---
-    vae_loader = SeedVR2VAELoader()
-    logger.info("  Loading SeedVR2 VAE")
-    vae_result = vae_loader.load_model()
-    vae_model = vae_result[0] if isinstance(vae_result, tuple) else vae_result
-
-    # --- Configure block swap for VRAM optimization ---
-    block_swap_config = None
-    if blocks_to_swap > 0:
-        try:
-            from ComfyUI_SeedVR2_VideoUpscaler.nodes import SeedVR2BlockSwapConfig
-            bsc = SeedVR2BlockSwapConfig()
-            block_swap_config = bsc.configure(blocks_to_swap)[0]
-            logger.info("  BlockSwap enabled: %d blocks", blocks_to_swap)
-        except (ImportError, AttributeError):
-            logger.info("  BlockSwap not available, proceeding without")
-
-    # --- Run upscaler ---
-    upscaler = SeedVR2VideoUpscaler()
-    logger.info("  Processing %d frames in batches of %d ...", n_frames, batch_size)
-
-    # SeedVR2 expects images as (N, H, W, C) tensor — same as ComfyUI IMAGE type
-    upscale_kwargs = {
-        "dit_model": dit_model,
-        "vae_model": vae_model,
-        "images": images,
-        "resolution": target_resolution,
-        "batch_size": min(batch_size, n_frames),
-        "preserve_vram": True,
+    quality_mapping = {
+        "LOW": nvvfx.effects.QualityLevel.LOW,
+        "MEDIUM": nvvfx.effects.QualityLevel.MEDIUM,
+        "HIGH": nvvfx.effects.QualityLevel.HIGH,
+        "ULTRA": nvvfx.effects.QualityLevel.ULTRA,
     }
-    if block_swap_config is not None:
-        upscale_kwargs["block_swap_config"] = block_swap_config
+    selected_quality = quality_mapping.get(quality, nvvfx.effects.QualityLevel.ULTRA)
 
-    try:
-        result = upscaler.upscale(**upscale_kwargs)
-        upscaled = result[0] if isinstance(result, tuple) else result
-    except TypeError:
-        # Fallback: some SeedVR2 versions use different method signature
-        logger.info("  Trying alternative SeedVR2 API...")
-        result = upscaler.process(
-            dit_model=dit_model,
-            vae_model=vae_model,
-            images=images,
-            resolution=target_resolution,
-            batch_size=min(batch_size, n_frames),
-        )
-        upscaled = result[0] if isinstance(result, tuple) else result
+    # Max pixels per batch to avoid OOM — same limit as RTX node
+    MAX_PIXELS = 1024 * 1024 * 16
+    out_pixels = target_w * target_h
+    batch_size = max(1, MAX_PIXELS // out_pixels)
 
-    # --- Cleanup: free VRAM for downstream nodes ---
-    del dit_model, vae_model, dit_loader, vae_loader, upscaler
-    if block_swap_config is not None:
-        del block_swap_config
+    upscaled_batches = []
+
+    with nvvfx.VideoSuperRes(selected_quality) as sr:
+        sr.output_width = target_w
+        sr.output_height = target_h
+        sr.load()
+
+        for i in range(0, n_frames, batch_size):
+            batch = images[i:i + batch_size]
+            batch_cuda = batch.cuda().permute(0, 3, 1, 2).contiguous()  # NCHW
+
+            batch_outputs = []
+            for j in range(batch_cuda.shape[0]):
+                input_frame = batch_cuda[j]
+                dlpack_out = sr.run(input_frame).image
+                output = torch.from_dlpack(dlpack_out).clone()
+                batch_outputs.append(output)
+
+            batch_out_tensor = torch.stack(batch_outputs, dim=0)
+            batch_out_tensor = batch_out_tensor.permute(0, 2, 3, 1).cpu()  # NHWC
+            upscaled_batches.append(batch_out_tensor)
+
+            if (i // batch_size) % 10 == 0:
+                logger.info("  RTX VSR progress: %d/%d frames", min(i + batch_size, n_frames), n_frames)
+
+    upscaled = torch.cat(upscaled_batches, dim=0)
+
+    # Cleanup
     torch.cuda.empty_cache()
 
     elapsed = time.time() - t0
     fps_rate = n_frames / elapsed if elapsed > 0 else 0
-    logger.info("SeedVR2 upscale done in %.1fs (%.2f frames/sec, %d frames → %dx%d)",
+    logger.info("RTX VSR upscale done in %.1fs (%.2f frames/sec, %d frames -> %dx%d)",
                 elapsed, fps_rate, n_frames, target_w, target_h)
     return upscaled
 
@@ -642,13 +607,11 @@ class DMMVideoConcat:
             "required": {
                 "video_1": ("VIDEO",),
                 "upscale_4k": (["disabled", "enabled"], {"default": "disabled",
-                               "tooltip": "Upscale final stitched video via SeedVR2 diffusion upscaler (generates new detail, temporal-aware)"}),
+                               "tooltip": "Upscale final stitched video via NVIDIA RTX Video Super Resolution (hardware-accelerated Tensor Core upscaling)"}),
                 "upscale_resolution": (["1080", "1440", "2160", "4320"], {"default": "2160",
-                                       "tooltip": "Target height: 1080=HD, 1440=2K, 2160=4K, 4320=8K (VRAM-dependent)"}),
-                "upscale_precision": (["fp8", "fp16"], {"default": "fp8",
-                                      "tooltip": "fp8 = 12-16GB VRAM, fp16 = 24GB+ VRAM (best quality)"}),
-                "upscale_batch_size": ("INT", {"default": 2, "min": 1, "max": 32, "step": 1,
-                                       "tooltip": "Frames per SeedVR2 batch. Lower = less VRAM but slower. 2 is safe for 16GB at 4K, increase for HD."}),
+                                       "tooltip": "Target height: 1080=HD, 1440=2K, 2160=4K, 4320=8K"}),
+                "upscale_quality": (["LOW", "MEDIUM", "HIGH", "ULTRA"], {"default": "ULTRA",
+                                    "tooltip": "RTX VSR quality level. ULTRA = best quality, LOW = fastest. All levels are fast on RTX GPUs."}),
             },
             "optional": {
                 "video_2": ("VIDEO",),
@@ -662,7 +625,7 @@ class DMMVideoConcat:
             },
         }
 
-    def concatenate(self, video_1, upscale_4k="disabled", upscale_resolution="2160", upscale_precision="fp8", upscale_batch_size=2, video_2=None, video_3=None, video_4=None, video_5=None, video_6=None, crossfade_frames=0):
+    def concatenate(self, video_1, upscale_4k="disabled", upscale_resolution="2160", upscale_quality="ULTRA", video_2=None, video_3=None, video_4=None, video_5=None, video_6=None, crossfade_frames=0):
         clips = [v for v in [video_1, video_2, video_3, video_4, video_5, video_6] if v is not None]
         logger.info("DMM_VideoConcat: concatenating %d clips", len(clips))
 
@@ -726,24 +689,23 @@ class DMMVideoConcat:
         else:
             combined_audio = _concat_audio(all_audio)
 
-        # SeedVR2 diffusion upscale if enabled
+        # RTX Video Super Resolution upscale if enabled
         if upscale_4k == "enabled":
             try:
-                combined_images = _seedvr2_upscale(
+                combined_images = _rtx_upscale(
                     combined_images,
                     target_resolution=int(upscale_resolution),
-                    precision=upscale_precision,
-                    batch_size=upscale_batch_size,
+                    quality=upscale_quality,
                 )
             except ImportError as e:
                 logger.warning(
-                    "DMM_VideoConcat: SeedVR2 not installed — %s. "
-                    "Skipping upscale. Install via: cd custom_nodes && "
-                    "git clone https://github.com/numz/ComfyUI-SeedVR2_VideoUpscaler",
+                    "DMM_VideoConcat: nvvfx not available -- %s. "
+                    "Skipping upscale. Install Nvidia_RTX_Nodes_ComfyUI "
+                    "and its requirements.",
                     e,
                 )
             except Exception as e:
-                logger.error("DMM_VideoConcat: SeedVR2 upscale failed: %s", e)
+                logger.error("DMM_VideoConcat: RTX VSR upscale failed: %s", e)
                 logger.warning("Continuing without upscale.")
 
         total_frames = combined_images.shape[0]
