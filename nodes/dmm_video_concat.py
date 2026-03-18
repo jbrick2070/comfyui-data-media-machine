@@ -148,14 +148,12 @@ class _ConcatVideo:
         self._fps = float(fps)
 
     def get_components(self):
-        """Return a components object matching VideoComponents."""
-        class _VC:
-            pass
-        vc = _VC()
-        vc.images = self._images
-        vc.audio = self._audio
-        vc.fps = self._fps
-        return vc
+        """Return a components dict matching VideoComponents."""
+        return {
+            "images": self._images,
+            "audio": self._audio,
+            "fps": self._fps,
+        }
 
     def get_dimensions(self):
         """Return (width, height) — SaveVideo calls this at line 90."""
@@ -190,7 +188,9 @@ class _ConcatVideo:
             w, h = self.get_dimensions()
 
             # Video stream
-            video_stream = container.add_stream('h264', rate=int(self._fps))
+            from fractions import Fraction
+            fps_frac = Fraction(self._fps).limit_denominator(10000)
+            video_stream = container.add_stream('h264', rate=fps_frac)
             video_stream.width = w
             video_stream.height = h
             video_stream.pix_fmt = 'yuv420p'
@@ -211,12 +211,15 @@ class _ConcatVideo:
                             wf = wf.unsqueeze(0)        # [1, samples]
                         wf_np = wf.numpy()
                         n_channels = wf_np.shape[0]
-                        layout = 'stereo' if n_channels >= 2 else 'mono'
+                        layout_str = 'stereo' if n_channels >= 2 else 'mono'
                         if n_channels >= 2:
                             wf_np = wf_np[:2]           # keep stereo only
                         audio_stream = container.add_stream('aac', rate=sample_rate)
-                        audio_stream.layout = layout
-                        logger.info("_ConcatVideo: adding audio stream (%s, %dHz)", layout, sample_rate)
+                        try:
+                            audio_stream.layout = av.AudioLayout(layout_str)
+                        except (TypeError, AttributeError):
+                            audio_stream.layout = layout_str
+                        logger.info("_ConcatVideo: adding audio stream (%s, %dHz)", layout_str, sample_rate)
                 except Exception as ae:
                     logger.warning("_ConcatVideo: audio stream setup failed, video-only: %s", ae)
                     audio_stream = None
@@ -290,10 +293,11 @@ def _build_video(images, audio, fps):
 
 
 def _rtx_upscale(images, target_resolution=2160, quality="ULTRA"):
-    """Upscale concatenated frame tensor via NVIDIA RTX Video Super Resolution.
+    """Upscale frame tensor. Tries Real-ESRGAN (auto-downloads), then nvvfx, then bicubic.
 
-    Uses nvvfx hardware-accelerated Tensor Core upscaling — much faster and
-    lighter than diffusion-based upscalers. No large model downloads required.
+    Real-ESRGAN: pip install realesrgan — model weights auto-download on first run.
+    nvvfx: Only if NVIDIA VFX SDK is manually installed (fast on RTX GPUs).
+    Bicubic: Always available as a last resort (torch-native, no extra deps).
 
     Args:
         images: (N, H, W, C) float tensor in NHWC format, values 0-1
@@ -303,73 +307,156 @@ def _rtx_upscale(images, target_resolution=2160, quality="ULTRA"):
         Upscaled (N, H_new, W_new, C) float tensor
     """
     import time
-
-    try:
-        import nvvfx
-    except ImportError:
-        raise ImportError(
-            "nvvfx not installed. RTX Video Super Resolution requires the "
-            "NVIDIA Video Effects SDK. Install Nvidia_RTX_Nodes_ComfyUI and "
-            "its requirements."
-        )
+    import numpy as np
 
     n_frames, h, w, c = images.shape
     scale = target_resolution / h
     target_w = max(8, round((w * scale) / 8) * 8)
     target_h = max(8, round(target_resolution / 8) * 8)
 
-    logger.info("RTX VSR upscale: %dx%d -> %dx%d (quality=%s) -- %d frames",
-                w, h, target_w, target_h, quality, n_frames)
+    if scale <= 1.0:
+        logger.info("Upscale skipped — target %dp is not larger than source %dp", target_resolution, h)
+        return images
+
     t0 = time.time()
 
-    quality_mapping = {
-        "LOW": nvvfx.effects.QualityLevel.LOW,
-        "MEDIUM": nvvfx.effects.QualityLevel.MEDIUM,
-        "HIGH": nvvfx.effects.QualityLevel.HIGH,
-        "ULTRA": nvvfx.effects.QualityLevel.ULTRA,
-    }
-    selected_quality = quality_mapping.get(quality, nvvfx.effects.QualityLevel.ULTRA)
+    # --- Strategy 1: Real-ESRGAN (auto-downloads model weights) ---
+    try:
+        # torchvision >= 0.16 removed functional_tensor; patch it before basicsr imports it
+        import sys as _sys
+        import torchvision.transforms.functional as _tvtf
+        if "torchvision.transforms.functional_tensor" not in _sys.modules:
+            _sys.modules["torchvision.transforms.functional_tensor"] = _tvtf
 
-    # Max pixels per batch to avoid OOM — same limit as RTX node
-    MAX_PIXELS = 1024 * 1024 * 16
-    out_pixels = target_w * target_h
-    batch_size = max(1, MAX_PIXELS // out_pixels)
+        from realesrgan import RealESRGANer
+        from basicsr.archs.rrdbnet_arch import RRDBNet
 
-    upscaled_batches = []
+        logger.info("Real-ESRGAN: %dx%d -> %dx%d (quality=%s) -- %d frames",
+                    w, h, target_w, target_h, quality, n_frames)
 
-    with nvvfx.VideoSuperRes(selected_quality) as sr:
-        sr.output_width = target_w
-        sr.output_height = target_h
-        sr.load()
+        # RealESRGAN_x4plus — auto-downloads ~64MB model from GitHub releases
+        model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64,
+                        num_block=23, num_grow_ch=32, scale=4)
 
-        for i in range(0, n_frames, batch_size):
-            batch = images[i:i + batch_size]
-            batch_cuda = batch.cuda().permute(0, 3, 1, 2).contiguous()  # NCHW
+        tile_sizes = {"LOW": 256, "MEDIUM": 384, "HIGH": 512, "ULTRA": 640}
+        tile = tile_sizes.get(quality, 512)
 
-            batch_outputs = []
-            for j in range(batch_cuda.shape[0]):
-                input_frame = batch_cuda[j]
-                dlpack_out = sr.run(input_frame).image
-                output = torch.from_dlpack(dlpack_out).clone()
-                batch_outputs.append(output)
+        upsampler = RealESRGANer(
+            scale=4,
+            model_path="https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth",
+            model=model,
+            tile=tile,
+            tile_pad=10,
+            pre_pad=0,
+            half=torch.cuda.is_available(),
+        )
 
-            batch_out_tensor = torch.stack(batch_outputs, dim=0)
-            batch_out_tensor = batch_out_tensor.permute(0, 2, 3, 1).cpu()  # NHWC
-            upscaled_batches.append(batch_out_tensor)
+        upscaled_frames = []
+        for i in range(n_frames):
+            # float [0,1] RGB NHWC -> uint8 BGR for ESRGAN
+            frame = (images[i].cpu().numpy() * 255).clip(0, 255).astype(np.uint8)
+            frame_bgr = frame[:, :, ::-1].copy()
 
-            if (i // batch_size) % 10 == 0:
-                logger.info("  RTX VSR progress: %d/%d frames", min(i + batch_size, n_frames), n_frames)
+            output_bgr, _ = upsampler.enhance(frame_bgr, outscale=scale)
 
-    upscaled = torch.cat(upscaled_batches, dim=0)
+            # uint8 BGR -> float [0,1] RGB
+            output_rgb = output_bgr[:, :, ::-1].copy().astype(np.float32) / 255.0
+            upscaled_frames.append(torch.from_numpy(output_rgb))
 
-    # Cleanup
-    torch.cuda.empty_cache()
+            if (i + 1) % 20 == 0 or i == n_frames - 1:
+                logger.info("  Real-ESRGAN progress: %d/%d frames", i + 1, n_frames)
+
+        # Cleanup ESRGAN model from VRAM
+        del upsampler
+        torch.cuda.empty_cache()
+
+        result = torch.stack(upscaled_frames, dim=0)
+
+        # Real-ESRGAN outscale can produce approximate dimensions;
+        # resize to exact target so output matches nvvfx/bicubic paths.
+        if result.shape[1] != target_h or result.shape[2] != target_w:
+            logger.info("Real-ESRGAN: resizing %dx%d -> exact %dx%d",
+                        result.shape[2], result.shape[1], target_w, target_h)
+            result = torch.nn.functional.interpolate(
+                result.permute(0, 3, 1, 2),
+                size=(target_h, target_w),
+                mode="bicubic", align_corners=False,
+            ).clamp(0, 1).permute(0, 2, 3, 1)
+
+        elapsed = time.time() - t0
+        logger.info("Real-ESRGAN done in %.1fs (%.2f fps, %d frames -> %dx%d)",
+                    elapsed, n_frames / elapsed if elapsed > 0 else 0,
+                    n_frames, result.shape[2], result.shape[1])
+        return result
+
+    except ImportError:
+        logger.info("Real-ESRGAN not installed (pip install realesrgan). Trying fallbacks...")
+    except Exception as e:
+        logger.warning("Real-ESRGAN failed: %s. Trying fallbacks...", e)
+
+    # --- Strategy 2: nvvfx (NVIDIA VFX SDK, if manually installed) ---
+    try:
+        import nvvfx
+
+        logger.info("nvvfx RTX VSR: %dx%d -> %dx%d (quality=%s) -- %d frames",
+                    w, h, target_w, target_h, quality, n_frames)
+
+        quality_mapping = {
+            "LOW": nvvfx.effects.QualityLevel.LOW,
+            "MEDIUM": nvvfx.effects.QualityLevel.MEDIUM,
+            "HIGH": nvvfx.effects.QualityLevel.HIGH,
+            "ULTRA": nvvfx.effects.QualityLevel.ULTRA,
+        }
+        selected_quality = quality_mapping.get(quality, nvvfx.effects.QualityLevel.ULTRA)
+
+        MAX_PIXELS = 1024 * 1024 * 16
+        out_pixels = target_w * target_h
+        batch_size = max(1, MAX_PIXELS // out_pixels)
+        upscaled_batches = []
+
+        with nvvfx.VideoSuperRes(selected_quality) as sr:
+            sr.output_width = target_w
+            sr.output_height = target_h
+            sr.load()
+
+            for i in range(0, n_frames, batch_size):
+                batch = images[i:i + batch_size]
+                batch_cuda = batch.cuda().permute(0, 3, 1, 2).contiguous()
+                batch_outputs = []
+                for j in range(batch_cuda.shape[0]):
+                    dlpack_out = sr.run(batch_cuda[j]).image
+                    batch_outputs.append(torch.from_dlpack(dlpack_out).clone())
+                batch_out = torch.stack(batch_outputs, dim=0).permute(0, 2, 3, 1).cpu()
+                upscaled_batches.append(batch_out)
+
+        result = torch.cat(upscaled_batches, dim=0)
+        torch.cuda.empty_cache()
+
+        elapsed = time.time() - t0
+        logger.info("nvvfx VSR done in %.1fs (%.2f fps, %d frames -> %dx%d)",
+                    elapsed, n_frames / elapsed if elapsed > 0 else 0,
+                    n_frames, target_w, target_h)
+        return result
+
+    except ImportError:
+        logger.info("nvvfx not installed. Falling back to bicubic...")
+    except Exception as e:
+        logger.warning("nvvfx failed: %s. Falling back to bicubic...", e)
+
+    # --- Strategy 3: Torch bicubic (always available, lower quality) ---
+    logger.info("Bicubic upscale: %dx%d -> %dx%d -- %d frames", w, h, target_w, target_h, n_frames)
+
+    imgs_nchw = images.permute(0, 3, 1, 2)  # NHWC -> NCHW
+    upscaled = torch.nn.functional.interpolate(
+        imgs_nchw, size=(target_h, target_w),
+        mode="bicubic", align_corners=False,
+    ).clamp(0, 1)
+    result = upscaled.permute(0, 2, 3, 1)  # NCHW -> NHWC
 
     elapsed = time.time() - t0
-    fps_rate = n_frames / elapsed if elapsed > 0 else 0
-    logger.info("RTX VSR upscale done in %.1fs (%.2f frames/sec, %d frames -> %dx%d)",
-                elapsed, fps_rate, n_frames, target_w, target_h)
-    return upscaled
+    logger.info("Bicubic upscale done in %.1fs (%d frames -> %dx%d)",
+                elapsed, n_frames, target_w, target_h)
+    return result
 
 
 def _crossfade_images(all_images, overlap_frames):
@@ -497,6 +584,20 @@ def _crossfade_audio(audio_list, overlap_frames, fps):
     overlap_samples = int(overlap_sec * sr)
 
     waveforms = [a["waveform"] for a in valid]
+
+    # Normalize channel counts — expand mono to match max channels so cat won't fail
+    max_ch = max(wf.shape[-2] if wf.dim() >= 2 else 1 for wf in waveforms)
+    normalised = []
+    for wf in waveforms:
+        if wf.dim() == 1:
+            wf = wf.unsqueeze(0)
+        if wf.dim() == 2 and wf.shape[0] < max_ch:
+            wf = wf.expand(max_ch, -1).contiguous()
+        elif wf.dim() == 3 and wf.shape[1] < max_ch:
+            wf = wf.expand(-1, max_ch, -1).contiguous()
+        normalised.append(wf)
+    waveforms = normalised
+
     result_parts = []
 
     for i, wf in enumerate(waveforms):
@@ -575,7 +676,18 @@ def _concat_audio(audio_list):
                     resampled = resampled.squeeze(0)
                 a["waveform"] = resampled
         waveforms = [a["waveform"] for a in valid]
-        combined = torch.cat(waveforms, dim=-1)
+        # Normalize channel counts before concat
+        max_ch = max(wf.shape[-2] if wf.dim() >= 2 else 1 for wf in waveforms)
+        norm_wf = []
+        for wf in waveforms:
+            if wf.dim() == 1:
+                wf = wf.unsqueeze(0)
+            if wf.dim() == 2 and wf.shape[0] < max_ch:
+                wf = wf.expand(max_ch, -1).contiguous()
+            elif wf.dim() == 3 and wf.shape[1] < max_ch:
+                wf = wf.expand(-1, max_ch, -1).contiguous()
+            norm_wf.append(wf)
+        combined = torch.cat(norm_wf, dim=-1)
         return {"waveform": combined, "sample_rate": sr}
 
     if all(isinstance(a, torch.Tensor) for a in valid):
@@ -650,6 +762,18 @@ class DMMVideoConcat:
             if i == 0:
                 fps = clip_fps
 
+        # Validate crossfade_frames
+        crossfade_frames = max(0, int(crossfade_frames))
+
+        # Clamp crossfade to half the shortest clip so we never produce empty tensors
+        if crossfade_frames > 0 and len(all_images) > 1:
+            min_frames = min(img.shape[0] for img in all_images if isinstance(img, torch.Tensor))
+            safe_overlap = min_frames // 2
+            if crossfade_frames > safe_overlap:
+                logger.warning("Crossfade %d exceeds safe limit (%d); clamping to %d",
+                               crossfade_frames, safe_overlap, safe_overlap)
+                crossfade_frames = safe_overlap
+
         # Ensure all frame tensors match spatial dimensions
         if all(isinstance(img, torch.Tensor) for img in all_images):
             ref_shape = all_images[0].shape[1:]  # (H, W, C)
@@ -697,16 +821,8 @@ class DMMVideoConcat:
                     target_resolution=int(upscale_resolution),
                     quality=upscale_quality,
                 )
-            except ImportError as e:
-                logger.warning(
-                    "DMM_VideoConcat: nvvfx not available -- %s. "
-                    "Skipping upscale. Install Nvidia_RTX_Nodes_ComfyUI "
-                    "and its requirements.",
-                    e,
-                )
             except Exception as e:
-                logger.error("DMM_VideoConcat: RTX VSR upscale failed: %s", e)
-                logger.warning("Continuing without upscale.")
+                logger.error("DMM_VideoConcat: upscale failed: %s", e)
 
         total_frames = combined_images.shape[0]
         duration = total_frames / fps
