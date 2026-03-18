@@ -23,7 +23,7 @@ Author: Jeffrey A. Brick
 Hardware target: Lenovo Legion Pro 7i Gen 10 (RTX 5080 / Win11)
 """
 
-DMM_VERSION = "3.6-beta"
+DMM_VERSION = "3.6"
 
 import os
 import traceback

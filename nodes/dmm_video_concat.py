@@ -1,12 +1,12 @@
 """
 DMM_VideoConcat – Concatenate up to 6 VIDEO clips into one inside ComfyUI.
 
-v3.6-beta:
+v3.6:
   - RTX Video Super Resolution upscaler (nvvfx, hardware-accelerated Tensor Cores)
   - Crossfade dissolve transitions between clips (configurable overlap)
   - Audio crossfade matches video overlap for seamless transitions
 
-v3.5-beta (legacy):
+v3.5 (legacy):
   - SeedVR2 diffusion upscaler replaced with RTX VSR for faster, lighter upscaling
 
 The VIDEO type is a VideoFromComponents object from comfy_api with methods:

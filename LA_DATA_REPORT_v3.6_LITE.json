@@ -1,8 +1,8 @@
 {
   "id": "c35a0af8-5080-437e-8c4a-b14e321bd288",
   "revision": 0,
-  "last_node_id": 45,
-  "last_link_id": 79,
+  "last_node_id": 47,
+  "last_link_id": 83,
   "nodes": [
     {
       "id": 1,
@@ -1770,9 +1770,8 @@
       ],
       "widgets_values": [
         "disabled",
+        "2160",
         "HIGH",
-        1920,
-        1080,
         12
       ],
       "properties": {
@@ -1818,14 +1817,14 @@
       ],
       "outputs": [],
       "widgets_values": [
-        "LA_DATA_REPORT_v3.4_LITE",
+        "LA_DATA_REPORT_v3.6_LITE",
         "auto",
         "auto"
       ],
       "properties": {
         "Node name for S&R": "SaveVideo"
       },
-      "title": "Save: LA Data Report v3.4"
+      "title": "Save: LA Data Report v3.6-beta"
     },
     {
       "id": 35,
@@ -2003,8 +2002,8 @@
           "name": "narration_text",
           "type": "STRING",
           "links": [
-            73,
-            77
+            77,
+            82
           ],
           "slot_index": 0
         }
@@ -2036,7 +2035,7 @@
         {
           "name": "text",
           "type": "STRING",
-          "link": 73,
+          "link": 83,
           "widget": {
             "name": "text"
           }
@@ -2107,7 +2106,7 @@
         {
           "name": "background_music",
           "type": "AUDIO",
-          "link": 79
+          "link": 81
         }
       ],
       "outputs": [
@@ -2238,7 +2237,7 @@
           "name": "music",
           "type": "AUDIO",
           "links": [
-            79
+            80
           ],
           "slot_index": 0
         }
@@ -2256,6 +2255,104 @@
         "Node name for S&R": "DMM_BackgroundMusic"
       },
       "title": "Background Music: Seventy-Six Cities"
+    },
+    {
+      "id": 46,
+      "type": "DMM_MusicEnhancer",
+      "pos": [
+        1460,
+        -150
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 29,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 80
+        },
+        {
+          "name": "strength",
+          "type": "FLOAT",
+          "widget": {
+            "name": "strength"
+          }
+        },
+        {
+          "name": "mix",
+          "type": "FLOAT",
+          "widget": {
+            "name": "mix"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "enhanced_audio",
+          "type": "AUDIO",
+          "links": [
+            81
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "Music Enhancer (MusicGen)",
+      "properties": {
+        "Node name for S&R": "DMM_MusicEnhancer"
+      },
+      "widgets_values": [
+        0.2,
+        0.65,
+        "",
+        -1,
+        20
+      ],
+      "color": "#2a363b",
+      "bgcolor": "#3f5159"
+    },
+    {
+      "id": 47,
+      "type": "DMM_NarrationRefiner",
+      "pos": [
+        860.0,
+        -350.0
+      ],
+      "size": [
+        315,
+        100
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "narration_text",
+          "type": "STRING",
+          "link": 82
+        }
+      ],
+      "outputs": [
+        {
+          "name": "narration_text",
+          "type": "STRING",
+          "links": [
+            83
+          ],
+          "slot_index": 0
+        }
+      ],
+      "widgets_values": [
+        "Phi-3-mini",
+        "late_night_radio"
+      ],
+      "properties": {
+        "Node name for S&R": "DMM_NarrationRefiner"
+      }
     }
   ],
   "links": [
@@ -2828,14 +2925,6 @@
       "STRING"
     ],
     [
-      73,
-      40,
-      0,
-      41,
-      0,
-      "STRING"
-    ],
-    [
       74,
       41,
       0,
@@ -2884,12 +2973,36 @@
       "VIDEO"
     ],
     [
-      79,
+      80,
       45,
+      0,
+      46,
+      0,
+      "AUDIO"
+    ],
+    [
+      81,
+      46,
       0,
       42,
       2,
       "AUDIO"
+    ],
+    [
+      82,
+      40,
+      0,
+      47,
+      0,
+      "STRING"
+    ],
+    [
+      83,
+      47,
+      0,
+      41,
+      0,
+      "STRING"
     ]
   ],
   "groups": [

@@ -1817,14 +1817,14 @@
       ],
       "outputs": [],
       "widgets_values": [
-        "LA_DATA_REPORT_v3.5_BETA",
+        "LA_DATA_REPORT_v3.6",
         "auto",
         "auto"
       ],
       "properties": {
         "Node name for S&R": "SaveVideo"
       },
-      "title": "Save: LA Data Report v3.5-beta"
+      "title": "Save: LA Data Report v3.6-beta"
     },
     {
       "id": 35,
