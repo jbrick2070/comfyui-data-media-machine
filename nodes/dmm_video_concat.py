@@ -320,7 +320,56 @@ def _rtx_upscale(images, target_resolution=2160, quality="ULTRA"):
 
     t0 = time.time()
 
-    # --- Strategy 1: Real-ESRGAN (auto-downloads model weights) ---
+    # --- Strategy 1: nvvfx RTX VSR (hardware-accelerated, fastest on RTX GPUs) ---
+    try:
+        import nvvfx
+
+        logger.info("nvvfx RTX VSR: %dx%d -> %dx%d (quality=%s) -- %d frames",
+                    w, h, target_w, target_h, quality, n_frames)
+
+        quality_mapping = {
+            "LOW": nvvfx.effects.QualityLevel.LOW,
+            "MEDIUM": nvvfx.effects.QualityLevel.MEDIUM,
+            "HIGH": nvvfx.effects.QualityLevel.HIGH,
+            "ULTRA": nvvfx.effects.QualityLevel.ULTRA,
+        }
+        selected_quality = quality_mapping.get(quality, nvvfx.effects.QualityLevel.ULTRA)
+
+        MAX_PIXELS = 1024 * 1024 * 16
+        out_pixels = target_w * target_h
+        batch_size = max(1, MAX_PIXELS // out_pixels)
+        upscaled_batches = []
+
+        with nvvfx.VideoSuperRes(selected_quality) as sr:
+            sr.output_width = target_w
+            sr.output_height = target_h
+            sr.load()
+
+            for i in range(0, n_frames, batch_size):
+                batch = images[i:i + batch_size]
+                batch_cuda = batch.cuda().permute(0, 3, 1, 2).contiguous()
+                batch_outputs = []
+                for j in range(batch_cuda.shape[0]):
+                    dlpack_out = sr.run(batch_cuda[j]).image
+                    batch_outputs.append(torch.from_dlpack(dlpack_out).clone())
+                batch_out = torch.stack(batch_outputs, dim=0).permute(0, 2, 3, 1).cpu()
+                upscaled_batches.append(batch_out)
+
+        result = torch.cat(upscaled_batches, dim=0)
+        torch.cuda.empty_cache()
+
+        elapsed = time.time() - t0
+        logger.info("nvvfx VSR done in %.1fs (%.2f fps, %d frames -> %dx%d)",
+                    elapsed, n_frames / elapsed if elapsed > 0 else 0,
+                    n_frames, target_w, target_h)
+        return result
+
+    except ImportError:
+        logger.info("nvvfx not installed. Trying Real-ESRGAN...")
+    except Exception as e:
+        logger.warning("nvvfx failed: %s. Trying Real-ESRGAN...", e)
+
+    # --- Strategy 2: Real-ESRGAN (auto-downloads model weights, frame-by-frame) ---
     try:
         # torchvision >= 0.16 removed functional_tensor; patch it before basicsr imports it
         import sys as _sys
@@ -390,58 +439,9 @@ def _rtx_upscale(images, target_resolution=2160, quality="ULTRA"):
         return result
 
     except ImportError:
-        logger.info("Real-ESRGAN not installed (pip install realesrgan). Trying fallbacks...")
+        logger.info("Real-ESRGAN not installed. Falling back to bicubic...")
     except Exception as e:
-        logger.warning("Real-ESRGAN failed: %s. Trying fallbacks...", e)
-
-    # --- Strategy 2: nvvfx (NVIDIA VFX SDK, if manually installed) ---
-    try:
-        import nvvfx
-
-        logger.info("nvvfx RTX VSR: %dx%d -> %dx%d (quality=%s) -- %d frames",
-                    w, h, target_w, target_h, quality, n_frames)
-
-        quality_mapping = {
-            "LOW": nvvfx.effects.QualityLevel.LOW,
-            "MEDIUM": nvvfx.effects.QualityLevel.MEDIUM,
-            "HIGH": nvvfx.effects.QualityLevel.HIGH,
-            "ULTRA": nvvfx.effects.QualityLevel.ULTRA,
-        }
-        selected_quality = quality_mapping.get(quality, nvvfx.effects.QualityLevel.ULTRA)
-
-        MAX_PIXELS = 1024 * 1024 * 16
-        out_pixels = target_w * target_h
-        batch_size = max(1, MAX_PIXELS // out_pixels)
-        upscaled_batches = []
-
-        with nvvfx.VideoSuperRes(selected_quality) as sr:
-            sr.output_width = target_w
-            sr.output_height = target_h
-            sr.load()
-
-            for i in range(0, n_frames, batch_size):
-                batch = images[i:i + batch_size]
-                batch_cuda = batch.cuda().permute(0, 3, 1, 2).contiguous()
-                batch_outputs = []
-                for j in range(batch_cuda.shape[0]):
-                    dlpack_out = sr.run(batch_cuda[j]).image
-                    batch_outputs.append(torch.from_dlpack(dlpack_out).clone())
-                batch_out = torch.stack(batch_outputs, dim=0).permute(0, 2, 3, 1).cpu()
-                upscaled_batches.append(batch_out)
-
-        result = torch.cat(upscaled_batches, dim=0)
-        torch.cuda.empty_cache()
-
-        elapsed = time.time() - t0
-        logger.info("nvvfx VSR done in %.1fs (%.2f fps, %d frames -> %dx%d)",
-                    elapsed, n_frames / elapsed if elapsed > 0 else 0,
-                    n_frames, target_w, target_h)
-        return result
-
-    except ImportError:
-        logger.info("nvvfx not installed. Falling back to bicubic...")
-    except Exception as e:
-        logger.warning("nvvfx failed: %s. Falling back to bicubic...", e)
+        logger.warning("Real-ESRGAN failed: %s. Falling back to bicubic...", e)
 
     # --- Strategy 3: Torch bicubic (always available, lower quality) ---
     logger.info("Bicubic upscale: %dx%d -> %dx%d -- %d frames", w, h, target_w, target_h, n_frames)
@@ -720,7 +720,7 @@ class DMMVideoConcat:
                 "video_1": ("VIDEO",),
                 "upscale_4k": (["disabled", "enabled"], {"default": "disabled",
                                "tooltip": "Upscale final stitched video via NVIDIA RTX Video Super Resolution (hardware-accelerated Tensor Core upscaling)"}),
-                "upscale_resolution": (["1080", "1440", "2160", "4320"], {"default": "2160",
+                "upscale_resolution": (["1080", "1440", "2160", "4320"], {"default": "1080",
                                        "tooltip": "Target height: 1080=HD, 1440=2K, 2160=4K, 4320=8K"}),
                 "upscale_quality": (["LOW", "MEDIUM", "HIGH", "ULTRA"], {"default": "ULTRA",
                                     "tooltip": "RTX VSR quality level. ULTRA = best quality, LOW = fastest. All levels are fast on RTX GPUs."}),
