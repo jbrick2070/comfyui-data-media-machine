@@ -1,9 +1,18 @@
 """
-DMMAirQualityFetch — Real-time air quality from Open-Meteo.
-NO API KEY NEEDED.
+DMMAirQualityFetch — Air quality from Open-Meteo (model) or AirNow (sensor).
 
-Endpoint: https://air-quality-api.open-meteo.com/v1/air-quality
-Returns: PM2.5, PM10, US AQI, European AQI, UV index, etc.
+Tier 1 (default, no key): Open-Meteo model-based AQ
+  Endpoint: https://air-quality-api.open-meteo.com/v1/air-quality
+
+Tier 2 (optional, free key): EPA AirNow real sensor data
+  Endpoint: https://www.airnowapi.org/aq/observation/latLong/current/
+  Key stored in: config.json → airnow_api_key
+  Register free at: https://docs.airnowapi.org/
+
+v3.5 changes:
+  - Added AirNow sensor source (real EPA monitor data)
+  - Auto-loads API key from config.json if present
+  - Falls back to Open-Meteo if key missing or AirNow fails
 
 Creative use: AQI drives haze/clarity in visuals, UV drives lighting intensity.
 """
@@ -35,14 +44,16 @@ class DMMAirQualityFetch:
         return {
             "required": {
                 "config": ("DMM_CONFIG",),
-                "source": (["open_meteo", "demo_clean", "demo_smoggy",
-                            "demo_hazardous", "demo_random"],),
+                "source": (["open_meteo", "airnow_sensor", "demo_clean",
+                            "demo_smoggy", "demo_hazardous", "demo_random"],),
             },
         }
 
     def fetch_air_quality(self, config, source):
         if source.startswith("demo_"):
             data = self._demo_aq(source, config)
+        elif source == "airnow_sensor":
+            data = self._fetch_airnow(config)
         elif source == "open_meteo":
             data = self._fetch_open_meteo_aq(config)
         else:
@@ -107,6 +118,83 @@ class DMMAirQualityFetch:
             "aqi_label": label,
             "creative_desc": creative_desc,
             "source": "open_meteo",
+            "live": True,
+        }
+
+    def _load_api_key(self, key_name):
+        """Load an API key from config.json next to the media_machine package."""
+        import os, json
+        config_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "config.json"
+        )
+        if not os.path.exists(config_path):
+            return None
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+            return cfg.get(key_name)
+        except Exception:
+            return None
+
+    def _fetch_airnow(self, config):
+        """
+        EPA AirNow — REAL SENSOR DATA. Requires free API key in config.json.
+        Falls back to Open-Meteo if key missing or request fails.
+        """
+        api_key = self._load_api_key("airnow_api_key")
+        if not api_key:
+            print("[DMM AirQ] No AirNow API key in config.json, falling back to Open-Meteo")
+            return self._fetch_open_meteo_aq(config)
+
+        url = (
+            f"https://www.airnowapi.org/aq/observation/latLong/current/"
+            f"?format=application/json"
+            f"&latitude={config['lat']}&longitude={config['lon']}"
+            f"&distance=25"
+            f"&API_KEY={api_key}"
+        )
+
+        raw = self._http_get_json(url)
+        if raw is None or not isinstance(raw, list) or len(raw) == 0:
+            print("[DMM AirQ] AirNow failed, falling back to Open-Meteo")
+            return self._fetch_open_meteo_aq(config)
+
+        # Parse AirNow response — each entry is one pollutant
+        # e.g. [{"ParameterName": "O3", "AQI": 22, ...}, {"ParameterName": "PM2.5", ...}]
+        sensor_data = {}
+        reporting_area = ""
+        for entry in raw:
+            param = entry.get("ParameterName", "")
+            aqi_val = entry.get("AQI", -1)
+            reporting_area = entry.get("ReportingArea", reporting_area)
+            if param == "O3":
+                sensor_data["ozone_aqi"] = aqi_val
+            elif param == "PM2.5":
+                sensor_data["pm25_aqi"] = aqi_val
+            elif param == "PM10":
+                sensor_data["pm10_aqi"] = aqi_val
+
+        # Use the highest AQI as overall
+        aqi_values = [v for v in sensor_data.values() if v >= 0]
+        us_aqi = max(aqi_values) if aqi_values else 50
+        label, creative_desc = self._aqi_to_label(us_aqi)
+
+        return {
+            "us_aqi": us_aqi,
+            "eu_aqi": int(us_aqi * 0.8),  # rough conversion
+            "pm25": sensor_data.get("pm25_aqi", 0),
+            "pm10": sensor_data.get("pm10_aqi", 0),
+            "ozone": sensor_data.get("ozone_aqi", 0),
+            "no2": 0,   # AirNow basic doesn't return these
+            "so2": 0,
+            "co": 0,
+            "uv_index": 0,
+            "aqi_label": label,
+            "creative_desc": creative_desc,
+            "reporting_area": reporting_area,
+            "data_type": "sensor",
+            "source": "airnow_sensor",
             "live": True,
         }
 

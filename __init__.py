@@ -68,6 +68,8 @@ _NODE_MODULES = {
     "DMM_ProceduralClip":      (".nodes.dmm_procedural_clip", "DMMProceduralClip"),
     # v3.4.1 background music (MIDI synth)
     "DMM_BackgroundMusic":     (".nodes.dmm_background_music", "DMMBackgroundMusic"),
+    # v3.5 energy grid (CAISO)
+    "DMM_EnergyGrid":          (".nodes.dmm_energy_grid", "DMMEnergyGrid"),
 }
 
 # Display names with emoji for the ComfyUI menu
@@ -102,6 +104,8 @@ _DISPLAY_NAMES = {
     "DMM_ProceduralClip":      "\U0001f3ac DMM: Procedural Clip (LA Style)",
     # v3.4.1 background music
     "DMM_BackgroundMusic":     "\U0001f3b5 DMM: Background Music (MIDI)",
+    # v3.5 energy grid
+    "DMM_EnergyGrid":          "\u26a1 DMM: Energy Grid (CAISO Live)",
 }
 
 for node_name, (module_path, class_name) in _NODE_MODULES.items():
