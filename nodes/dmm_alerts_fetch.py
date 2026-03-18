@@ -1,12 +1,18 @@
 """
-DMMAlertsFetch — Active NWS weather alerts for the configured area.
+DMMAlertsFetch — Active NWS weather alerts + CAL FIRE incidents.
 NO API KEY NEEDED.
 
-Endpoint: https://api.weather.gov/alerts/active
-Returns watches, warnings, advisories, statements for the location.
+Endpoints:
+  NWS: https://api.weather.gov/alerts/active
+  CAL FIRE: https://incidents.fire.ca.gov/umbraco/api/IncidentApi/GeoJsonList
+
+v3.5 changes:
+  - Added CAL FIRE wildfire incident feed (GeoJSON, no key, filters by distance)
+  - NWS + CAL FIRE merged into unified alert output when source="nws_live"
+  - New source option: "calfire_only" for fire-specific queries
 
 Creative use: Alert severity → narrative urgency, red alerts → visual distortion,
-multiple active alerts → layered tension.
+multiple active alerts → layered tension, active fires → smoke/haze overlays.
 """
 
 import time
@@ -30,8 +36,9 @@ class DMMAlertsFetch:
         return {
             "required": {
                 "config": ("DMM_CONFIG",),
-                "source": (["nws_live", "demo_clear", "demo_heat_advisory",
-                            "demo_fire_warning", "demo_multi_alert"],),
+                "source": (["nws_live", "calfire_only", "demo_clear",
+                            "demo_heat_advisory", "demo_fire_warning",
+                            "demo_multi_alert"],),
             },
         }
 
@@ -40,6 +47,29 @@ class DMMAlertsFetch:
             data = self._demo_alerts(source, config)
         elif source == "nws_live":
             data = self._fetch_nws_alerts(config)
+            # v3.5: Merge CAL FIRE incidents into NWS alerts
+            fire_data = self._fetch_calfire(config)
+            if fire_data.get("fire_incidents"):
+                for fire in fire_data["fire_incidents"]:
+                    data["alerts"].append(fire)
+                    data["count"] += 1
+                data["fire_count"] = fire_data["fire_count"]
+                data["nearest_fire"] = fire_data.get("nearest_fire")
+                # Re-sort by severity after merge
+                data["alerts"].sort(
+                    key=lambda a: self._SEVERITY_ORDER.get(a["severity"], 0),
+                    reverse=True
+                )
+                data["alerts"] = data["alerts"][:8]  # cap at 8
+                # Update top event if fire is more severe
+                if data["alerts"]:
+                    data["top_event"] = data["alerts"][0]["event"]
+                    data["top_headline"] = data["alerts"][0]["headline"]
+            else:
+                data["fire_count"] = 0
+                data["nearest_fire"] = None
+        elif source == "calfire_only":
+            data = self._fetch_calfire_standalone(config)
         else:
             data = self._demo_alerts("demo_clear", config)
 
@@ -135,6 +165,124 @@ class DMMAlertsFetch:
             "top_event": alerts[0]["event"] if alerts else "None",
             "top_headline": alerts[0]["headline"] if alerts else "No active alerts",
             "source": "nws_live",
+            "live": True,
+        }
+
+    def _fetch_calfire(self, config):
+        """
+        CAL FIRE Active Incidents — NO KEY NEEDED.
+        GeoJSON endpoint, filter by distance to configured lat/lon.
+        Returns fire incidents normalized to the same alert schema.
+        """
+        import math
+
+        url = "https://incidents.fire.ca.gov/umbraco/api/IncidentApi/GeoJsonList?inactive=false"
+        raw = self._http_get_json(url, timeout=10)
+        if raw is None or "features" not in raw:
+            print("[DMM Alerts] CAL FIRE API failed or empty")
+            return {"fire_incidents": [], "fire_count": 0, "nearest_fire": None}
+
+        fires = []
+        lat0, lon0 = config["lat"], config["lon"]
+        for f in raw["features"]:
+            props = f.get("properties", {})
+            coords = f.get("geometry", {}).get("coordinates", [0, 0])
+            fire_lat = props.get("Latitude", coords[1] if len(coords) > 1 else 0)
+            fire_lon = props.get("Longitude", coords[0] if len(coords) > 0 else 0)
+
+            # Distance in miles (haversine approximation)
+            dlat = math.radians(fire_lat - lat0)
+            dlon = math.radians(fire_lon - lon0)
+            a = (math.sin(dlat / 2) ** 2 +
+                 math.cos(math.radians(lat0)) * math.cos(math.radians(fire_lat)) *
+                 math.sin(dlon / 2) ** 2)
+            dist_miles = 3959 * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+            # Only include fires within 200 miles
+            if dist_miles > 200:
+                continue
+
+            acres = props.get("AcresBurned", 0) or 0
+            contained = props.get("PercentContained", 0) or 0
+
+            # Map fire size to alert severity
+            if acres >= 1000 and contained < 50:
+                severity = "Extreme"
+            elif acres >= 500 or contained < 30:
+                severity = "Severe"
+            elif acres >= 100:
+                severity = "Moderate"
+            else:
+                severity = "Minor"
+
+            fires.append({
+                "event": f"Wildfire: {props.get('Name', 'Unknown')}",
+                "headline": (f"{props.get('Name', 'Unknown')} Fire — "
+                             f"{int(acres)} acres, {int(contained)}% contained, "
+                             f"{int(dist_miles)} mi away"),
+                "severity": severity,
+                "urgency": "Immediate" if contained < 50 else "Expected",
+                "certainty": "Observed",
+                "description": (f"{props.get('Type', 'Wildfire')} in "
+                                f"{props.get('County', 'Unknown')} County. "
+                                f"{props.get('Location', '')}. "
+                                f"Admin: {props.get('AdminUnit', '')}"),
+                "instruction": "",
+                "area": f"{props.get('County', 'Unknown')} County",
+                "sender_name": props.get("AdminUnit", "CAL FIRE"),
+                "effective": props.get("Started", ""),
+                "expires": "",
+                "source_type": "calfire",
+                "acres_burned": acres,
+                "percent_contained": contained,
+                "distance_miles": round(dist_miles, 1),
+                "fire_lat": fire_lat,
+                "fire_lon": fire_lon,
+            })
+
+        fires.sort(key=lambda f: f["distance_miles"])
+        nearest = fires[0] if fires else None
+
+        return {
+            "fire_incidents": fires[:5],  # top 5 nearest
+            "fire_count": len(fires),
+            "nearest_fire": {
+                "name": nearest["event"],
+                "distance_miles": nearest["distance_miles"],
+                "acres": nearest["acres_burned"],
+                "contained": nearest["percent_contained"],
+            } if nearest else None,
+        }
+
+    def _fetch_calfire_standalone(self, config):
+        """CAL FIRE as sole alert source (no NWS merge)."""
+        fire_data = self._fetch_calfire(config)
+        alerts = fire_data.get("fire_incidents", [])
+
+        if not alerts:
+            alert_level, alert_mood = "all_clear", "no active fires in region"
+        else:
+            top = alerts[0]["severity"]
+            if top == "Extreme":
+                alert_level = "extreme"
+                alert_mood = "active wildfire emergency, extreme danger"
+            elif top == "Severe":
+                alert_level = "severe"
+                alert_mood = "significant wildfire activity, heightened alert"
+            else:
+                alert_level = "moderate"
+                alert_mood = "fire activity in region, monitor conditions"
+
+        return {
+            "alerts": alerts,
+            "count": len(alerts),
+            "alert_level": alert_level,
+            "alert_mood": alert_mood,
+            "top_event": alerts[0]["event"] if alerts else "None",
+            "top_headline": alerts[0]["headline"] if alerts else "No active fires",
+            "fire_count": fire_data["fire_count"],
+            "nearest_fire": fire_data.get("nearest_fire"),
+            "source": "calfire_live",
             "live": True,
         }
 

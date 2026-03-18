@@ -149,6 +149,24 @@ class DMMEarthquakeFetch:
         else:
             seismic_mood = "seismically quiet, stable ground"
 
+        # v3.5: Derived seismic context fields (no new API call)
+        # Computed from the same USGS data for richer narrative input
+        felt_reports = sum(1 for q in quakes if q.get("felt"))
+        total_felt = sum(q.get("felt", 0) or 0 for q in quakes)
+        depths = [q["depth_km"] for q in quakes if q.get("depth_km")]
+        avg_depth = round(sum(depths) / len(depths), 1) if depths else 0
+        sigs = [q.get("sig", 0) for q in quakes]
+        max_sig = max(sigs) if sigs else 0
+        tsunami_flags = sum(1 for q in quakes if q.get("tsunami"))
+
+        # Seismic intensity index: 0.0 (dead quiet) to 1.0 (major event)
+        # Weighted blend of count, max magnitude, and felt reports
+        intensity = min(1.0, (
+            (len(quakes) / 20.0) * 0.3 +
+            (max_mag / 7.0) * 0.5 +
+            (min(total_felt, 1000) / 1000.0) * 0.2
+        ))
+
         return {
             "quakes": quakes[:10],  # top 10 most recent
             "count": len(quakes),
@@ -157,6 +175,14 @@ class DMMEarthquakeFetch:
             "seismic_mood": seismic_mood,
             "lookback_hours": lookback_hours,
             "radius_km": radius_km,
+            # v3.5 derived fields
+            "seismic_intensity": round(intensity, 3),
+            "felt_quake_count": felt_reports,
+            "total_felt_reports": total_felt,
+            "avg_depth_km": avg_depth,
+            "max_significance": max_sig,
+            "tsunami_flags": tsunami_flags,
+            "strongest_place": quakes[0]["place"] if quakes and max_mag > 0 else "none",
             "source": "usgs_live",
             "live": True,
         }
