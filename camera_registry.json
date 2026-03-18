@@ -1,2062 +1,2154 @@
-﻿{
-    "_comment":  "DMM Camera Registry v3.5-beta. Caltrans D7 CCTV + Weingart Skid Row + ABC7 KABC + YouTube live thumbnails + HPWREN Mt. Wilson. Generated 2026-03-17.",
-    "weather":  [
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405368waterfordst/i405368waterfordst.jpg",
-                        "label":  "I-405 : (368) Waterford St",
-                        "distance_miles":  6.3,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1095centinelaaveonramp/i1095centinelaaveonramp.jpg",
-                        "label":  "I-10: (95) Centinela Ave On-Ramp",
-                        "distance_miles":  6.5,
-                        "nearby":  "Santa Monica Airport",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405369northofsunsetblvd/i405369northofsunsetblvd.jpg",
-                        "label":  "I-405 : (369) North of Sunset Blvd",
-                        "distance_miles":  6.9,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10105eocloverfieldblvd/i10105eocloverfieldblvd.jpg",
-                        "label":  "I-10 : (105) E/O Cloverfield Blvd",
-                        "distance_miles":  7.3,
-                        "nearby":  "Sawtelle",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1010420thst/i1010420thst.jpg",
-                        "label":  "I-10 : (104) 20th St",
-                        "distance_miles":  7.7,
-                        "nearby":  "Mid City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405671belaircrestdrive/i405671belaircrestdrive.jpg",
-                        "label":  "I-405 : (671) Bel Air Crest Drive",
-                        "distance_miles":  8.2,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10103lincolnblvd/i10103lincolnblvd.jpg",
-                        "label":  "I-10: (103) Lincoln Blvd",
-                        "distance_miles":  8.4,
-                        "nearby":  "Santa Monica",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10100olympicblvd/i10100olympicblvd.jpg",
-                        "label":  "I-10: (100) Olympic Blvd",
-                        "distance_miles":  8.7,
-                        "nearby":  "Santa Monica City Hall",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10102mcclureeast/i10102mcclureeast.jpg",
-                        "label":  "I-10 : (102) Mcclure East",
-                        "distance_miles":  9,
-                        "nearby":  "Santa Monica",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10101mcclurewest/i10101mcclurewest.jpg",
-                        "label":  "I-10 : (101) Mcclure West",
-                        "distance_miles":  9.1,
-                        "nearby":  "Santa Monica",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr17096victoryblvd/sr17096victoryblvd.jpg",
-                        "label":  "SR-170 : (96) Victory Blvd",
-                        "distance_miles":  9.3,
-                        "nearby":  "Laurel Canyon Blvd",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1229californiaincline/sr1229californiaincline.jpg",
-                        "label":  "SR-1 : (229) California Incline",
-                        "distance_miles":  9.4,
-                        "nearby":  "Santa Monica",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101627sepulvedablvd/us101627sepulvedablvd.jpg",
-                        "label":  "US-101 : (627) Sepulveda Blvd",
-                        "distance_miles":  9.5,
-                        "nearby":  "Sherman Oaks",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405675venturablvd/i405675venturablvd.jpg",
-                        "label":  "I-405 : (675) Ventura Blvd",
-                        "distance_miles":  9.5,
-                        "nearby":  "Sherman Oaks",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1235beachhouse/sr1235beachhouse.jpg",
-                        "label":  "SR-1 : (235) Beach House",
-                        "distance_miles":  9.6,
-                        "nearby":  "Santa Monica",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405676northofus101/i405676northofus101.jpg",
-                        "label":  "I-405 : (676) North of US-101",
-                        "distance_miles":  10,
-                        "nearby":  "Van Nuys",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405677northofburbankblvd/i405677northofburbankblvd.jpg",
-                        "label":  "I-405 : (677) North of Burbank Blvd",
-                        "distance_miles":  10.3,
-                        "nearby":  "Van Nuys",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101631balboablvd/us101631balboablvd.jpg",
-                        "label":  "US-101 : (631) Balboa Blvd",
-                        "distance_miles":  11.5,
-                        "nearby":  "Encino",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1236topangacanyonrd/sr1236topangacanyonrd.jpg",
-                        "label":  "SR-1 : (236) Topanga Canyon Rd",
-                        "distance_miles":  13,
-                        "nearby":  "Topanga Beach",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1237tunacanyonrd/sr1237tunacanyonrd.jpg",
-                        "label":  "SR-1 : (237) Tuna Canyon Rd",
-                        "distance_miles":  13.6,
-                        "nearby":  "Las Tunas Beach",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101634tampaave/us101634tampaave.jpg",
-                        "label":  "US-101 : (634) Tampa Ave",
-                        "distance_miles":  13.9,
-                        "nearby":  "Tarzana",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1239bigrockdr/sr1239bigrockdr.jpg",
-                        "label":  "SR-1 : (239) Big Rock Dr",
-                        "distance_miles":  14.6,
-                        "nearby":  "Piedra Gorda Canyon",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1240wobigrockdr/sr1240wobigrockdr.jpg",
-                        "label":  "SR-1 : (240) W/O Big Rock Dr",
-                        "distance_miles":  14.9,
-                        "nearby":  "Big Rock Beach",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1241midblock/sr1241midblock.jpg",
-                        "label":  "SR-1 : (241) Mid Block",
-                        "distance_miles":  15.5,
-                        "nearby":  "Big Rock",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1242eolasflores/sr1242eolasflores.jpg",
-                        "label":  "SR-1 : (242) E/O Las Flores",
-                        "distance_miles":  16,
-                        "nearby":  "Las Flores Canyon",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1243lasfloresramblapacifico/sr1243lasfloresramblapacifico.jpg",
-                        "label":  "SR-1 : (243) Las Flores / Rambla Pacifico",
-                        "distance_miles":  16.2,
-                        "nearby":  "Las Flores Canyon",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1244lacosta/sr1244lacosta.jpg",
-                        "label":  "SR-1 : (244) La Costa",
-                        "distance_miles":  16.4,
-                        "nearby":  "La Costa",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1246carboncanyonrd/sr1246carboncanyonrd.jpg",
-                        "label":  "SR-1 : (246) Carbon Canyon Rd",
-                        "distance_miles":  16.9,
-                        "nearby":  "Carbon Canyon",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1247buschrealty/sr1247buschrealty.jpg",
-                        "label":  "SR-1 : (247) Busch Realty",
-                        "distance_miles":  17.4,
-                        "nearby":  "Carbon Beach",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1204pedcrossingeastmalibu/sr1204pedcrossingeastmalibu.jpg",
-                        "label":  "SR-1 : (204) PED Crossing East Malibu",
-                        "distance_miles":  17.7,
-                        "nearby":  "Eastern Malibu",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1249malibuinn/sr1249malibuinn.jpg",
-                        "label":  "SR-1 : (249) Malibu Inn",
-                        "distance_miles":  17.9,
-                        "nearby":  "Eastern Malibu",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1238bwmalibupiercrosscreekway/sr1238bwmalibupiercrosscreekway.jpg",
-                        "label":  "SR-1 : (238) B/W Malibu Pier \u0026 Cross Creek Way",
-                        "distance_miles":  18.3,
-                        "nearby":  "Malibu Pier",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1250malibupier/sr1250malibupier.jpg",
-                        "label":  "SR-1 : (250) Malibu Pier",
-                        "distance_miles":  18.3,
-                        "nearby":  "Malibu Pier",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1200crosscreekway/sr1200crosscreekway.jpg",
-                        "label":  "SR-1 : (200) Cross Creek Way",
-                        "distance_miles":  18.8,
-                        "nearby":  "Malibu Lagoon",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110795pchonramp/i110795pchonramp.jpg",
-                        "label":  "I-110 : (795) PCH On-Ramp",
-                        "distance_miles":  18.9,
-                        "nearby":  "Wilmington",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110794pchonramp/i110794pchonramp.jpg",
-                        "label":  "I-110 : (794) PCH On-Ramp",
-                        "distance_miles":  19,
-                        "nearby":  "Harbor City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110158pchofframp/i110158pchofframp.jpg",
-                        "label":  "I-110 : (158) PCH Off-Ramp",
-                        "distance_miles":  19.1,
-                        "nearby":  "Wilmington",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1201webbway/sr1201webbway.jpg",
-                        "label":  "SR-1 : (201) Webb Way",
-                        "distance_miles":  19.1,
-                        "nearby":  "Malibu",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i566towbrte210/i566towbrte210.jpg",
-                        "label":  "I-5 : (66) To WB RTE 210",
-                        "distance_miles":  19.6,
-                        "nearby":  "Sylmar",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1202malibucanyonrd/sr1202malibucanyonrd.jpg",
-                        "label":  "SR-1 : (202) Malibu Canyon Rd",
-                        "distance_miles":  19.8,
-                        "nearby":  "Pepperdine University",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1203johntylerdr/sr1203johntylerdr.jpg",
-                        "label":  "SR-1 : (203) John Tyler Dr",
-                        "distance_miles":  20.1,
-                        "nearby":  "Pepperdine University",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i710262southofpch/i710262southofpch.jpg",
-                        "label":  "I-710 : (262)  South of  PCH",
-                        "distance_miles":  20.2,
-                        "nearby":  "Long Beach",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr118697stearnsst/sr118697stearnsst.jpg",
-                        "label":  "SR-118 : (697) Stearns St",
-                        "distance_miles":  24.3,
-                        "nearby":  "Simi Valley",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101712westlakeblvd/us101712westlakeblvd.jpg",
-                        "label":  "US-101 : (712) West Lake Blvd",
-                        "distance_miles":  27.3,
-                        "nearby":  "Thousand Oaks",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101713conejoschool/us101713conejoschool.jpg",
-                        "label":  "US-101 : (713) Conejo School",
-                        "distance_miles":  28.6,
-                        "nearby":  "Thousand Oaks",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23736thousandoaksblvd/sr23736thousandoaksblvd.jpg",
-                        "label":  "SR-23 : (736) Thousand Oaks Blvd",
-                        "distance_miles":  29.4,
-                        "nearby":  "Thousand Oaks",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23734southofavenidadelosarboles/sr23734southofavenidadelosarboles.jpg",
-                        "label":  "SR-23 : (734) South of Avenida De Los Arboles",
-                        "distance_miles":  29.5,
-                        "nearby":  "Thousand Oaks",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23737jannsrd/sr23737jannsrd.jpg",
-                        "label":  "SR-23 : (737) Janns Rd",
-                        "distance_miles":  29.7,
-                        "nearby":  "Thousand Oaks",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23738pedersonrd/sr23738pedersonrd.jpg",
-                        "label":  "SR-23 : (738) Pederson Rd",
-                        "distance_miles":  29.7,
-                        "nearby":  "E Avenida De Los Arboles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23733southofpaigelane/sr23733southofpaigelane.jpg",
-                        "label":  "SR-23 : (733) South of Paige Lane",
-                        "distance_miles":  29.7,
-                        "nearby":  "Thousand Oaks",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cdns.abclocal.go.com/three/kabc/webcam/web1-1.jpg",
-                        "label":  "ABC7 KABC Weather Cam 1",
-                        "distance_miles":  3.5,
-                        "nearby":  "Los Angeles",
-                        "source":  "abc7"
-                    },
-                    {
-                        "url":  "https://cdns.abclocal.go.com/three/kabc/webcam/web1-2.jpg",
-                        "label":  "ABC7 KABC Weather Cam 2",
-                        "distance_miles":  3.5,
-                        "nearby":  "Los Angeles",
-                        "source":  "abc7"
-                    },
-                    {
-                        "url":  "https://cdns.abclocal.go.com/three/kabc/webcam/web2-1.jpg",
-                        "label":  "ABC7 KABC Weather Cam 3",
-                        "distance_miles":  3.5,
-                        "nearby":  "Los Angeles",
-                        "source":  "abc7"
-                    },
-                    {
-                        "url":  "https://cdns.abclocal.go.com/three/kabc/webcam/web2-2.jpg",
-                        "label":  "ABC7 KABC Weather Cam 4",
-                        "distance_miles":  3.5,
-                        "nearby":  "Los Angeles",
-                        "source":  "abc7"
-                    },
-                    {
-                        "label":  "Mt. Wilson Observatory North (HPWREN)",
-                        "url":  "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
-                        "nearby":  "Angeles National Forest",
-                        "distance_miles":  28.5
-                    },
-                    {
-                        "label":  "YouTube Live: LAX Plane Spotting Runways 25L/25R",
-                        "url":  "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg",
-                        "nearby":  "Los Angeles Intl Airport",
-                        "distance_miles":  12.5,
-                        "source":  "youtube"
-                    }
-                ],
-    "earthquake":  [
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101623coldwatercanyon/us101623coldwatercanyon.jpg",
-                           "label":  "US-101 : (623) Coldwater Canyon",
-                           "distance_miles":  7.7,
-                           "nearby":  "Sherman Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101624woodmanave/us101624woodmanave.jpg",
-                           "label":  "US-101 : (624) Woodman Ave",
-                           "distance_miles":  8,
-                           "nearby":  "xxx",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101625hazeltine/us101625hazeltine.jpg",
-                           "label":  "US-101 : (625) Hazeltine",
-                           "distance_miles":  8.4,
-                           "nearby":  "xxx",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101626vannuysblvd/us101626vannuysblvd.jpg",
-                           "label":  "US-101 : (626) Van Nuys Blvd",
-                           "distance_miles":  8.8,
-                           "nearby":  "Sherman Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr17096victoryblvd/sr17096victoryblvd.jpg",
-                           "label":  "SR-170 : (96) Victory Blvd",
-                           "distance_miles":  9.3,
-                           "nearby":  "Laurel Canyon Blvd",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101627sepulvedablvd/us101627sepulvedablvd.jpg",
-                           "label":  "US-101 : (627) Sepulveda Blvd",
-                           "distance_miles":  9.5,
-                           "nearby":  "Sherman Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405675venturablvd/i405675venturablvd.jpg",
-                           "label":  "I-405 : (675) Ventura Blvd",
-                           "distance_miles":  9.5,
-                           "nearby":  "Sherman Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i542buenavista/i542buenavista.jpg",
-                           "label":  "I-5 : (42) Buena Vista",
-                           "distance_miles":  9.6,
-                           "nearby":  "Burbank",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405676northofus101/i405676northofus101.jpg",
-                           "label":  "I-405 : (676) North of US-101",
-                           "distance_miles":  10,
-                           "nearby":  "Van Nuys",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405677northofburbankblvd/i405677northofburbankblvd.jpg",
-                           "label":  "I-405 : (677) North of Burbank Blvd",
-                           "distance_miles":  10.3,
-                           "nearby":  "Van Nuys",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101631balboablvd/us101631balboablvd.jpg",
-                           "label":  "US-101 : (631) Balboa Blvd",
-                           "distance_miles":  11.5,
-                           "nearby":  "Encino",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i567penrosestreet/i567penrosestreet.jpg",
-                           "label":  "I-5 : (67) Penrose Street",
-                           "distance_miles":  11.5,
-                           "nearby":  "Sun Valley",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101634tampaave/us101634tampaave.jpg",
-                           "label":  "US-101 : (634) Tampa Ave",
-                           "distance_miles":  13.9,
-                           "nearby":  "Tarzana",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i568eastofsr118connector/i568eastofsr118connector.jpg",
-                           "label":  "I-5 : (68) East of SR-118 Connector",
-                           "distance_miles":  15.1,
-                           "nearby":  "Pacoima",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr118694northi5connloc2/sr118694northi5connloc2.jpg",
-                           "label":  "SR-118 : (694) North I-5 Conn / Loc 2",
-                           "distance_miles":  15.3,
-                           "nearby":  "San Fernando",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i566towbrte210/i566towbrte210.jpg",
-                           "label":  "I-5 : (66) To WB RTE 210",
-                           "distance_miles":  19.6,
-                           "nearby":  "Sylmar",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr118697stearnsst/sr118697stearnsst.jpg",
-                           "label":  "SR-118 : (697) Stearns St",
-                           "distance_miles":  24.3,
-                           "nearby":  "Simi Valley",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101712westlakeblvd/us101712westlakeblvd.jpg",
-                           "label":  "US-101 : (712) West Lake Blvd",
-                           "distance_miles":  27.3,
-                           "nearby":  "Thousand Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101713conejoschool/us101713conejoschool.jpg",
-                           "label":  "US-101 : (713) Conejo School",
-                           "distance_miles":  28.6,
-                           "nearby":  "Thousand Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23736thousandoaksblvd/sr23736thousandoaksblvd.jpg",
-                           "label":  "SR-23 : (736) Thousand Oaks Blvd",
-                           "distance_miles":  29.4,
-                           "nearby":  "Thousand Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23734southofavenidadelosarboles/sr23734southofavenidadelosarboles.jpg",
-                           "label":  "SR-23 : (734) South of Avenida De Los Arboles",
-                           "distance_miles":  29.5,
-                           "nearby":  "Thousand Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23737jannsrd/sr23737jannsrd.jpg",
-                           "label":  "SR-23 : (737) Janns Rd",
-                           "distance_miles":  29.7,
-                           "nearby":  "Thousand Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23738pedersonrd/sr23738pedersonrd.jpg",
-                           "label":  "SR-23 : (738) Pederson Rd",
-                           "distance_miles":  29.7,
-                           "nearby":  "E Avenida De Los Arboles",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23733southofpaigelane/sr23733southofpaigelane.jpg",
-                           "label":  "SR-23 : (733) South of Paige Lane",
-                           "distance_miles":  29.7,
-                           "nearby":  "Thousand Oaks",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr126940commercectrdr/sr126940commercectrdr.jpg",
-                           "label":  "SR-126 : (940) Commerce Ctr Dr",
-                           "distance_miles":  29.9,
-                           "nearby":  "Valencia",
-                           "source":  "caltrans"
-                       },
-                       {
-                           "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23735southoftierrarejada/sr23735southoftierrarejada.jpg",
-                           "label":  "SR-23 : (735) South of Tierra Rejada",
-                           "distance_miles":  31.1,
-                           "nearby":  "Moorpark",
-                           "source":  "caltrans"
-                       }
-                   ],
-    "air_quality":  [
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10401westofatlanticblvd/i10401westofatlanticblvd.jpg",
-                            "label":  "I-10 : (401) West of Atlantic Blvd",
-                            "distance_miles":  11.3,
-                            "nearby":  "Alhambra",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10403garfieldave/i10403garfieldave.jpg",
-                            "label":  "I-10 : (403) Garfield Ave",
-                            "distance_miles":  12.1,
-                            "nearby":  "Alhambra",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210448marengo/i210448marengo.jpg",
-                            "label":  "I-210 : (448) Marengo",
-                            "distance_miles":  12.4,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210753marengocorson/i210753marengocorson.jpg",
-                            "label":  "I-210 : (753) Marengo-Corson",
-                            "distance_miles":  12.4,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10404newave/i10404newave.jpg",
-                            "label":  "I-10 : (404) New Ave",
-                            "distance_miles":  12.9,
-                            "nearby":  "San Gabriel",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210755hillmaple/i210755hillmaple.jpg",
-                            "label":  "I-210 : (755) Hill-Maple",
-                            "distance_miles":  12.9,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210449lakeave/i210449lakeave.jpg",
-                            "label":  "I-210 : (449) Lake Ave",
-                            "distance_miles":  13,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i52slausonave/i52slausonave.jpg",
-                            "label":  "I-5 : (2) Slauson Ave",
-                            "distance_miles":  13,
-                            "nearby":  "Los Angeles",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210754hillmaple/i210754hillmaple.jpg",
-                            "label":  "I-210 : (754) Hill-Maple",
-                            "distance_miles":  13.2,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5579northofparamountblvd/i5579northofparamountblvd.jpg",
-                            "label":  "I-5 : (579) North of Paramount Blvd",
-                            "distance_miles":  13.6,
-                            "nearby":  "Downey",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210757hillcorson/i210757hillcorson.jpg",
-                            "label":  "I-210 : (757) Hill-Corson",
-                            "distance_miles":  13.6,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10406sangabrielblvd/i10406sangabrielblvd.jpg",
-                            "label":  "I-10 : (406) San Gabriel Blvd",
-                            "distance_miles":  13.6,
-                            "nearby":  "Rosemead",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210756hillmaple/i210756hillmaple.jpg",
-                            "label":  "I-210 : (756) Hill-Maple",
-                            "distance_miles":  13.7,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5578paramountblvd/i5578paramountblvd.jpg",
-                            "label":  "I-5 : (578) Paramount Blvd",
-                            "distance_miles":  13.9,
-                            "nearby":  "McCampbell",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210759allencorson/i210759allencorson.jpg",
-                            "label":  "I-210 : (759) Allen-Corson",
-                            "distance_miles":  14,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210450allenaveonramp/i210450allenaveonramp.jpg",
-                            "label":  "I-210 : (450) Allen Ave On-Ramp",
-                            "distance_miles":  14.1,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210758allenmaple/i210758allenmaple.jpg",
-                            "label":  "I-210 : (758) Allen-Maple",
-                            "distance_miles":  14.1,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5577lakewoodblvd/i5577lakewoodblvd.jpg",
-                            "label":  "I-5 : (577) Lakewood Blvd",
-                            "distance_miles":  14.4,
-                            "nearby":  "Downey",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10407westofrosemeadblvd/i10407westofrosemeadblvd.jpg",
-                            "label":  "I-10 : (407) West of Rosemead Blvd",
-                            "distance_miles":  14.5,
-                            "nearby":  "Rosemead",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210761altadenacorson/i210761altadenacorson.jpg",
-                            "label":  "I-210 : (761) Altadena-Corson",
-                            "distance_miles":  14.7,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210760altadenamaple/i210760altadenamaple.jpg",
-                            "label":  "I-210 : (760) Altadena-Maple",
-                            "distance_miles":  14.9,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210764sangabriellatierr/i210764sangabriellatierr.jpg",
-                            "label":  "I-210 : (764) San Gabriel-La Tierr",
-                            "distance_miles":  14.9,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210765sierramadrevilla/i210765sierramadrevilla.jpg",
-                            "label":  "I-210 : (765) Sierra Madre Villa",
-                            "distance_miles":  15,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210763sangabrielsierra/i210763sangabrielsierra.jpg",
-                            "label":  "I-210 : (763) San Gabriel-Sierra",
-                            "distance_miles":  15,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210762wmaplesierramadre/i210762wmaplesierramadre.jpg",
-                            "label":  "I-210 : (762) W Maple-Sierra Madre",
-                            "distance_miles":  15,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210453sierramadre/i210453sierramadre.jpg",
-                            "label":  "I-210 : (453) Sierra Madre",
-                            "distance_miles":  15.1,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr60149rosemeadblvd/sr60149rosemeadblvd.jpg",
-                            "label":  "SR-60 : (149) Rosemead Blvd",
-                            "distance_miles":  15.2,
-                            "nearby":  "South El Monte",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10408templecityblvd/i10408templecityblvd.jpg",
-                            "label":  "I-10 : (408) Temple City Blvd",
-                            "distance_miles":  15.3,
-                            "nearby":  "Rosemead",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5576northofi605/i5576northofi605.jpg",
-                            "label":  "I-5 : (576) North of I-605",
-                            "distance_miles":  15.3,
-                            "nearby":  "Downey",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605518washingtonblvd/i605518washingtonblvd.jpg",
-                            "label":  "I-605 : (518) Washington Blvd",
-                            "distance_miles":  15.5,
-                            "nearby":  "Whittier",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605517slausonave/i605517slausonave.jpg",
-                            "label":  "I-605 : (517) Slauson Ave",
-                            "distance_miles":  15.6,
-                            "nearby":  "Whittier",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i105319bellflowerblvd/i105319bellflowerblvd.jpg",
-                            "label":  "I-105 : (319) Bellflower Blvd",
-                            "distance_miles":  15.7,
-                            "nearby":  "Downey",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr60150westofsantaanita/sr60150westofsantaanita.jpg",
-                            "label":  "SR-60 : (150) West of Santa Anita",
-                            "distance_miles":  15.7,
-                            "nearby":  "South El Monte",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605519whittierblvd/i605519whittierblvd.jpg",
-                            "label":  "I-605 : (519) Whittier Blvd",
-                            "distance_miles":  15.7,
-                            "nearby":  "Whittier",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605516telegraphrd/i605516telegraphrd.jpg",
-                            "label":  "I-605 : (516) Telegraph Rd",
-                            "distance_miles":  15.7,
-                            "nearby":  "Santa Fe Springs",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605515norwalkhubati605i5/i605515norwalkhubati605i5.jpg",
-                            "label":  "I-605 : (515) Norwalk Hub at I-605 / I-5",
-                            "distance_miles":  15.8,
-                            "nearby":  "Downey",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5575rte605/i5575rte605.jpg",
-                            "label":  "I-5 : (575) Rte 605",
-                            "distance_miles":  15.8,
-                            "nearby":  "Norwalk Park",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605520northofbeverlyblvd/i605520northofbeverlyblvd.jpg",
-                            "label":  "I-605 : (520) North of  Beverly Blvd",
-                            "distance_miles":  15.9,
-                            "nearby":  "Whittier",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605514northoffirestoneblvd/i605514northoffirestoneblvd.jpg",
-                            "label":  "I-605 : (514) North of  Firestone Blvd",
-                            "distance_miles":  15.9,
-                            "nearby":  "Norwalk",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210768foothillblvd/i210768foothillblvd.jpg",
-                            "label":  "I-210 : (768) Foothill Blvd",
-                            "distance_miles":  16,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5574florence/i5574florence.jpg",
-                            "label":  "I-5: (574) Florence",
-                            "distance_miles":  16,
-                            "nearby":  "Santa Fe Springs",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210767eastcolorado/i210767eastcolorado.jpg",
-                            "label":  "I-210 : (767) East Colorado",
-                            "distance_miles":  16.1,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605521rosehillsrd/i605521rosehillsrd.jpg",
-                            "label":  "I-605 : (521) Rose Hills Rd",
-                            "distance_miles":  16.1,
-                            "nearby":  "Whittier",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10409santaanitaave/i10409santaanitaave.jpg",
-                            "label":  "I-10 : (409) Santa Anita Ave",
-                            "distance_miles":  16.3,
-                            "nearby":  "South El Monte",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605513i105/i605513i105.jpg",
-                            "label":  "I-605 : (513) I-105",
-                            "distance_miles":  16.4,
-                            "nearby":  "Norwalk",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210456baldwinave/i210456baldwinave.jpg",
-                            "label":  "I-210 : (456) Baldwin Ave",
-                            "distance_miles":  16.9,
-                            "nearby":  "Arcadia",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr91536woclarkave/sr91536woclarkave.jpg",
-                            "label":  "SR-91 : (536)  W/O Clark Ave",
-                            "distance_miles":  16.9,
-                            "nearby":  "Bellflower",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210769sbaldwinave/i210769sbaldwinave.jpg",
-                            "label":  "I-210 : (769) S Baldwin Ave",
-                            "distance_miles":  16.9,
-                            "nearby":  "Pasadena",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605522peckrdsouthofi605/i605522peckrdsouthofi605.jpg",
-                            "label":  "I-605 : (522) Peck Rd (South of I-605)",
-                            "distance_miles":  17,
-                            "nearby":  "Whittier",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605511rosecransave/i605511rosecransave.jpg",
-                            "label":  "I-605 : (511) Rosecrans Ave",
-                            "distance_miles":  17,
-                            "nearby":  "Norwalk",
-                            "source":  "caltrans"
-                        },
-                        {
-                            "label":  "Mt. Wilson Observatory North (HPWREN)",
-                            "url":  "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
-                            "nearby":  "Angeles National Forest",
-                            "distance_miles":  28.5
-                        }
-                    ],
-    "transit":  [
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10117crenshawblvd/i10117crenshawblvd.jpg",
-                        "label":  "I-10 : (117) Crenshaw Blvd",
-                        "distance_miles":  1.8,
-                        "nearby":  "Mid City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1082crenshawblvdonramp/i1082crenshawblvdonramp.jpg",
-                        "label":  "I-10 : (82) Crenshaw Blvd On-Ramp",
-                        "distance_miles":  1.8,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1083crenshawblvdonramp/i1083crenshawblvdonramp.jpg",
-                        "label":  "I-10 : (83) Crenshaw Blvd On-Ramp",
-                        "distance_miles":  2.1,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1085arlingtonave/i1085arlingtonave.jpg",
-                        "label":  "I-10 : (85) Arlington Ave",
-                        "distance_miles":  2.2,
-                        "nearby":  "Jefferson Park",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1086westernaveonramp/i1086westernaveonramp.jpg",
-                        "label":  "I-10 : (86) Western Ave On-Ramp",
-                        "distance_miles":  2.4,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1087westernaveonramp/i1087westernaveonramp.jpg",
-                        "label":  "I-10 : (87) Western Ave On-Ramp",
-                        "distance_miles":  2.5,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10120westernavenue/i10120westernavenue.jpg",
-                        "label":  "I-10 : (120) Western Avenue",
-                        "distance_miles":  2.5,
-                        "nearby":  "Culver city",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1088normandieaveonramp/i1088normandieaveonramp.jpg",
-                        "label":  "I-10 : (88) Normandie Ave On-Ramp",
-                        "distance_miles":  2.7,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101603melroseave/us101603melroseave.jpg",
-                        "label":  "US-101 : (603) Melrose Ave",
-                        "distance_miles":  2.8,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101605santamonica/us101605santamonica.jpg",
-                        "label":  "US-101 : (605) Santa Monica",
-                        "distance_miles":  2.9,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101606westernave/us101606westernave.jpg",
-                        "label":  "US-101 : (606) Western Ave",
-                        "distance_miles":  2.9,
-                        "nearby":  "xxx",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101602southofmelroseave/us101602southofmelroseave.jpg",
-                        "label":  "US-101 : (602) South of Melrose Ave",
-                        "distance_miles":  2.9,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101604northofnormandieave/us101604northofnormandieave.jpg",
-                        "label":  "US-101 : (604) North of Normandie Ave",
-                        "distance_miles":  2.9,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1089normandieaveonramp/i1089normandieaveonramp.jpg",
-                        "label":  "I-10 : (89) Normandie Ave On-Ramp",
-                        "distance_miles":  2.9,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101607hollywoodblvd/us101607hollywoodblvd.jpg",
-                        "label":  "US-101 : (607) Hollywood Blvd",
-                        "distance_miles":  3.1,
-                        "nearby":  "xxx",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101600vermontave/us101600vermontave.jpg",
-                        "label":  "US-101 : (600) Vermont Ave",
-                        "distance_miles":  3.1,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101609vinest/us101609vinest.jpg",
-                        "label":  "US-101 : (609) Vine St",
-                        "distance_miles":  3.2,
-                        "nearby":  "xxx",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101608gower/us101608gower.jpg",
-                        "label":  "US-101 : (608) Gower",
-                        "distance_miles":  3.2,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1090vermontaveonramp/i1090vermontaveonramp.jpg",
-                        "label":  "I-10 : (90) Vermont Ave On-Ramp",
-                        "distance_miles":  3.2,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101599hooverst/us101599hooverst.jpg",
-                        "label":  "US-101 : (599) Hoover St",
-                        "distance_miles":  3.3,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1091vermontaveonramp/i1091vermontaveonramp.jpg",
-                        "label":  "I-10 : (91) Vermont Ave On-Ramp",
-                        "distance_miles":  3.3,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1092hooverstonramp/i1092hooverstonramp.jpg",
-                        "label":  "I-10 : (92) Hoover St On-Ramp",
-                        "distance_miles":  3.5,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101611pilgrimagebridge/us101611pilgrimagebridge.jpg",
-                        "label":  "US-101 : (611) Pilgrimage Bridge",
-                        "distance_miles":  3.7,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101598bentonway/us101598bentonway.jpg",
-                        "label":  "US-101 : (598) Benton Way",
-                        "distance_miles":  3.9,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10123route110chptower/i10123route110chptower.jpg",
-                        "label":  "I-10 : (123) Route 110 CHP Tower",
-                        "distance_miles":  4.1,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110183nb110towb10/i110183nb110towb10.jpg",
-                        "label":  "I-110 : (183) NB 110 to WB 10",
-                        "distance_miles":  4.1,
-                        "nearby":  "Pico-Union",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i11018411thst/i11018411thst.jpg",
-                        "label":  "I-110 : (184) 11th St",
-                        "distance_miles":  4.1,
-                        "nearby":  "LA Live",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110824no23rdst/i110824no23rdst.jpg",
-                        "label":  "I-110 : (824) N/O 23rd St",
-                        "distance_miles":  4.2,
-                        "nearby":  "Exposition Park",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10109motorave/i10109motorave.jpg",
-                        "label":  "I-10: (109) Motor Ave",
-                        "distance_miles":  4.2,
-                        "nearby":  "Palms",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110828jamesmwoodblvdofframp/i110828jamesmwoodblvdofframp.jpg",
-                        "label":  "I-110 : (828) James M Wood Blvd Off-Ramp",
-                        "distance_miles":  4.3,
-                        "nearby":  "South Park",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108318thstonramp/i1108318thstonramp.jpg",
-                        "label":  "I-110 : (831) 8th St On-Ramp",
-                        "distance_miles":  4.3,
-                        "nearby":  "South Park",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101597bonniebraest/us101597bonniebraest.jpg",
-                        "label":  "US-101 : (597) Bonnie Brae St",
-                        "distance_miles":  4.3,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101613southofmulhollanddr/us101613southofmulhollanddr.jpg",
-                        "label":  "US-101 : (613) South of Mulholland Dr",
-                        "distance_miles":  4.3,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110179adamsblvd/i110179adamsblvd.jpg",
-                        "label":  "I-110 : (179) Adams Blvd",
-                        "distance_miles":  4.4,
-                        "nearby":  "Gardena",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1081overlandaveonramp/i1081overlandaveonramp.jpg",
-                        "label":  "I-10 : (81) Overland Ave On-Ramp",
-                        "distance_miles":  4.4,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110178expositionblvd/i110178expositionblvd.jpg",
-                        "label":  "I-110 : (178) Exposition Blvd",
-                        "distance_miles":  4.5,
-                        "nearby":  "University of Southern California",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1080overlandaveonramp/i1080overlandaveonramp.jpg",
-                        "label":  "I-10 : (80) Overland Ave On-Ramp",
-                        "distance_miles":  4.5,
-                        "nearby":  "Culver City",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110822soexpositionblvd/i110822soexpositionblvd.jpg",
-                        "label":  "I-110 : (822) S/O EXPOSITION BLVD",
-                        "distance_miles":  4.5,
-                        "nearby":  "Exposition Park",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110823noexpositionblvd/i110823noexpositionblvd.jpg",
-                        "label":  "I-110 : (823) N/O EXPOSITION BLVD",
-                        "distance_miles":  4.5,
-                        "nearby":  "Exposition Park",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1101857thst/i1101857thst.jpg",
-                        "label":  "I-110 : (185) 7th St",
-                        "distance_miles":  4.5,
-                        "nearby":  "South Park",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110186wilshireblvd/i110186wilshireblvd.jpg",
-                        "label":  "I-110 : (186) Wilshire Blvd",
-                        "distance_miles":  4.6,
-                        "nearby":  "Financial District",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108326thstofframp/i1108326thstofframp.jpg",
-                        "label":  "I-110 : (832) 6th St Off-Ramp",
-                        "distance_miles":  4.6,
-                        "nearby":  "Downtown LA",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101614barhamblvd/us101614barhamblvd.jpg",
-                        "label":  "US-101 : (614) Barham Blvd",
-                        "distance_miles":  4.7,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108333thstonramp/i1108333thstonramp.jpg",
-                        "label":  "I-110 : (833) 3th St On-Ramp",
-                        "distance_miles":  4.8,
-                        "nearby":  "Downtown LA",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110820martinlutherkingblvdonramp/i110820martinlutherkingblvdonramp.jpg",
-                        "label":  "I-110 : (820) Martin Luther King Blvd On-Ramp",
-                        "distance_miles":  4.8,
-                        "nearby":  "Exposition Park",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108343thstofframp/i1108343thstofframp.jpg",
-                        "label":  "I-110 : (834) 3th St Off-Ramp",
-                        "distance_miles":  4.8,
-                        "nearby":  "Downtown LA",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10124losangelesst/i10124losangelesst.jpg",
-                        "label":  "I-10 : (124) Los Angeles St",
-                        "distance_miles":  4.8,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10108nationalblvd/i10108nationalblvd.jpg",
-                        "label":  "I-10: (108) National Blvd",
-                        "distance_miles":  4.8,
-                        "nearby":  "Palms",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101596edgewarerd/us101596edgewarerd.jpg",
-                        "label":  "US-101 : (596) Edgeware Rd",
-                        "distance_miles":  4.8,
-                        "nearby":  "Los Angeles",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110177martinlutherkingblvd/i110177martinlutherkingblvd.jpg",
-                        "label":  "I-110 : (177) Martin Luther King Blvd",
-                        "distance_miles":  4.9,
-                        "nearby":  "Figueroa Street",
-                        "source":  "caltrans"
-                    },
-                    {
-                        "label":  "YouTube Live: LAX Plane Spotting Runways 25L/25R",
-                        "url":  "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg",
-                        "nearby":  "Los Angeles Intl Airport",
-                        "distance_miles":  12.5,
-                        "source":  "youtube"
-                    }
-                ],
-    "alerts":  [
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1085arlingtonave/i1085arlingtonave.jpg",
-                       "label":  "I-10 : (85) Arlington Ave",
-                       "distance_miles":  2.2,
-                       "nearby":  "Jefferson Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1086westernaveonramp/i1086westernaveonramp.jpg",
-                       "label":  "I-10 : (86) Western Ave On-Ramp",
-                       "distance_miles":  2.4,
-                       "nearby":  "Culver City",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1087westernaveonramp/i1087westernaveonramp.jpg",
-                       "label":  "I-10 : (87) Western Ave On-Ramp",
-                       "distance_miles":  2.5,
-                       "nearby":  "Culver City",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10120westernavenue/i10120westernavenue.jpg",
-                       "label":  "I-10 : (120) Western Avenue",
-                       "distance_miles":  2.5,
-                       "nearby":  "Culver city",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1088normandieaveonramp/i1088normandieaveonramp.jpg",
-                       "label":  "I-10 : (88) Normandie Ave On-Ramp",
-                       "distance_miles":  2.7,
-                       "nearby":  "Culver City",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101603melroseave/us101603melroseave.jpg",
-                       "label":  "US-101 : (603) Melrose Ave",
-                       "distance_miles":  2.8,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101605santamonica/us101605santamonica.jpg",
-                       "label":  "US-101 : (605) Santa Monica",
-                       "distance_miles":  2.9,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101606westernave/us101606westernave.jpg",
-                       "label":  "US-101 : (606) Western Ave",
-                       "distance_miles":  2.9,
-                       "nearby":  "xxx",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101602southofmelroseave/us101602southofmelroseave.jpg",
-                       "label":  "US-101 : (602) South of Melrose Ave",
-                       "distance_miles":  2.9,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101604northofnormandieave/us101604northofnormandieave.jpg",
-                       "label":  "US-101 : (604) North of Normandie Ave",
-                       "distance_miles":  2.9,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1089normandieaveonramp/i1089normandieaveonramp.jpg",
-                       "label":  "I-10 : (89) Normandie Ave On-Ramp",
-                       "distance_miles":  2.9,
-                       "nearby":  "Culver City",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101600vermontave/us101600vermontave.jpg",
-                       "label":  "US-101 : (600) Vermont Ave",
-                       "distance_miles":  3.1,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1090vermontaveonramp/i1090vermontaveonramp.jpg",
-                       "label":  "I-10 : (90) Vermont Ave On-Ramp",
-                       "distance_miles":  3.2,
-                       "nearby":  "Culver City",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101599hooverst/us101599hooverst.jpg",
-                       "label":  "US-101 : (599) Hoover St",
-                       "distance_miles":  3.3,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1091vermontaveonramp/i1091vermontaveonramp.jpg",
-                       "label":  "I-10 : (91) Vermont Ave On-Ramp",
-                       "distance_miles":  3.3,
-                       "nearby":  "Culver City",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1092hooverstonramp/i1092hooverstonramp.jpg",
-                       "label":  "I-10 : (92) Hoover St On-Ramp",
-                       "distance_miles":  3.5,
-                       "nearby":  "Culver City",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101598bentonway/us101598bentonway.jpg",
-                       "label":  "US-101 : (598) Benton Way",
-                       "distance_miles":  3.9,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10123route110chptower/i10123route110chptower.jpg",
-                       "label":  "I-10 : (123) Route 110 CHP Tower",
-                       "distance_miles":  4.1,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110183nb110towb10/i110183nb110towb10.jpg",
-                       "label":  "I-110 : (183) NB 110 to WB 10",
-                       "distance_miles":  4.1,
-                       "nearby":  "Pico-Union",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i11018411thst/i11018411thst.jpg",
-                       "label":  "I-110 : (184) 11th St",
-                       "distance_miles":  4.1,
-                       "nearby":  "LA Live",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110824no23rdst/i110824no23rdst.jpg",
-                       "label":  "I-110 : (824) N/O 23rd St",
-                       "distance_miles":  4.2,
-                       "nearby":  "Exposition Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108318thstonramp/i1108318thstonramp.jpg",
-                       "label":  "I-110 : (831) 8th St On-Ramp",
-                       "distance_miles":  4.3,
-                       "nearby":  "South Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110828jamesmwoodblvdofframp/i110828jamesmwoodblvdofframp.jpg",
-                       "label":  "I-110 : (828) James M Wood Blvd Off-Ramp",
-                       "distance_miles":  4.3,
-                       "nearby":  "South Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101597bonniebraest/us101597bonniebraest.jpg",
-                       "label":  "US-101 : (597) Bonnie Brae St",
-                       "distance_miles":  4.3,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110179adamsblvd/i110179adamsblvd.jpg",
-                       "label":  "I-110 : (179) Adams Blvd",
-                       "distance_miles":  4.4,
-                       "nearby":  "Gardena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110822soexpositionblvd/i110822soexpositionblvd.jpg",
-                       "label":  "I-110 : (822) S/O EXPOSITION BLVD",
-                       "distance_miles":  4.5,
-                       "nearby":  "Exposition Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110178expositionblvd/i110178expositionblvd.jpg",
-                       "label":  "I-110 : (178) Exposition Blvd",
-                       "distance_miles":  4.5,
-                       "nearby":  "University of Southern California",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110823noexpositionblvd/i110823noexpositionblvd.jpg",
-                       "label":  "I-110 : (823) N/O EXPOSITION BLVD",
-                       "distance_miles":  4.5,
-                       "nearby":  "Exposition Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1101857thst/i1101857thst.jpg",
-                       "label":  "I-110 : (185) 7th St",
-                       "distance_miles":  4.5,
-                       "nearby":  "South Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110186wilshireblvd/i110186wilshireblvd.jpg",
-                       "label":  "I-110 : (186) Wilshire Blvd",
-                       "distance_miles":  4.6,
-                       "nearby":  "Financial District",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108326thstofframp/i1108326thstofframp.jpg",
-                       "label":  "I-110 : (832) 6th St Off-Ramp",
-                       "distance_miles":  4.6,
-                       "nearby":  "Downtown LA",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110820martinlutherkingblvdonramp/i110820martinlutherkingblvdonramp.jpg",
-                       "label":  "I-110 : (820) Martin Luther King Blvd On-Ramp",
-                       "distance_miles":  4.8,
-                       "nearby":  "Exposition Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108343thstofframp/i1108343thstofframp.jpg",
-                       "label":  "I-110 : (834) 3th St Off-Ramp",
-                       "distance_miles":  4.8,
-                       "nearby":  "Downtown LA",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108333thstonramp/i1108333thstonramp.jpg",
-                       "label":  "I-110 : (833) 3th St On-Ramp",
-                       "distance_miles":  4.8,
-                       "nearby":  "Downtown LA",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10124losangelesst/i10124losangelesst.jpg",
-                       "label":  "I-10 : (124) Los Angeles St",
-                       "distance_miles":  4.8,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101596edgewarerd/us101596edgewarerd.jpg",
-                       "label":  "US-101 : (596) Edgeware Rd",
-                       "distance_miles":  4.8,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110177martinlutherkingblvd/i110177martinlutherkingblvd.jpg",
-                       "label":  "I-110 : (177) Martin Luther King Blvd",
-                       "distance_miles":  4.9,
-                       "nearby":  "Figueroa Street",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1101881stst/i1101881stst.jpg",
-                       "label":  "I-110 : (188) 1st St",
-                       "distance_miles":  4.9,
-                       "nearby":  "Downtown LA",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110835soroute101/i110835soroute101.jpg",
-                       "label":  "I-110 : (835) S/O Route 101",
-                       "distance_miles":  5.1,
-                       "nearby":  "Downtown LA",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101595northofi110/us101595northofi110.jpg",
-                       "label":  "US-101 : (595) North of I-110",
-                       "distance_miles":  5.1,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110819vernonaveonramp/i110819vernonaveonramp.jpg",
-                       "label":  "I-110 : (819) Vernon Ave On-Ramp",
-                       "distance_miles":  5.2,
-                       "nearby":  "South Figueroa Corridor",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110836alpinestonramp/i110836alpinestonramp.jpg",
-                       "label":  "I-110 : (836) Alpine St On-Ramp",
-                       "distance_miles":  5.3,
-                       "nearby":  "Downtown LA",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10125griffithsanpedro/i10125griffithsanpedro.jpg",
-                       "label":  "I-10 : (125) Griffith/San Pedro",
-                       "distance_miles":  5.4,
-                       "nearby":  "Los Angeles",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i519stadiumway/i519stadiumway.jpg",
-                       "label":  "I-5 : (19) Stadium Way",
-                       "distance_miles":  5.9,
-                       "nearby":  "West Hollywood",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110191hillstreetexit/i110191hillstreetexit.jpg",
-                       "label":  "I-110 : (191) Hill Street Exit",
-                       "distance_miles":  6,
-                       "nearby":  "Elysian Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110816slausonavesbonramp/i110816slausonavesbonramp.jpg",
-                       "label":  "I-110 : (816) Slauson Ave SB On-Ramp",
-                       "distance_miles":  6,
-                       "nearby":  "Vermont-Slauson",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101594vignesst/us101594vignesst.jpg",
-                       "label":  "US-101 : (594) Vignes St",
-                       "distance_miles":  6.1,
-                       "nearby":  "xxx",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110817slausonavenbonramp/i110817slausonavenbonramp.jpg",
-                       "label":  "I-110 : (817) Slauson Ave NB On-Ramp",
-                       "distance_miles":  6.1,
-                       "nearby":  "Florence",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110175soslausonave/i110175soslausonave.jpg",
-                       "label":  "I-110 : (175) SO SLAUSON AVE",
-                       "distance_miles":  6.1,
-                       "nearby":  "South Main St",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i525meadowdale/i525meadowdale.jpg",
-                       "label":  "I-5 : (25) Meadowdale",
-                       "distance_miles":  6.1,
-                       "nearby":  "Elysian Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart01",
-                       "label":  "Weingart Skid Row Cam 1",
-                       "distance_miles":  4.2,
-                       "nearby":  "Skid Row / Downtown LA",
-                       "source":  "weingart"
-                   },
-                   {
-                       "url":  "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart02",
-                       "label":  "Weingart Skid Row Cam 2",
-                       "distance_miles":  4.2,
-                       "nearby":  "Skid Row / Downtown LA",
-                       "source":  "weingart"
-                   },
-                   {
-                       "url":  "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart03",
-                       "label":  "Weingart Skid Row Cam 3",
-                       "distance_miles":  4.2,
-                       "nearby":  "Skid Row / Downtown LA",
-                       "source":  "weingart"
-                   },
-                   {
-                       "url":  "https://img.youtube.com/vi/NsmJg4oSDVg/maxresdefault.jpg",
-                       "label":  "YouTube Live: Skid Row LA Cam 2",
-                       "distance_miles":  4.2,
-                       "nearby":  "Skid Row / Downtown LA",
-                       "source":  "youtube"
-                   },
-                   {
-                       "label":  "YouTube Live: Venice Beach Ocean Front Walk",
-                       "url":  "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg",
-                       "nearby":  "Venice",
-                       "distance_miles":  7.8,
-                       "source":  "youtube"
-                   }
-               ],
-    "scenic":  [
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101616lankershimblvd/us101616lankershimblvd.jpg",
-                       "label":  "US-101 : (616) Lankershim Blvd",
-                       "distance_miles":  5.6,
-                       "nearby":  "Studio City",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i519stadiumway/i519stadiumway.jpg",
-                       "label":  "I-5 : (19) Stadium Way",
-                       "distance_miles":  5.9,
-                       "nearby":  "West Hollywood",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101617vinelandave/us101617vinelandave.jpg",
-                       "label":  "US-101 : (617) Vineland Ave",
-                       "distance_miles":  6.1,
-                       "nearby":  "North Hollywood",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10106bundydr/i10106bundydr.jpg",
-                       "label":  "I-10 : (106) Bundy Dr",
-                       "distance_miles":  6.2,
-                       "nearby":  "Santa Monica Airport",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134652hollywoodway/sr134652hollywoodway.jpg",
-                       "label":  "SR-134 : (652) Hollywood Way",
-                       "distance_miles":  6.4,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134653buenavista/sr134653buenavista.jpg",
-                       "label":  "SR-134 : (653) Buena Vista",
-                       "distance_miles":  6.4,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101618moorparkst/us101618moorparkst.jpg",
-                       "label":  "US-101 : (618) Moorpark St",
-                       "distance_miles":  6.4,
-                       "nearby":  "North Hollywood",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134648vinelandave/sr134648vinelandave.jpg",
-                       "label":  "SR-134 : (648) Vineland Ave",
-                       "distance_miles":  6.5,
-                       "nearby":  "North Hollywood",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i530socoloradoblvd/i530socoloradoblvd.jpg",
-                       "label":  "I-5: (30) SO Colorado Blvd",
-                       "distance_miles":  6.5,
-                       "nearby":  "Griffith Park",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1095centinelaaveonramp/i1095centinelaaveonramp.jpg",
-                       "label":  "I-10: (95) Centinela Ave On-Ramp",
-                       "distance_miles":  6.5,
-                       "nearby":  "Santa Monica Airport",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134654westofforestlawn/sr134654westofforestlawn.jpg",
-                       "label":  "SR-134 : (654) West of Forest Lawn",
-                       "distance_miles":  6.6,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101619sr170tujunga/us101619sr170tujunga.jpg",
-                       "label":  "US-101 : (619) SR-170 / Tujunga",
-                       "distance_miles":  6.8,
-                       "nearby":  "North Hollywood",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr170647southsr170toeastsr134/sr170647southsr170toeastsr134.jpg",
-                       "label":  "SR-170 : (647) South SR-170 to East SR-134",
-                       "distance_miles":  6.9,
-                       "nearby":  "North Hollywood",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134656westofriversidedr/sr134656westofriversidedr.jpg",
-                       "label":  "SR-134 : (656) West of Riverside Dr",
-                       "distance_miles":  7,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134657eastofroute5/sr134657eastofroute5.jpg",
-                       "label":  "SR-134 : (657) East of Route 5",
-                       "distance_miles":  7.2,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134659eosanfernandord/sr134659eosanfernandord.jpg",
-                       "label":  "SR-134 : (659) E/O San Fernando Rd",
-                       "distance_miles":  7.5,
-                       "nearby":  "West Glendale",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101623coldwatercanyon/us101623coldwatercanyon.jpg",
-                       "label":  "US-101 : (623) Coldwater Canyon",
-                       "distance_miles":  7.7,
-                       "nearby":  "Sherman Oaks",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134660eastofpacificave/sr134660eastofpacificave.jpg",
-                       "label":  "SR-134 : (660) East of Pacific Ave",
-                       "distance_miles":  7.9,
-                       "nearby":  "Glendale",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr2584colorado/sr2584colorado.jpg",
-                       "label":  "SR-2 : (584) Colorado",
-                       "distance_miles":  8.2,
-                       "nearby":  "Glendale",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i537olive/i537olive.jpg",
-                       "label":  "I-5 : (37) Olive",
-                       "distance_miles":  8.2,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10103lincolnblvd/i10103lincolnblvd.jpg",
-                       "label":  "I-10: (103) Lincoln Blvd",
-                       "distance_miles":  8.4,
-                       "nearby":  "Santa Monica",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134662glendaleave/sr134662glendaleave.jpg",
-                       "label":  "SR-134 : (662) Glendale Ave",
-                       "distance_miles":  8.5,
-                       "nearby":  "Downtown Glendale",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134663harveydr/sr134663harveydr.jpg",
-                       "label":  "SR-134 : (663) Harvey Dr",
-                       "distance_miles":  8.6,
-                       "nearby":  "Downtown Glendale",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i540northofburbankblvd/i540northofburbankblvd.jpg",
-                       "label":  "I-5 : (40) North of Burbank Blvd",
-                       "distance_miles":  8.7,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10100olympicblvd/i10100olympicblvd.jpg",
-                       "label":  "I-10: (100) Olympic Blvd",
-                       "distance_miles":  8.7,
-                       "nearby":  "Santa Monica City Hall",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101626vannuysblvd/us101626vannuysblvd.jpg",
-                       "label":  "US-101 : (626) Van Nuys Blvd",
-                       "distance_miles":  8.8,
-                       "nearby":  "Sherman Oaks",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10102mcclureeast/i10102mcclureeast.jpg",
-                       "label":  "I-10 : (102) Mcclure East",
-                       "distance_miles":  9,
-                       "nearby":  "Santa Monica",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10101mcclurewest/i10101mcclurewest.jpg",
-                       "label":  "I-10 : (101) Mcclure West",
-                       "distance_miles":  9.1,
-                       "nearby":  "Santa Monica",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i541sanfernandoonramp/i541sanfernandoonramp.jpg",
-                       "label":  "I-5 : (41) San Fernando On-Ramp",
-                       "distance_miles":  9.2,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1229californiaincline/sr1229californiaincline.jpg",
-                       "label":  "SR-1 : (229) California Incline",
-                       "distance_miles":  9.4,
-                       "nearby":  "Santa Monica",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101627sepulvedablvd/us101627sepulvedablvd.jpg",
-                       "label":  "US-101 : (627) Sepulveda Blvd",
-                       "distance_miles":  9.5,
-                       "nearby":  "Sherman Oaks",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405675venturablvd/i405675venturablvd.jpg",
-                       "label":  "I-405 : (675) Ventura Blvd",
-                       "distance_miles":  9.5,
-                       "nearby":  "Sherman Oaks",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i542buenavista/i542buenavista.jpg",
-                       "label":  "I-5 : (42) Buena Vista",
-                       "distance_miles":  9.6,
-                       "nearby":  "Burbank",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1235beachhouse/sr1235beachhouse.jpg",
-                       "label":  "SR-1 : (235) Beach House",
-                       "distance_miles":  9.6,
-                       "nearby":  "Santa Monica",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134668orangegrove/sr134668orangegrove.jpg",
-                       "label":  "SR-134 : (668) Orange Grove",
-                       "distance_miles":  11.6,
-                       "nearby":  "Old Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210448marengo/i210448marengo.jpg",
-                       "label":  "I-210 : (448) Marengo",
-                       "distance_miles":  12.4,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210753marengocorson/i210753marengocorson.jpg",
-                       "label":  "I-210 : (753) Marengo-Corson",
-                       "distance_miles":  12.4,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210755hillmaple/i210755hillmaple.jpg",
-                       "label":  "I-210 : (755) Hill-Maple",
-                       "distance_miles":  12.9,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210449lakeave/i210449lakeave.jpg",
-                       "label":  "I-210 : (449) Lake Ave",
-                       "distance_miles":  13,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210754hillmaple/i210754hillmaple.jpg",
-                       "label":  "I-210 : (754) Hill-Maple",
-                       "distance_miles":  13.2,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210757hillcorson/i210757hillcorson.jpg",
-                       "label":  "I-210 : (757) Hill-Corson",
-                       "distance_miles":  13.6,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210756hillmaple/i210756hillmaple.jpg",
-                       "label":  "I-210 : (756) Hill-Maple",
-                       "distance_miles":  13.7,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210759allencorson/i210759allencorson.jpg",
-                       "label":  "I-210 : (759) Allen-Corson",
-                       "distance_miles":  14,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210450allenaveonramp/i210450allenaveonramp.jpg",
-                       "label":  "I-210 : (450) Allen Ave On-Ramp",
-                       "distance_miles":  14.1,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210758allenmaple/i210758allenmaple.jpg",
-                       "label":  "I-210 : (758) Allen-Maple",
-                       "distance_miles":  14.1,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210761altadenacorson/i210761altadenacorson.jpg",
-                       "label":  "I-210 : (761) Altadena-Corson",
-                       "distance_miles":  14.7,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210760altadenamaple/i210760altadenamaple.jpg",
-                       "label":  "I-210 : (760) Altadena-Maple",
-                       "distance_miles":  14.9,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210764sangabriellatierr/i210764sangabriellatierr.jpg",
-                       "label":  "I-210 : (764) San Gabriel-La Tierr",
-                       "distance_miles":  14.9,
-                       "nearby":  "Pasadena",
-                       "source":  "caltrans"
-                   },
-                   {
-                       "url":  "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg",
-                       "label":  "YouTube Live: Venice Beach Boardwalk North",
-                       "distance_miles":  7.8,
-                       "nearby":  "Venice Beach / Santa Monica",
-                       "source":  "youtube"
-                   },
-                   {
-                       "url":  "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg",
-                       "label":  "YouTube Live: Santa Monica Beach (EXPLORE.org)",
-                       "distance_miles":  8.5,
-                       "nearby":  "Santa Monica Beach",
-                       "source":  "youtube"
-                   },
-                   {
-                       "label":  "Mt. Wilson Observatory North (HPWREN)",
-                       "url":  "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
-                       "nearby":  "Angeles National Forest",
-                       "distance_miles":  28.5
-                   },
-                   {
-                       "label":  "YouTube Live: Venice Beach Ocean Front Walk",
-                       "url":  "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg",
-                       "nearby":  "Venice",
-                       "distance_miles":  7.8,
-                       "source":  "youtube"
-                   }
-               ],
-    "_meta":  {
-                  "generated_at":  "2026-03-17T20:30:00-07:00",
-                  "center_lon":  -118.2437,
-                  "version":  "3.5-beta",
-                  "center_lat":  34.0522,
-                  "source_counts":  {
-                                        "weingart":  3,
-                                        "caltrans":  275,
-                                        "youtube":  5,
-                                        "hpwren":  1,
-                                        "abc7":  4
-                                    }
-              }
+{
+  "_comment": "DMM Camera Registry v3.5-beta. Caltrans D7 CCTV + Weingart Skid Row + ABC7 KABC + YouTube live thumbnails + HPWREN Mt. Wilson. Generated 2026-03-17.",
+  "weather": [
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405368waterfordst/i405368waterfordst.jpg",
+      "label": "I-405 : (368) Waterford St",
+      "distance_miles": 6.3,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1095centinelaaveonramp/i1095centinelaaveonramp.jpg",
+      "label": "I-10: (95) Centinela Ave On-Ramp",
+      "distance_miles": 6.5,
+      "nearby": "Santa Monica Airport",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405369northofsunsetblvd/i405369northofsunsetblvd.jpg",
+      "label": "I-405 : (369) North of Sunset Blvd",
+      "distance_miles": 6.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10105eocloverfieldblvd/i10105eocloverfieldblvd.jpg",
+      "label": "I-10 : (105) E/O Cloverfield Blvd",
+      "distance_miles": 7.3,
+      "nearby": "Sawtelle",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1010420thst/i1010420thst.jpg",
+      "label": "I-10 : (104) 20th St",
+      "distance_miles": 7.7,
+      "nearby": "Mid City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405671belaircrestdrive/i405671belaircrestdrive.jpg",
+      "label": "I-405 : (671) Bel Air Crest Drive",
+      "distance_miles": 8.2,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10103lincolnblvd/i10103lincolnblvd.jpg",
+      "label": "I-10: (103) Lincoln Blvd",
+      "distance_miles": 8.4,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10100olympicblvd/i10100olympicblvd.jpg",
+      "label": "I-10: (100) Olympic Blvd",
+      "distance_miles": 8.7,
+      "nearby": "Santa Monica City Hall",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10102mcclureeast/i10102mcclureeast.jpg",
+      "label": "I-10 : (102) Mcclure East",
+      "distance_miles": 9,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10101mcclurewest/i10101mcclurewest.jpg",
+      "label": "I-10 : (101) Mcclure West",
+      "distance_miles": 9.1,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr17096victoryblvd/sr17096victoryblvd.jpg",
+      "label": "SR-170 : (96) Victory Blvd",
+      "distance_miles": 9.3,
+      "nearby": "Laurel Canyon Blvd",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1229californiaincline/sr1229californiaincline.jpg",
+      "label": "SR-1 : (229) California Incline",
+      "distance_miles": 9.4,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101627sepulvedablvd/us101627sepulvedablvd.jpg",
+      "label": "US-101 : (627) Sepulveda Blvd",
+      "distance_miles": 9.5,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405675venturablvd/i405675venturablvd.jpg",
+      "label": "I-405 : (675) Ventura Blvd",
+      "distance_miles": 9.5,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1235beachhouse/sr1235beachhouse.jpg",
+      "label": "SR-1 : (235) Beach House",
+      "distance_miles": 9.6,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405676northofus101/i405676northofus101.jpg",
+      "label": "I-405 : (676) North of US-101",
+      "distance_miles": 10,
+      "nearby": "Van Nuys",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405677northofburbankblvd/i405677northofburbankblvd.jpg",
+      "label": "I-405 : (677) North of Burbank Blvd",
+      "distance_miles": 10.3,
+      "nearby": "Van Nuys",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101631balboablvd/us101631balboablvd.jpg",
+      "label": "US-101 : (631) Balboa Blvd",
+      "distance_miles": 11.5,
+      "nearby": "Encino",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1236topangacanyonrd/sr1236topangacanyonrd.jpg",
+      "label": "SR-1 : (236) Topanga Canyon Rd",
+      "distance_miles": 13,
+      "nearby": "Topanga Beach",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1237tunacanyonrd/sr1237tunacanyonrd.jpg",
+      "label": "SR-1 : (237) Tuna Canyon Rd",
+      "distance_miles": 13.6,
+      "nearby": "Las Tunas Beach",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101634tampaave/us101634tampaave.jpg",
+      "label": "US-101 : (634) Tampa Ave",
+      "distance_miles": 13.9,
+      "nearby": "Tarzana",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1239bigrockdr/sr1239bigrockdr.jpg",
+      "label": "SR-1 : (239) Big Rock Dr",
+      "distance_miles": 14.6,
+      "nearby": "Piedra Gorda Canyon",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1240wobigrockdr/sr1240wobigrockdr.jpg",
+      "label": "SR-1 : (240) W/O Big Rock Dr",
+      "distance_miles": 14.9,
+      "nearby": "Big Rock Beach",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1241midblock/sr1241midblock.jpg",
+      "label": "SR-1 : (241) Mid Block",
+      "distance_miles": 15.5,
+      "nearby": "Big Rock",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1242eolasflores/sr1242eolasflores.jpg",
+      "label": "SR-1 : (242) E/O Las Flores",
+      "distance_miles": 16,
+      "nearby": "Las Flores Canyon",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1243lasfloresramblapacifico/sr1243lasfloresramblapacifico.jpg",
+      "label": "SR-1 : (243) Las Flores / Rambla Pacifico",
+      "distance_miles": 16.2,
+      "nearby": "Las Flores Canyon",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1244lacosta/sr1244lacosta.jpg",
+      "label": "SR-1 : (244) La Costa",
+      "distance_miles": 16.4,
+      "nearby": "La Costa",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1246carboncanyonrd/sr1246carboncanyonrd.jpg",
+      "label": "SR-1 : (246) Carbon Canyon Rd",
+      "distance_miles": 16.9,
+      "nearby": "Carbon Canyon",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1247buschrealty/sr1247buschrealty.jpg",
+      "label": "SR-1 : (247) Busch Realty",
+      "distance_miles": 17.4,
+      "nearby": "Carbon Beach",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1204pedcrossingeastmalibu/sr1204pedcrossingeastmalibu.jpg",
+      "label": "SR-1 : (204) PED Crossing East Malibu",
+      "distance_miles": 17.7,
+      "nearby": "Eastern Malibu",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1249malibuinn/sr1249malibuinn.jpg",
+      "label": "SR-1 : (249) Malibu Inn",
+      "distance_miles": 17.9,
+      "nearby": "Eastern Malibu",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1238bwmalibupiercrosscreekway/sr1238bwmalibupiercrosscreekway.jpg",
+      "label": "SR-1 : (238) B/W Malibu Pier & Cross Creek Way",
+      "distance_miles": 18.3,
+      "nearby": "Malibu Pier",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1250malibupier/sr1250malibupier.jpg",
+      "label": "SR-1 : (250) Malibu Pier",
+      "distance_miles": 18.3,
+      "nearby": "Malibu Pier",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1200crosscreekway/sr1200crosscreekway.jpg",
+      "label": "SR-1 : (200) Cross Creek Way",
+      "distance_miles": 18.8,
+      "nearby": "Malibu Lagoon",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110795pchonramp/i110795pchonramp.jpg",
+      "label": "I-110 : (795) PCH On-Ramp",
+      "distance_miles": 18.9,
+      "nearby": "Wilmington",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110794pchonramp/i110794pchonramp.jpg",
+      "label": "I-110 : (794) PCH On-Ramp",
+      "distance_miles": 19,
+      "nearby": "Harbor City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110158pchofframp/i110158pchofframp.jpg",
+      "label": "I-110 : (158) PCH Off-Ramp",
+      "distance_miles": 19.1,
+      "nearby": "Wilmington",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1201webbway/sr1201webbway.jpg",
+      "label": "SR-1 : (201) Webb Way",
+      "distance_miles": 19.1,
+      "nearby": "Malibu",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i566towbrte210/i566towbrte210.jpg",
+      "label": "I-5 : (66) To WB RTE 210",
+      "distance_miles": 19.6,
+      "nearby": "Sylmar",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1202malibucanyonrd/sr1202malibucanyonrd.jpg",
+      "label": "SR-1 : (202) Malibu Canyon Rd",
+      "distance_miles": 19.8,
+      "nearby": "Pepperdine University",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1203johntylerdr/sr1203johntylerdr.jpg",
+      "label": "SR-1 : (203) John Tyler Dr",
+      "distance_miles": 20.1,
+      "nearby": "Pepperdine University",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i710262southofpch/i710262southofpch.jpg",
+      "label": "I-710 : (262)  South of  PCH",
+      "distance_miles": 20.2,
+      "nearby": "Long Beach",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr118697stearnsst/sr118697stearnsst.jpg",
+      "label": "SR-118 : (697) Stearns St",
+      "distance_miles": 24.3,
+      "nearby": "Simi Valley",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101712westlakeblvd/us101712westlakeblvd.jpg",
+      "label": "US-101 : (712) West Lake Blvd",
+      "distance_miles": 27.3,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101713conejoschool/us101713conejoschool.jpg",
+      "label": "US-101 : (713) Conejo School",
+      "distance_miles": 28.6,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23736thousandoaksblvd/sr23736thousandoaksblvd.jpg",
+      "label": "SR-23 : (736) Thousand Oaks Blvd",
+      "distance_miles": 29.4,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23734southofavenidadelosarboles/sr23734southofavenidadelosarboles.jpg",
+      "label": "SR-23 : (734) South of Avenida De Los Arboles",
+      "distance_miles": 29.5,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23737jannsrd/sr23737jannsrd.jpg",
+      "label": "SR-23 : (737) Janns Rd",
+      "distance_miles": 29.7,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23738pedersonrd/sr23738pedersonrd.jpg",
+      "label": "SR-23 : (738) Pederson Rd",
+      "distance_miles": 29.7,
+      "nearby": "E Avenida De Los Arboles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23733southofpaigelane/sr23733southofpaigelane.jpg",
+      "label": "SR-23 : (733) South of Paige Lane",
+      "distance_miles": 29.7,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web1-1.jpg",
+      "label": "ABC7 KABC Weather Cam 1",
+      "distance_miles": 3.5,
+      "nearby": "Los Angeles",
+      "source": "abc7"
+    },
+    {
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web1-2.jpg",
+      "label": "ABC7 KABC Weather Cam 2",
+      "distance_miles": 3.5,
+      "nearby": "Los Angeles",
+      "source": "abc7"
+    },
+    {
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web2-1.jpg",
+      "label": "ABC7 KABC Weather Cam 3",
+      "distance_miles": 3.5,
+      "nearby": "Los Angeles",
+      "source": "abc7"
+    },
+    {
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web2-2.jpg",
+      "label": "ABC7 KABC Weather Cam 4",
+      "distance_miles": 3.5,
+      "nearby": "Los Angeles",
+      "source": "abc7"
+    },
+    {
+      "label": "Mt. Wilson Observatory North (HPWREN)",
+      "url": "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
+      "nearby": "Angeles National Forest",
+      "distance_miles": 28.5
+    },
+    {
+      "label": "YouTube Live: LAX Plane Spotting Runways 25L/25R",
+      "url": "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg",
+      "nearby": "Los Angeles Intl Airport",
+      "distance_miles": 12.5,
+      "source": "youtube"
+    },
+    {
+      "label": "YouTube Live: Venice Beach Boardwalk North",
+      "url": "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg"
+    },
+    {
+      "label": "YouTube Live: Santa Monica Beach (EXPLORE.org)",
+      "url": "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg"
+    },
+    {
+      "label": "YouTube Live: Venice Beach Ocean Front Walk",
+      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg"
+    }
+  ],
+  "earthquake": [
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101623coldwatercanyon/us101623coldwatercanyon.jpg",
+      "label": "US-101 : (623) Coldwater Canyon",
+      "distance_miles": 7.7,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101624woodmanave/us101624woodmanave.jpg",
+      "label": "US-101 : (624) Woodman Ave",
+      "distance_miles": 8,
+      "nearby": "xxx",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101625hazeltine/us101625hazeltine.jpg",
+      "label": "US-101 : (625) Hazeltine",
+      "distance_miles": 8.4,
+      "nearby": "xxx",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101626vannuysblvd/us101626vannuysblvd.jpg",
+      "label": "US-101 : (626) Van Nuys Blvd",
+      "distance_miles": 8.8,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr17096victoryblvd/sr17096victoryblvd.jpg",
+      "label": "SR-170 : (96) Victory Blvd",
+      "distance_miles": 9.3,
+      "nearby": "Laurel Canyon Blvd",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101627sepulvedablvd/us101627sepulvedablvd.jpg",
+      "label": "US-101 : (627) Sepulveda Blvd",
+      "distance_miles": 9.5,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405675venturablvd/i405675venturablvd.jpg",
+      "label": "I-405 : (675) Ventura Blvd",
+      "distance_miles": 9.5,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i542buenavista/i542buenavista.jpg",
+      "label": "I-5 : (42) Buena Vista",
+      "distance_miles": 9.6,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405676northofus101/i405676northofus101.jpg",
+      "label": "I-405 : (676) North of US-101",
+      "distance_miles": 10,
+      "nearby": "Van Nuys",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405677northofburbankblvd/i405677northofburbankblvd.jpg",
+      "label": "I-405 : (677) North of Burbank Blvd",
+      "distance_miles": 10.3,
+      "nearby": "Van Nuys",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101631balboablvd/us101631balboablvd.jpg",
+      "label": "US-101 : (631) Balboa Blvd",
+      "distance_miles": 11.5,
+      "nearby": "Encino",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i567penrosestreet/i567penrosestreet.jpg",
+      "label": "I-5 : (67) Penrose Street",
+      "distance_miles": 11.5,
+      "nearby": "Sun Valley",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101634tampaave/us101634tampaave.jpg",
+      "label": "US-101 : (634) Tampa Ave",
+      "distance_miles": 13.9,
+      "nearby": "Tarzana",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i568eastofsr118connector/i568eastofsr118connector.jpg",
+      "label": "I-5 : (68) East of SR-118 Connector",
+      "distance_miles": 15.1,
+      "nearby": "Pacoima",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr118694northi5connloc2/sr118694northi5connloc2.jpg",
+      "label": "SR-118 : (694) North I-5 Conn / Loc 2",
+      "distance_miles": 15.3,
+      "nearby": "San Fernando",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i566towbrte210/i566towbrte210.jpg",
+      "label": "I-5 : (66) To WB RTE 210",
+      "distance_miles": 19.6,
+      "nearby": "Sylmar",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr118697stearnsst/sr118697stearnsst.jpg",
+      "label": "SR-118 : (697) Stearns St",
+      "distance_miles": 24.3,
+      "nearby": "Simi Valley",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101712westlakeblvd/us101712westlakeblvd.jpg",
+      "label": "US-101 : (712) West Lake Blvd",
+      "distance_miles": 27.3,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101713conejoschool/us101713conejoschool.jpg",
+      "label": "US-101 : (713) Conejo School",
+      "distance_miles": 28.6,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23736thousandoaksblvd/sr23736thousandoaksblvd.jpg",
+      "label": "SR-23 : (736) Thousand Oaks Blvd",
+      "distance_miles": 29.4,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23734southofavenidadelosarboles/sr23734southofavenidadelosarboles.jpg",
+      "label": "SR-23 : (734) South of Avenida De Los Arboles",
+      "distance_miles": 29.5,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23737jannsrd/sr23737jannsrd.jpg",
+      "label": "SR-23 : (737) Janns Rd",
+      "distance_miles": 29.7,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23738pedersonrd/sr23738pedersonrd.jpg",
+      "label": "SR-23 : (738) Pederson Rd",
+      "distance_miles": 29.7,
+      "nearby": "E Avenida De Los Arboles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23733southofpaigelane/sr23733southofpaigelane.jpg",
+      "label": "SR-23 : (733) South of Paige Lane",
+      "distance_miles": 29.7,
+      "nearby": "Thousand Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr126940commercectrdr/sr126940commercectrdr.jpg",
+      "label": "SR-126 : (940) Commerce Ctr Dr",
+      "distance_miles": 29.9,
+      "nearby": "Valencia",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr23735southoftierrarejada/sr23735southoftierrarejada.jpg",
+      "label": "SR-23 : (735) South of Tierra Rejada",
+      "distance_miles": 31.1,
+      "nearby": "Moorpark",
+      "source": "caltrans"
+    },
+    {
+      "label": "ABC7 KABC Weather Cam 1",
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web1-1.jpg"
+    },
+    {
+      "label": "ABC7 KABC Weather Cam 2",
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web1-2.jpg"
+    },
+    {
+      "label": "ABC7 KABC Weather Cam 3",
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web2-1.jpg"
+    },
+    {
+      "label": "ABC7 KABC Weather Cam 4",
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web2-2.jpg"
+    },
+    {
+      "label": "Mt. Wilson Observatory North (HPWREN)",
+      "url": "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg"
+    },
+    {
+      "label": "YouTube Live: LAX Plane Spotting Runways 25L/25R",
+      "url": "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg"
+    },
+    {
+      "label": "YouTube Live: Venice Beach Boardwalk North",
+      "url": "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg"
+    },
+    {
+      "label": "YouTube Live: Santa Monica Beach (EXPLORE.org)",
+      "url": "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg"
+    },
+    {
+      "label": "YouTube Live: Venice Beach Ocean Front Walk",
+      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg"
+    },
+    {
+      "label": "Weingart Skid Row Cam 1",
+      "url": "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart01"
+    },
+    {
+      "label": "Weingart Skid Row Cam 2",
+      "url": "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart02"
+    },
+    {
+      "label": "Weingart Skid Row Cam 3",
+      "url": "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart03"
+    }
+  ],
+  "air_quality": [
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10401westofatlanticblvd/i10401westofatlanticblvd.jpg",
+      "label": "I-10 : (401) West of Atlantic Blvd",
+      "distance_miles": 11.3,
+      "nearby": "Alhambra",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10403garfieldave/i10403garfieldave.jpg",
+      "label": "I-10 : (403) Garfield Ave",
+      "distance_miles": 12.1,
+      "nearby": "Alhambra",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210448marengo/i210448marengo.jpg",
+      "label": "I-210 : (448) Marengo",
+      "distance_miles": 12.4,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210753marengocorson/i210753marengocorson.jpg",
+      "label": "I-210 : (753) Marengo-Corson",
+      "distance_miles": 12.4,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10404newave/i10404newave.jpg",
+      "label": "I-10 : (404) New Ave",
+      "distance_miles": 12.9,
+      "nearby": "San Gabriel",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210755hillmaple/i210755hillmaple.jpg",
+      "label": "I-210 : (755) Hill-Maple",
+      "distance_miles": 12.9,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210449lakeave/i210449lakeave.jpg",
+      "label": "I-210 : (449) Lake Ave",
+      "distance_miles": 13,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i52slausonave/i52slausonave.jpg",
+      "label": "I-5 : (2) Slauson Ave",
+      "distance_miles": 13,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210754hillmaple/i210754hillmaple.jpg",
+      "label": "I-210 : (754) Hill-Maple",
+      "distance_miles": 13.2,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5579northofparamountblvd/i5579northofparamountblvd.jpg",
+      "label": "I-5 : (579) North of Paramount Blvd",
+      "distance_miles": 13.6,
+      "nearby": "Downey",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210757hillcorson/i210757hillcorson.jpg",
+      "label": "I-210 : (757) Hill-Corson",
+      "distance_miles": 13.6,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10406sangabrielblvd/i10406sangabrielblvd.jpg",
+      "label": "I-10 : (406) San Gabriel Blvd",
+      "distance_miles": 13.6,
+      "nearby": "Rosemead",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210756hillmaple/i210756hillmaple.jpg",
+      "label": "I-210 : (756) Hill-Maple",
+      "distance_miles": 13.7,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5578paramountblvd/i5578paramountblvd.jpg",
+      "label": "I-5 : (578) Paramount Blvd",
+      "distance_miles": 13.9,
+      "nearby": "McCampbell",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210759allencorson/i210759allencorson.jpg",
+      "label": "I-210 : (759) Allen-Corson",
+      "distance_miles": 14,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210450allenaveonramp/i210450allenaveonramp.jpg",
+      "label": "I-210 : (450) Allen Ave On-Ramp",
+      "distance_miles": 14.1,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210758allenmaple/i210758allenmaple.jpg",
+      "label": "I-210 : (758) Allen-Maple",
+      "distance_miles": 14.1,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5577lakewoodblvd/i5577lakewoodblvd.jpg",
+      "label": "I-5 : (577) Lakewood Blvd",
+      "distance_miles": 14.4,
+      "nearby": "Downey",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10407westofrosemeadblvd/i10407westofrosemeadblvd.jpg",
+      "label": "I-10 : (407) West of Rosemead Blvd",
+      "distance_miles": 14.5,
+      "nearby": "Rosemead",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210761altadenacorson/i210761altadenacorson.jpg",
+      "label": "I-210 : (761) Altadena-Corson",
+      "distance_miles": 14.7,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210760altadenamaple/i210760altadenamaple.jpg",
+      "label": "I-210 : (760) Altadena-Maple",
+      "distance_miles": 14.9,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210764sangabriellatierr/i210764sangabriellatierr.jpg",
+      "label": "I-210 : (764) San Gabriel-La Tierr",
+      "distance_miles": 14.9,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210765sierramadrevilla/i210765sierramadrevilla.jpg",
+      "label": "I-210 : (765) Sierra Madre Villa",
+      "distance_miles": 15,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210763sangabrielsierra/i210763sangabrielsierra.jpg",
+      "label": "I-210 : (763) San Gabriel-Sierra",
+      "distance_miles": 15,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210762wmaplesierramadre/i210762wmaplesierramadre.jpg",
+      "label": "I-210 : (762) W Maple-Sierra Madre",
+      "distance_miles": 15,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210453sierramadre/i210453sierramadre.jpg",
+      "label": "I-210 : (453) Sierra Madre",
+      "distance_miles": 15.1,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr60149rosemeadblvd/sr60149rosemeadblvd.jpg",
+      "label": "SR-60 : (149) Rosemead Blvd",
+      "distance_miles": 15.2,
+      "nearby": "South El Monte",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10408templecityblvd/i10408templecityblvd.jpg",
+      "label": "I-10 : (408) Temple City Blvd",
+      "distance_miles": 15.3,
+      "nearby": "Rosemead",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5576northofi605/i5576northofi605.jpg",
+      "label": "I-5 : (576) North of I-605",
+      "distance_miles": 15.3,
+      "nearby": "Downey",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605518washingtonblvd/i605518washingtonblvd.jpg",
+      "label": "I-605 : (518) Washington Blvd",
+      "distance_miles": 15.5,
+      "nearby": "Whittier",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605517slausonave/i605517slausonave.jpg",
+      "label": "I-605 : (517) Slauson Ave",
+      "distance_miles": 15.6,
+      "nearby": "Whittier",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i105319bellflowerblvd/i105319bellflowerblvd.jpg",
+      "label": "I-105 : (319) Bellflower Blvd",
+      "distance_miles": 15.7,
+      "nearby": "Downey",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr60150westofsantaanita/sr60150westofsantaanita.jpg",
+      "label": "SR-60 : (150) West of Santa Anita",
+      "distance_miles": 15.7,
+      "nearby": "South El Monte",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605519whittierblvd/i605519whittierblvd.jpg",
+      "label": "I-605 : (519) Whittier Blvd",
+      "distance_miles": 15.7,
+      "nearby": "Whittier",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605516telegraphrd/i605516telegraphrd.jpg",
+      "label": "I-605 : (516) Telegraph Rd",
+      "distance_miles": 15.7,
+      "nearby": "Santa Fe Springs",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605515norwalkhubati605i5/i605515norwalkhubati605i5.jpg",
+      "label": "I-605 : (515) Norwalk Hub at I-605 / I-5",
+      "distance_miles": 15.8,
+      "nearby": "Downey",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5575rte605/i5575rte605.jpg",
+      "label": "I-5 : (575) Rte 605",
+      "distance_miles": 15.8,
+      "nearby": "Norwalk Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605520northofbeverlyblvd/i605520northofbeverlyblvd.jpg",
+      "label": "I-605 : (520) North of  Beverly Blvd",
+      "distance_miles": 15.9,
+      "nearby": "Whittier",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605514northoffirestoneblvd/i605514northoffirestoneblvd.jpg",
+      "label": "I-605 : (514) North of  Firestone Blvd",
+      "distance_miles": 15.9,
+      "nearby": "Norwalk",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210768foothillblvd/i210768foothillblvd.jpg",
+      "label": "I-210 : (768) Foothill Blvd",
+      "distance_miles": 16,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i5574florence/i5574florence.jpg",
+      "label": "I-5: (574) Florence",
+      "distance_miles": 16,
+      "nearby": "Santa Fe Springs",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210767eastcolorado/i210767eastcolorado.jpg",
+      "label": "I-210 : (767) East Colorado",
+      "distance_miles": 16.1,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605521rosehillsrd/i605521rosehillsrd.jpg",
+      "label": "I-605 : (521) Rose Hills Rd",
+      "distance_miles": 16.1,
+      "nearby": "Whittier",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10409santaanitaave/i10409santaanitaave.jpg",
+      "label": "I-10 : (409) Santa Anita Ave",
+      "distance_miles": 16.3,
+      "nearby": "South El Monte",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605513i105/i605513i105.jpg",
+      "label": "I-605 : (513) I-105",
+      "distance_miles": 16.4,
+      "nearby": "Norwalk",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210456baldwinave/i210456baldwinave.jpg",
+      "label": "I-210 : (456) Baldwin Ave",
+      "distance_miles": 16.9,
+      "nearby": "Arcadia",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr91536woclarkave/sr91536woclarkave.jpg",
+      "label": "SR-91 : (536)  W/O Clark Ave",
+      "distance_miles": 16.9,
+      "nearby": "Bellflower",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210769sbaldwinave/i210769sbaldwinave.jpg",
+      "label": "I-210 : (769) S Baldwin Ave",
+      "distance_miles": 16.9,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605522peckrdsouthofi605/i605522peckrdsouthofi605.jpg",
+      "label": "I-605 : (522) Peck Rd (South of I-605)",
+      "distance_miles": 17,
+      "nearby": "Whittier",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i605511rosecransave/i605511rosecransave.jpg",
+      "label": "I-605 : (511) Rosecrans Ave",
+      "distance_miles": 17,
+      "nearby": "Norwalk",
+      "source": "caltrans"
+    },
+    {
+      "label": "Mt. Wilson Observatory North (HPWREN)",
+      "url": "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
+      "nearby": "Angeles National Forest",
+      "distance_miles": 28.5
+    },
+    {
+      "label": "ABC7 KABC Weather Cam 1",
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web1-1.jpg"
+    },
+    {
+      "label": "ABC7 KABC Weather Cam 2",
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web1-2.jpg"
+    },
+    {
+      "label": "ABC7 KABC Weather Cam 3",
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web2-1.jpg"
+    },
+    {
+      "label": "ABC7 KABC Weather Cam 4",
+      "url": "https://cdns.abclocal.go.com/three/kabc/webcam/web2-2.jpg"
+    },
+    {
+      "label": "YouTube Live: LAX Plane Spotting Runways 25L/25R",
+      "url": "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg"
+    },
+    {
+      "label": "YouTube Live: Venice Beach Boardwalk North",
+      "url": "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg"
+    },
+    {
+      "label": "YouTube Live: Santa Monica Beach (EXPLORE.org)",
+      "url": "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg"
+    },
+    {
+      "label": "YouTube Live: Venice Beach Ocean Front Walk",
+      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg"
+    }
+  ],
+  "transit": [
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10117crenshawblvd/i10117crenshawblvd.jpg",
+      "label": "I-10 : (117) Crenshaw Blvd",
+      "distance_miles": 1.8,
+      "nearby": "Mid City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1082crenshawblvdonramp/i1082crenshawblvdonramp.jpg",
+      "label": "I-10 : (82) Crenshaw Blvd On-Ramp",
+      "distance_miles": 1.8,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1083crenshawblvdonramp/i1083crenshawblvdonramp.jpg",
+      "label": "I-10 : (83) Crenshaw Blvd On-Ramp",
+      "distance_miles": 2.1,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1085arlingtonave/i1085arlingtonave.jpg",
+      "label": "I-10 : (85) Arlington Ave",
+      "distance_miles": 2.2,
+      "nearby": "Jefferson Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1086westernaveonramp/i1086westernaveonramp.jpg",
+      "label": "I-10 : (86) Western Ave On-Ramp",
+      "distance_miles": 2.4,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1087westernaveonramp/i1087westernaveonramp.jpg",
+      "label": "I-10 : (87) Western Ave On-Ramp",
+      "distance_miles": 2.5,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10120westernavenue/i10120westernavenue.jpg",
+      "label": "I-10 : (120) Western Avenue",
+      "distance_miles": 2.5,
+      "nearby": "Culver city",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1088normandieaveonramp/i1088normandieaveonramp.jpg",
+      "label": "I-10 : (88) Normandie Ave On-Ramp",
+      "distance_miles": 2.7,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101603melroseave/us101603melroseave.jpg",
+      "label": "US-101 : (603) Melrose Ave",
+      "distance_miles": 2.8,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101605santamonica/us101605santamonica.jpg",
+      "label": "US-101 : (605) Santa Monica",
+      "distance_miles": 2.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101606westernave/us101606westernave.jpg",
+      "label": "US-101 : (606) Western Ave",
+      "distance_miles": 2.9,
+      "nearby": "xxx",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101602southofmelroseave/us101602southofmelroseave.jpg",
+      "label": "US-101 : (602) South of Melrose Ave",
+      "distance_miles": 2.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101604northofnormandieave/us101604northofnormandieave.jpg",
+      "label": "US-101 : (604) North of Normandie Ave",
+      "distance_miles": 2.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1089normandieaveonramp/i1089normandieaveonramp.jpg",
+      "label": "I-10 : (89) Normandie Ave On-Ramp",
+      "distance_miles": 2.9,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101607hollywoodblvd/us101607hollywoodblvd.jpg",
+      "label": "US-101 : (607) Hollywood Blvd",
+      "distance_miles": 3.1,
+      "nearby": "xxx",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101600vermontave/us101600vermontave.jpg",
+      "label": "US-101 : (600) Vermont Ave",
+      "distance_miles": 3.1,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101609vinest/us101609vinest.jpg",
+      "label": "US-101 : (609) Vine St",
+      "distance_miles": 3.2,
+      "nearby": "xxx",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101608gower/us101608gower.jpg",
+      "label": "US-101 : (608) Gower",
+      "distance_miles": 3.2,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1090vermontaveonramp/i1090vermontaveonramp.jpg",
+      "label": "I-10 : (90) Vermont Ave On-Ramp",
+      "distance_miles": 3.2,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101599hooverst/us101599hooverst.jpg",
+      "label": "US-101 : (599) Hoover St",
+      "distance_miles": 3.3,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1091vermontaveonramp/i1091vermontaveonramp.jpg",
+      "label": "I-10 : (91) Vermont Ave On-Ramp",
+      "distance_miles": 3.3,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1092hooverstonramp/i1092hooverstonramp.jpg",
+      "label": "I-10 : (92) Hoover St On-Ramp",
+      "distance_miles": 3.5,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101611pilgrimagebridge/us101611pilgrimagebridge.jpg",
+      "label": "US-101 : (611) Pilgrimage Bridge",
+      "distance_miles": 3.7,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101598bentonway/us101598bentonway.jpg",
+      "label": "US-101 : (598) Benton Way",
+      "distance_miles": 3.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10123route110chptower/i10123route110chptower.jpg",
+      "label": "I-10 : (123) Route 110 CHP Tower",
+      "distance_miles": 4.1,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110183nb110towb10/i110183nb110towb10.jpg",
+      "label": "I-110 : (183) NB 110 to WB 10",
+      "distance_miles": 4.1,
+      "nearby": "Pico-Union",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i11018411thst/i11018411thst.jpg",
+      "label": "I-110 : (184) 11th St",
+      "distance_miles": 4.1,
+      "nearby": "LA Live",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110824no23rdst/i110824no23rdst.jpg",
+      "label": "I-110 : (824) N/O 23rd St",
+      "distance_miles": 4.2,
+      "nearby": "Exposition Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10109motorave/i10109motorave.jpg",
+      "label": "I-10: (109) Motor Ave",
+      "distance_miles": 4.2,
+      "nearby": "Palms",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110828jamesmwoodblvdofframp/i110828jamesmwoodblvdofframp.jpg",
+      "label": "I-110 : (828) James M Wood Blvd Off-Ramp",
+      "distance_miles": 4.3,
+      "nearby": "South Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108318thstonramp/i1108318thstonramp.jpg",
+      "label": "I-110 : (831) 8th St On-Ramp",
+      "distance_miles": 4.3,
+      "nearby": "South Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101597bonniebraest/us101597bonniebraest.jpg",
+      "label": "US-101 : (597) Bonnie Brae St",
+      "distance_miles": 4.3,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101613southofmulhollanddr/us101613southofmulhollanddr.jpg",
+      "label": "US-101 : (613) South of Mulholland Dr",
+      "distance_miles": 4.3,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110179adamsblvd/i110179adamsblvd.jpg",
+      "label": "I-110 : (179) Adams Blvd",
+      "distance_miles": 4.4,
+      "nearby": "Gardena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1081overlandaveonramp/i1081overlandaveonramp.jpg",
+      "label": "I-10 : (81) Overland Ave On-Ramp",
+      "distance_miles": 4.4,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110178expositionblvd/i110178expositionblvd.jpg",
+      "label": "I-110 : (178) Exposition Blvd",
+      "distance_miles": 4.5,
+      "nearby": "University of Southern California",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1080overlandaveonramp/i1080overlandaveonramp.jpg",
+      "label": "I-10 : (80) Overland Ave On-Ramp",
+      "distance_miles": 4.5,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110822soexpositionblvd/i110822soexpositionblvd.jpg",
+      "label": "I-110 : (822) S/O EXPOSITION BLVD",
+      "distance_miles": 4.5,
+      "nearby": "Exposition Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110823noexpositionblvd/i110823noexpositionblvd.jpg",
+      "label": "I-110 : (823) N/O EXPOSITION BLVD",
+      "distance_miles": 4.5,
+      "nearby": "Exposition Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1101857thst/i1101857thst.jpg",
+      "label": "I-110 : (185) 7th St",
+      "distance_miles": 4.5,
+      "nearby": "South Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110186wilshireblvd/i110186wilshireblvd.jpg",
+      "label": "I-110 : (186) Wilshire Blvd",
+      "distance_miles": 4.6,
+      "nearby": "Financial District",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108326thstofframp/i1108326thstofframp.jpg",
+      "label": "I-110 : (832) 6th St Off-Ramp",
+      "distance_miles": 4.6,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101614barhamblvd/us101614barhamblvd.jpg",
+      "label": "US-101 : (614) Barham Blvd",
+      "distance_miles": 4.7,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108333thstonramp/i1108333thstonramp.jpg",
+      "label": "I-110 : (833) 3th St On-Ramp",
+      "distance_miles": 4.8,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110820martinlutherkingblvdonramp/i110820martinlutherkingblvdonramp.jpg",
+      "label": "I-110 : (820) Martin Luther King Blvd On-Ramp",
+      "distance_miles": 4.8,
+      "nearby": "Exposition Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108343thstofframp/i1108343thstofframp.jpg",
+      "label": "I-110 : (834) 3th St Off-Ramp",
+      "distance_miles": 4.8,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10124losangelesst/i10124losangelesst.jpg",
+      "label": "I-10 : (124) Los Angeles St",
+      "distance_miles": 4.8,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10108nationalblvd/i10108nationalblvd.jpg",
+      "label": "I-10: (108) National Blvd",
+      "distance_miles": 4.8,
+      "nearby": "Palms",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101596edgewarerd/us101596edgewarerd.jpg",
+      "label": "US-101 : (596) Edgeware Rd",
+      "distance_miles": 4.8,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110177martinlutherkingblvd/i110177martinlutherkingblvd.jpg",
+      "label": "I-110 : (177) Martin Luther King Blvd",
+      "distance_miles": 4.9,
+      "nearby": "Figueroa Street",
+      "source": "caltrans"
+    },
+    {
+      "label": "YouTube Live: LAX Plane Spotting Runways 25L/25R",
+      "url": "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg",
+      "nearby": "Los Angeles Intl Airport",
+      "distance_miles": 12.5,
+      "source": "youtube"
+    }
+  ],
+  "alerts": [
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1085arlingtonave/i1085arlingtonave.jpg",
+      "label": "I-10 : (85) Arlington Ave",
+      "distance_miles": 2.2,
+      "nearby": "Jefferson Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1086westernaveonramp/i1086westernaveonramp.jpg",
+      "label": "I-10 : (86) Western Ave On-Ramp",
+      "distance_miles": 2.4,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1087westernaveonramp/i1087westernaveonramp.jpg",
+      "label": "I-10 : (87) Western Ave On-Ramp",
+      "distance_miles": 2.5,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10120westernavenue/i10120westernavenue.jpg",
+      "label": "I-10 : (120) Western Avenue",
+      "distance_miles": 2.5,
+      "nearby": "Culver city",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1088normandieaveonramp/i1088normandieaveonramp.jpg",
+      "label": "I-10 : (88) Normandie Ave On-Ramp",
+      "distance_miles": 2.7,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101603melroseave/us101603melroseave.jpg",
+      "label": "US-101 : (603) Melrose Ave",
+      "distance_miles": 2.8,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101605santamonica/us101605santamonica.jpg",
+      "label": "US-101 : (605) Santa Monica",
+      "distance_miles": 2.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101606westernave/us101606westernave.jpg",
+      "label": "US-101 : (606) Western Ave",
+      "distance_miles": 2.9,
+      "nearby": "xxx",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101602southofmelroseave/us101602southofmelroseave.jpg",
+      "label": "US-101 : (602) South of Melrose Ave",
+      "distance_miles": 2.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101604northofnormandieave/us101604northofnormandieave.jpg",
+      "label": "US-101 : (604) North of Normandie Ave",
+      "distance_miles": 2.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1089normandieaveonramp/i1089normandieaveonramp.jpg",
+      "label": "I-10 : (89) Normandie Ave On-Ramp",
+      "distance_miles": 2.9,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101600vermontave/us101600vermontave.jpg",
+      "label": "US-101 : (600) Vermont Ave",
+      "distance_miles": 3.1,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1090vermontaveonramp/i1090vermontaveonramp.jpg",
+      "label": "I-10 : (90) Vermont Ave On-Ramp",
+      "distance_miles": 3.2,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101599hooverst/us101599hooverst.jpg",
+      "label": "US-101 : (599) Hoover St",
+      "distance_miles": 3.3,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1091vermontaveonramp/i1091vermontaveonramp.jpg",
+      "label": "I-10 : (91) Vermont Ave On-Ramp",
+      "distance_miles": 3.3,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1092hooverstonramp/i1092hooverstonramp.jpg",
+      "label": "I-10 : (92) Hoover St On-Ramp",
+      "distance_miles": 3.5,
+      "nearby": "Culver City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101598bentonway/us101598bentonway.jpg",
+      "label": "US-101 : (598) Benton Way",
+      "distance_miles": 3.9,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10123route110chptower/i10123route110chptower.jpg",
+      "label": "I-10 : (123) Route 110 CHP Tower",
+      "distance_miles": 4.1,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110183nb110towb10/i110183nb110towb10.jpg",
+      "label": "I-110 : (183) NB 110 to WB 10",
+      "distance_miles": 4.1,
+      "nearby": "Pico-Union",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i11018411thst/i11018411thst.jpg",
+      "label": "I-110 : (184) 11th St",
+      "distance_miles": 4.1,
+      "nearby": "LA Live",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110824no23rdst/i110824no23rdst.jpg",
+      "label": "I-110 : (824) N/O 23rd St",
+      "distance_miles": 4.2,
+      "nearby": "Exposition Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108318thstonramp/i1108318thstonramp.jpg",
+      "label": "I-110 : (831) 8th St On-Ramp",
+      "distance_miles": 4.3,
+      "nearby": "South Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110828jamesmwoodblvdofframp/i110828jamesmwoodblvdofframp.jpg",
+      "label": "I-110 : (828) James M Wood Blvd Off-Ramp",
+      "distance_miles": 4.3,
+      "nearby": "South Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101597bonniebraest/us101597bonniebraest.jpg",
+      "label": "US-101 : (597) Bonnie Brae St",
+      "distance_miles": 4.3,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110179adamsblvd/i110179adamsblvd.jpg",
+      "label": "I-110 : (179) Adams Blvd",
+      "distance_miles": 4.4,
+      "nearby": "Gardena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110822soexpositionblvd/i110822soexpositionblvd.jpg",
+      "label": "I-110 : (822) S/O EXPOSITION BLVD",
+      "distance_miles": 4.5,
+      "nearby": "Exposition Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110178expositionblvd/i110178expositionblvd.jpg",
+      "label": "I-110 : (178) Exposition Blvd",
+      "distance_miles": 4.5,
+      "nearby": "University of Southern California",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110823noexpositionblvd/i110823noexpositionblvd.jpg",
+      "label": "I-110 : (823) N/O EXPOSITION BLVD",
+      "distance_miles": 4.5,
+      "nearby": "Exposition Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1101857thst/i1101857thst.jpg",
+      "label": "I-110 : (185) 7th St",
+      "distance_miles": 4.5,
+      "nearby": "South Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110186wilshireblvd/i110186wilshireblvd.jpg",
+      "label": "I-110 : (186) Wilshire Blvd",
+      "distance_miles": 4.6,
+      "nearby": "Financial District",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108326thstofframp/i1108326thstofframp.jpg",
+      "label": "I-110 : (832) 6th St Off-Ramp",
+      "distance_miles": 4.6,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110820martinlutherkingblvdonramp/i110820martinlutherkingblvdonramp.jpg",
+      "label": "I-110 : (820) Martin Luther King Blvd On-Ramp",
+      "distance_miles": 4.8,
+      "nearby": "Exposition Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108343thstofframp/i1108343thstofframp.jpg",
+      "label": "I-110 : (834) 3th St Off-Ramp",
+      "distance_miles": 4.8,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1108333thstonramp/i1108333thstonramp.jpg",
+      "label": "I-110 : (833) 3th St On-Ramp",
+      "distance_miles": 4.8,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10124losangelesst/i10124losangelesst.jpg",
+      "label": "I-10 : (124) Los Angeles St",
+      "distance_miles": 4.8,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101596edgewarerd/us101596edgewarerd.jpg",
+      "label": "US-101 : (596) Edgeware Rd",
+      "distance_miles": 4.8,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110177martinlutherkingblvd/i110177martinlutherkingblvd.jpg",
+      "label": "I-110 : (177) Martin Luther King Blvd",
+      "distance_miles": 4.9,
+      "nearby": "Figueroa Street",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1101881stst/i1101881stst.jpg",
+      "label": "I-110 : (188) 1st St",
+      "distance_miles": 4.9,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110835soroute101/i110835soroute101.jpg",
+      "label": "I-110 : (835) S/O Route 101",
+      "distance_miles": 5.1,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101595northofi110/us101595northofi110.jpg",
+      "label": "US-101 : (595) North of I-110",
+      "distance_miles": 5.1,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110819vernonaveonramp/i110819vernonaveonramp.jpg",
+      "label": "I-110 : (819) Vernon Ave On-Ramp",
+      "distance_miles": 5.2,
+      "nearby": "South Figueroa Corridor",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110836alpinestonramp/i110836alpinestonramp.jpg",
+      "label": "I-110 : (836) Alpine St On-Ramp",
+      "distance_miles": 5.3,
+      "nearby": "Downtown LA",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10125griffithsanpedro/i10125griffithsanpedro.jpg",
+      "label": "I-10 : (125) Griffith/San Pedro",
+      "distance_miles": 5.4,
+      "nearby": "Los Angeles",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i519stadiumway/i519stadiumway.jpg",
+      "label": "I-5 : (19) Stadium Way",
+      "distance_miles": 5.9,
+      "nearby": "West Hollywood",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110191hillstreetexit/i110191hillstreetexit.jpg",
+      "label": "I-110 : (191) Hill Street Exit",
+      "distance_miles": 6,
+      "nearby": "Elysian Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110816slausonavesbonramp/i110816slausonavesbonramp.jpg",
+      "label": "I-110 : (816) Slauson Ave SB On-Ramp",
+      "distance_miles": 6,
+      "nearby": "Vermont-Slauson",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101594vignesst/us101594vignesst.jpg",
+      "label": "US-101 : (594) Vignes St",
+      "distance_miles": 6.1,
+      "nearby": "xxx",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110817slausonavenbonramp/i110817slausonavenbonramp.jpg",
+      "label": "I-110 : (817) Slauson Ave NB On-Ramp",
+      "distance_miles": 6.1,
+      "nearby": "Florence",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i110175soslausonave/i110175soslausonave.jpg",
+      "label": "I-110 : (175) SO SLAUSON AVE",
+      "distance_miles": 6.1,
+      "nearby": "South Main St",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i525meadowdale/i525meadowdale.jpg",
+      "label": "I-5 : (25) Meadowdale",
+      "distance_miles": 6.1,
+      "nearby": "Elysian Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart01",
+      "label": "Weingart Skid Row Cam 1",
+      "distance_miles": 4.2,
+      "nearby": "Skid Row / Downtown LA",
+      "source": "weingart"
+    },
+    {
+      "url": "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart02",
+      "label": "Weingart Skid Row Cam 2",
+      "distance_miles": 4.2,
+      "nearby": "Skid Row / Downtown LA",
+      "source": "weingart"
+    },
+    {
+      "url": "https://g1.ipcamlive.com/player/snapshot.php?alias=weingart03",
+      "label": "Weingart Skid Row Cam 3",
+      "distance_miles": 4.2,
+      "nearby": "Skid Row / Downtown LA",
+      "source": "weingart"
+    },
+    {
+      "url": "https://img.youtube.com/vi/NsmJg4oSDVg/maxresdefault.jpg",
+      "label": "YouTube Live: Skid Row LA Cam 2",
+      "distance_miles": 4.2,
+      "nearby": "Skid Row / Downtown LA",
+      "source": "youtube"
+    },
+    {
+      "label": "YouTube Live: Venice Beach Ocean Front Walk",
+      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg",
+      "nearby": "Venice",
+      "distance_miles": 7.8,
+      "source": "youtube"
+    }
+  ],
+  "scenic": [
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101616lankershimblvd/us101616lankershimblvd.jpg",
+      "label": "US-101 : (616) Lankershim Blvd",
+      "distance_miles": 5.6,
+      "nearby": "Studio City",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i519stadiumway/i519stadiumway.jpg",
+      "label": "I-5 : (19) Stadium Way",
+      "distance_miles": 5.9,
+      "nearby": "West Hollywood",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101617vinelandave/us101617vinelandave.jpg",
+      "label": "US-101 : (617) Vineland Ave",
+      "distance_miles": 6.1,
+      "nearby": "North Hollywood",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10106bundydr/i10106bundydr.jpg",
+      "label": "I-10 : (106) Bundy Dr",
+      "distance_miles": 6.2,
+      "nearby": "Santa Monica Airport",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134652hollywoodway/sr134652hollywoodway.jpg",
+      "label": "SR-134 : (652) Hollywood Way",
+      "distance_miles": 6.4,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134653buenavista/sr134653buenavista.jpg",
+      "label": "SR-134 : (653) Buena Vista",
+      "distance_miles": 6.4,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101618moorparkst/us101618moorparkst.jpg",
+      "label": "US-101 : (618) Moorpark St",
+      "distance_miles": 6.4,
+      "nearby": "North Hollywood",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134648vinelandave/sr134648vinelandave.jpg",
+      "label": "SR-134 : (648) Vineland Ave",
+      "distance_miles": 6.5,
+      "nearby": "North Hollywood",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i530socoloradoblvd/i530socoloradoblvd.jpg",
+      "label": "I-5: (30) SO Colorado Blvd",
+      "distance_miles": 6.5,
+      "nearby": "Griffith Park",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i1095centinelaaveonramp/i1095centinelaaveonramp.jpg",
+      "label": "I-10: (95) Centinela Ave On-Ramp",
+      "distance_miles": 6.5,
+      "nearby": "Santa Monica Airport",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134654westofforestlawn/sr134654westofforestlawn.jpg",
+      "label": "SR-134 : (654) West of Forest Lawn",
+      "distance_miles": 6.6,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101619sr170tujunga/us101619sr170tujunga.jpg",
+      "label": "US-101 : (619) SR-170 / Tujunga",
+      "distance_miles": 6.8,
+      "nearby": "North Hollywood",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr170647southsr170toeastsr134/sr170647southsr170toeastsr134.jpg",
+      "label": "SR-170 : (647) South SR-170 to East SR-134",
+      "distance_miles": 6.9,
+      "nearby": "North Hollywood",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134656westofriversidedr/sr134656westofriversidedr.jpg",
+      "label": "SR-134 : (656) West of Riverside Dr",
+      "distance_miles": 7,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134657eastofroute5/sr134657eastofroute5.jpg",
+      "label": "SR-134 : (657) East of Route 5",
+      "distance_miles": 7.2,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134659eosanfernandord/sr134659eosanfernandord.jpg",
+      "label": "SR-134 : (659) E/O San Fernando Rd",
+      "distance_miles": 7.5,
+      "nearby": "West Glendale",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101623coldwatercanyon/us101623coldwatercanyon.jpg",
+      "label": "US-101 : (623) Coldwater Canyon",
+      "distance_miles": 7.7,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134660eastofpacificave/sr134660eastofpacificave.jpg",
+      "label": "SR-134 : (660) East of Pacific Ave",
+      "distance_miles": 7.9,
+      "nearby": "Glendale",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr2584colorado/sr2584colorado.jpg",
+      "label": "SR-2 : (584) Colorado",
+      "distance_miles": 8.2,
+      "nearby": "Glendale",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i537olive/i537olive.jpg",
+      "label": "I-5 : (37) Olive",
+      "distance_miles": 8.2,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10103lincolnblvd/i10103lincolnblvd.jpg",
+      "label": "I-10: (103) Lincoln Blvd",
+      "distance_miles": 8.4,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134662glendaleave/sr134662glendaleave.jpg",
+      "label": "SR-134 : (662) Glendale Ave",
+      "distance_miles": 8.5,
+      "nearby": "Downtown Glendale",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134663harveydr/sr134663harveydr.jpg",
+      "label": "SR-134 : (663) Harvey Dr",
+      "distance_miles": 8.6,
+      "nearby": "Downtown Glendale",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i540northofburbankblvd/i540northofburbankblvd.jpg",
+      "label": "I-5 : (40) North of Burbank Blvd",
+      "distance_miles": 8.7,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10100olympicblvd/i10100olympicblvd.jpg",
+      "label": "I-10: (100) Olympic Blvd",
+      "distance_miles": 8.7,
+      "nearby": "Santa Monica City Hall",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101626vannuysblvd/us101626vannuysblvd.jpg",
+      "label": "US-101 : (626) Van Nuys Blvd",
+      "distance_miles": 8.8,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10102mcclureeast/i10102mcclureeast.jpg",
+      "label": "I-10 : (102) Mcclure East",
+      "distance_miles": 9,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i10101mcclurewest/i10101mcclurewest.jpg",
+      "label": "I-10 : (101) Mcclure West",
+      "distance_miles": 9.1,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i541sanfernandoonramp/i541sanfernandoonramp.jpg",
+      "label": "I-5 : (41) San Fernando On-Ramp",
+      "distance_miles": 9.2,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1229californiaincline/sr1229californiaincline.jpg",
+      "label": "SR-1 : (229) California Incline",
+      "distance_miles": 9.4,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/us101627sepulvedablvd/us101627sepulvedablvd.jpg",
+      "label": "US-101 : (627) Sepulveda Blvd",
+      "distance_miles": 9.5,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i405675venturablvd/i405675venturablvd.jpg",
+      "label": "I-405 : (675) Ventura Blvd",
+      "distance_miles": 9.5,
+      "nearby": "Sherman Oaks",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i542buenavista/i542buenavista.jpg",
+      "label": "I-5 : (42) Buena Vista",
+      "distance_miles": 9.6,
+      "nearby": "Burbank",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr1235beachhouse/sr1235beachhouse.jpg",
+      "label": "SR-1 : (235) Beach House",
+      "distance_miles": 9.6,
+      "nearby": "Santa Monica",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/sr134668orangegrove/sr134668orangegrove.jpg",
+      "label": "SR-134 : (668) Orange Grove",
+      "distance_miles": 11.6,
+      "nearby": "Old Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210448marengo/i210448marengo.jpg",
+      "label": "I-210 : (448) Marengo",
+      "distance_miles": 12.4,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210753marengocorson/i210753marengocorson.jpg",
+      "label": "I-210 : (753) Marengo-Corson",
+      "distance_miles": 12.4,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210755hillmaple/i210755hillmaple.jpg",
+      "label": "I-210 : (755) Hill-Maple",
+      "distance_miles": 12.9,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210449lakeave/i210449lakeave.jpg",
+      "label": "I-210 : (449) Lake Ave",
+      "distance_miles": 13,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210754hillmaple/i210754hillmaple.jpg",
+      "label": "I-210 : (754) Hill-Maple",
+      "distance_miles": 13.2,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210757hillcorson/i210757hillcorson.jpg",
+      "label": "I-210 : (757) Hill-Corson",
+      "distance_miles": 13.6,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210756hillmaple/i210756hillmaple.jpg",
+      "label": "I-210 : (756) Hill-Maple",
+      "distance_miles": 13.7,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210759allencorson/i210759allencorson.jpg",
+      "label": "I-210 : (759) Allen-Corson",
+      "distance_miles": 14,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210450allenaveonramp/i210450allenaveonramp.jpg",
+      "label": "I-210 : (450) Allen Ave On-Ramp",
+      "distance_miles": 14.1,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210758allenmaple/i210758allenmaple.jpg",
+      "label": "I-210 : (758) Allen-Maple",
+      "distance_miles": 14.1,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210761altadenacorson/i210761altadenacorson.jpg",
+      "label": "I-210 : (761) Altadena-Corson",
+      "distance_miles": 14.7,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210760altadenamaple/i210760altadenamaple.jpg",
+      "label": "I-210 : (760) Altadena-Maple",
+      "distance_miles": 14.9,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://cwwp2.dot.ca.gov/data/d7/cctv/image/i210764sangabriellatierr/i210764sangabriellatierr.jpg",
+      "label": "I-210 : (764) San Gabriel-La Tierr",
+      "distance_miles": 14.9,
+      "nearby": "Pasadena",
+      "source": "caltrans"
+    },
+    {
+      "url": "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg",
+      "label": "YouTube Live: Venice Beach Boardwalk North",
+      "distance_miles": 7.8,
+      "nearby": "Venice Beach / Santa Monica",
+      "source": "youtube"
+    },
+    {
+      "url": "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg",
+      "label": "YouTube Live: Santa Monica Beach (EXPLORE.org)",
+      "distance_miles": 8.5,
+      "nearby": "Santa Monica Beach",
+      "source": "youtube"
+    },
+    {
+      "label": "Mt. Wilson Observatory North (HPWREN)",
+      "url": "https://cdn.hpwren.ucsd.edu/RT/wilson-n-mobo-c.jpg",
+      "nearby": "Angeles National Forest",
+      "distance_miles": 28.5
+    },
+    {
+      "label": "YouTube Live: Venice Beach Ocean Front Walk",
+      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg",
+      "nearby": "Venice",
+      "distance_miles": 7.8,
+      "source": "youtube"
+    }
+  ],
+  "_meta": {
+    "generated_at": "2026-03-17T20:30:00-07:00",
+    "center_lon": -118.2437,
+    "version": "3.5-beta",
+    "center_lat": 34.0522,
+    "source_counts": {
+      "weingart": 3,
+      "caltrans": 275,
+      "youtube": 5,
+      "hpwren": 1,
+      "abc7": 4
+    }
+  }
 }
