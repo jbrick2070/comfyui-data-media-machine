@@ -44,6 +44,7 @@ _cache_misses = 0
 # Format: url -> timestamp_when_marked_dark
 _dark_camera_cache = {}
 _DARK_CAMERA_TTL = 3600  # seconds — skip dark cameras for 1 hour
+_DARK_CACHE_MAX = 500    # v3.5: hard cap to prevent unbounded growth
 _dark_cache_lock = threading.Lock()
 
 # v3.5: Domain rate limiter — prevents hammering any single host.
@@ -55,6 +56,9 @@ _domain_lock = threading.Lock()
 _DOMAIN_MIN_DELAY = 2.0  # seconds between requests to the same domain
 
 
+_DOMAIN_STALE_AGE = 86400  # 24 hours — prune domains not seen in a day
+
+
 def _domain_throttle(url):
     """Sleep if needed to respect per-domain rate limit."""
     import random
@@ -64,6 +68,12 @@ def _domain_throttle(url):
         return
     with _domain_lock:
         now = time.time()
+        # v3.5: Prune stale domain entries (>24h old) to prevent unbounded growth
+        if len(_domain_last_fetch) > 50:
+            stale = [d for d, t in _domain_last_fetch.items()
+                     if now - t > _DOMAIN_STALE_AGE]
+            for d in stale:
+                del _domain_last_fetch[d]
         last = _domain_last_fetch.get(domain, 0)
         elapsed = now - last
         if elapsed < _DOMAIN_MIN_DELAY:
@@ -145,10 +155,16 @@ class DMMWebcamFetch:
             _cache_misses += 1
 
         # v3.4: Purge expired dark-camera entries
+        # v3.5: Also enforce hard cap to prevent unbounded growth
         with _dark_cache_lock:
             expired = [u for u, t in _dark_camera_cache.items() if now - t > _DARK_CAMERA_TTL]
             for u in expired:
                 del _dark_camera_cache[u]
+            # Hard cap: evict oldest entries if over limit
+            if len(_dark_camera_cache) > _DARK_CACHE_MAX:
+                sorted_entries = sorted(_dark_camera_cache.items(), key=lambda x: x[1])
+                for u, _ in sorted_entries[:len(_dark_camera_cache) - _DARK_CACHE_MAX]:
+                    del _dark_camera_cache[u]
             dark_skipped = 0
 
         # Try each URL in fallback chain

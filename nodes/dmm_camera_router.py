@@ -26,6 +26,7 @@ import logging
 import os
 import random
 import threading
+import time
 from hashlib import sha256
 
 log = logging.getLogger("DMM.CameraRouter")
@@ -208,11 +209,10 @@ class DMMCameraRouter:
         # v3.5: Cache-buster for YouTube thumbnail URLs.
         # Google CDNs aggressively cache maxresdefault.jpg; appending a timestamp
         # query param forces edge nodes to serve a fresh copy.
-        import time as _time
         def _cache_bust(u):
             if "img.youtube.com" in u:
                 sep = "&" if "?" in u else "?"
-                return f"{u}{sep}t={int(_time.time())}"
+                return f"{u}{sep}t={int(time.time())}"
             return u
 
         # Build pipe-delimited URL string: selected first, then fallbacks
