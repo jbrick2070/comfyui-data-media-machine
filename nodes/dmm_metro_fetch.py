@@ -57,20 +57,14 @@ class DMMMetroFetch:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "config": ("DMM_CONFIG",),
-                "source": (["la_metro_live", "demo_rush_hour",
-                            "demo_flowing", "demo_random"],),
-                "sample_size": ("INT", {
-                    "default": 20,
-                    "min": 5,
-                    "max": 100,
-                    "step": 5,
-                    "tooltip": "Number of bus samples to analyze (more = better average but slower)"
-                }),
+                 "config": ("DMM_CONFIG",),
+                 "source": (["la_metro_live", "demo_rush_hour",
+                             "demo_flowing", "demo_random"],),
             },
         }
 
-    def fetch_metro(self, config, source, sample_size):
+    def fetch_metro(self, config, source):
+        sample_size = 20  # Hardcoded standard sample size
         if source.startswith("demo_"):
             data = self._demo_metro(source, config, sample_size)
         elif source == "la_metro_live":
