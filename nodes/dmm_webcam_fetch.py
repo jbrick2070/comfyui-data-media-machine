@@ -191,6 +191,19 @@ class DMMWebcamFetch:
                     _domain_throttle(url)
                     log.info("Fetching webcam [%d/%d] attempt %d/%d: %s",
                              url_idx + 1, len(url_list), attempt + 1, retry_count + 1, url[:80])
+                    
+                    if "youtube.com/watch" in url or "youtu.be/" in url:
+                        frame_arr = self._fetch_youtube_frame(url)
+                        if frame_arr is None:
+                            break # Try next fallback URL if YouTube fails
+                            
+                        # Bypass placeholder detection for YouTube since they usually have reliable feeds
+                        mean_brightness = float(frame_arr.mean())
+                        fetched_url = url
+                        log.info("YouTube Live frame extracted: %dx%d brightness=%.2f from %s",
+                                 frame_arr.shape[1], frame_arr.shape[0], mean_brightness, url[:60])
+                        break
+                        
                     resp = requests.get(url, timeout=timeout_sec, headers={
                         "User-Agent": "DMM-DataMediaMachine/3.0"
                     })
@@ -444,3 +457,35 @@ class DMMWebcamFetch:
             return float(num / den) if den > 0 else 0.0
         except Exception:
             return 0.0
+
+    def _fetch_youtube_frame(self, url):
+        """Use yt-dlp to grab the live HLS stream and cv2 to extract exactly one frame."""
+        import cv2
+        try:
+            import yt_dlp
+        except ImportError:
+            log.error("yt-dlp is not installed. Please pip install yt-dlp to fetch live YouTube frames.")
+            return None
+
+        ydl_opts = {
+            'format': 'best',
+            'quiet': True,
+            'no_warnings': True,
+        }
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+                stream_url = info.get('url')
+                if not stream_url:
+                    return None
+
+            cap = cv2.VideoCapture(stream_url)
+            ret, frame = cap.read()
+            cap.release()
+
+            if ret:
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                return frame_rgb.astype(np.float32) / 255.0
+        except Exception as e:
+            log.error("YouTube frame fetch failed for %s: %s", url[:60], e)
+        return None

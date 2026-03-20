@@ -387,22 +387,22 @@
     },
     {
       "label": "YouTube Live: LAX Plane Spotting Runways 25L/25R",
-      "url": "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=UQaSS4_VAV4",
       "nearby": "Los Angeles Intl Airport",
       "distance_miles": 12.5,
       "source": "youtube"
     },
     {
       "label": "YouTube Live: Venice Beach Boardwalk North",
-      "url": "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=98jOtUeM3m8"
     },
     {
       "label": "YouTube Live: Santa Monica Beach (EXPLORE.org)",
-      "url": "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=qmE7U1YZPQA"
     },
     {
       "label": "YouTube Live: Venice Beach Ocean Front Walk",
-      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=EO_1LWqsCNE"
     }
   ],
   "earthquake": [
@@ -610,19 +610,19 @@
     },
     {
       "label": "YouTube Live: LAX Plane Spotting Runways 25L/25R",
-      "url": "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=UQaSS4_VAV4"
     },
     {
       "label": "YouTube Live: Venice Beach Boardwalk North",
-      "url": "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=98jOtUeM3m8"
     },
     {
       "label": "YouTube Live: Santa Monica Beach (EXPLORE.org)",
-      "url": "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=qmE7U1YZPQA"
     },
     {
       "label": "YouTube Live: Venice Beach Ocean Front Walk",
-      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=EO_1LWqsCNE"
     },
     {
       "label": "Weingart Skid Row Cam 1",
@@ -1012,19 +1012,19 @@
     },
     {
       "label": "YouTube Live: LAX Plane Spotting Runways 25L/25R",
-      "url": "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=UQaSS4_VAV4"
     },
     {
       "label": "YouTube Live: Venice Beach Boardwalk North",
-      "url": "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=98jOtUeM3m8"
     },
     {
       "label": "YouTube Live: Santa Monica Beach (EXPLORE.org)",
-      "url": "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=qmE7U1YZPQA"
     },
     {
       "label": "YouTube Live: Venice Beach Ocean Front Walk",
-      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg"
+      "url": "https://www.youtube.com/watch?v=EO_1LWqsCNE"
     }
   ],
   "transit": [
@@ -1380,7 +1380,7 @@
     },
     {
       "label": "YouTube Live: LAX Plane Spotting Runways 25L/25R",
-      "url": "https://img.youtube.com/vi/UQaSS4_VAV4/maxresdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=UQaSS4_VAV4",
       "nearby": "Los Angeles Intl Airport",
       "distance_miles": 12.5,
       "source": "youtube"
@@ -1759,7 +1759,7 @@
       "source": "weingart"
     },
     {
-      "url": "https://img.youtube.com/vi/NsmJg4oSDVg/maxresdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=NsmJg4oSDVg",
       "label": "YouTube Live: Skid Row LA Cam 2",
       "distance_miles": 4.2,
       "nearby": "Skid Row / Downtown LA",
@@ -1767,7 +1767,7 @@
     },
     {
       "label": "YouTube Live: Venice Beach Ocean Front Walk",
-      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=EO_1LWqsCNE",
       "nearby": "Venice",
       "distance_miles": 7.8,
       "source": "youtube"
@@ -2111,14 +2111,14 @@
       "source": "caltrans"
     },
     {
-      "url": "https://img.youtube.com/vi/98jOtUeM3m8/maxresdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=98jOtUeM3m8",
       "label": "YouTube Live: Venice Beach Boardwalk North",
       "distance_miles": 7.8,
       "nearby": "Venice Beach / Santa Monica",
       "source": "youtube"
     },
     {
-      "url": "https://img.youtube.com/vi/qmE7U1YZPQA/maxresdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=qmE7U1YZPQA",
       "label": "YouTube Live: Santa Monica Beach (EXPLORE.org)",
       "distance_miles": 8.5,
       "nearby": "Santa Monica Beach",
@@ -2132,7 +2132,7 @@
     },
     {
       "label": "YouTube Live: Venice Beach Ocean Front Walk",
-      "url": "https://img.youtube.com/vi/EO_1LWqsCNE/maxresdefault.jpg",
+      "url": "https://www.youtube.com/watch?v=EO_1LWqsCNE",
       "nearby": "Venice",
       "distance_miles": 7.8,
       "source": "youtube"
