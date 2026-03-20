@@ -203,7 +203,16 @@ class DMMCameraRouter:
             # Use original_focus for offset so swapped scenic slots pick different cams
             offset = int.from_bytes(sha256(original_focus.encode()).digest()[:4], "little")
             rng = random.Random(seed + offset)
-            idx = rng.randint(0, len(cameras) - 1)
+            
+            # v3.6: Group by source to ensure diversity (so 275 Caltrans don't drown out 5 YouTube)
+            sources = {}
+            for c in cameras:
+                src = c.get("source", "caltrans")
+                sources.setdefault(src, []).append(c)
+                
+            chosen_src = rng.choice(list(sources.keys()))
+            chosen_cam = rng.choice(sources[chosen_src])
+            idx = cameras.index(chosen_cam)
 
         selected = cameras[idx]
         url = selected.get("url", "")
