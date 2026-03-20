@@ -855,13 +855,13 @@ class DMMProceduralClip:
         """Draw a small arc gauge (180° sweep) showing a fraction 0-1."""
         # Background arc
         bbox = [cx - r, cy - r, cx + r, cy + r]
-        draw.arc(bbox, 180, 360, fill=_dim(bg_color, 0.3), width=2)
+        draw.arc(bbox, 180, 360, fill=_dim(bg_color, 0.3), width=4)
         # Filled arc
         if frac > 0.01:
             end_angle = 180 + int(180 * frac)
             # Color shifts from cool→warm as value increases
             arc_color = _lerp_color(color, NEON["hot"], frac) if frac > 0.6 else color
-            draw.arc(bbox, 180, end_angle, fill=arc_color, width=2)
+            draw.arc(bbox, 180, end_angle, fill=arc_color, width=4)
 
     # ── AQI label helper ────────────────────────────────────────────
     def _aqi_label(self, aqi_num):
