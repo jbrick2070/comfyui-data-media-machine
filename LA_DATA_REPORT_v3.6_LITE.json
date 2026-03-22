@@ -2347,7 +2347,7 @@
         }
       ],
       "widgets_values": [
-        "Phi-3-mini",
+        "Qwen2.5-3B-Instruct",
         "late_night_radio"
       ],
       "properties": {
