@@ -276,7 +276,7 @@ class DMMProceduralClip:
                 "height": ("INT", {"default": 288, "min": 128, "max": 2160, "step": 32}),
                 "duration_sec": ("FLOAT", {"default": 5.0, "min": 1.0, "max": 30.0, "step": 0.5,
                                            "tooltip": "Clip length in seconds"}),
-                "fps": ("INT", {"default": 25, "min": 1, "max": 60}),
+                "fps": ("INT", {"default": 35, "min": 1, "max": 60}),
                 "style": (["la_neon", "minimal_data", "retro_terminal"],
                           {"default": "la_neon"}),
             },

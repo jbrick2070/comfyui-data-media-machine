@@ -200,7 +200,7 @@ class DMMNarrationDistiller:
         exact_time = f"{hour_12}:{now.tm_min:02d} {am_pm}"
 
         # Combine all parts directly
-        # The DMM_NarrationRefiner (Phi-3) will rewrite this into a proper broadcast.
+        # The DMM_NarrationRefiner (Qwen2.5) will rewrite this into a proper broadcast.
         # We just need to ensure all the raw facts are present and legible.
         intro = f"The current LA time is {exact_time}."
         sections = [s for s in [intro, alerts, weather, quake, aq, transit] if s]

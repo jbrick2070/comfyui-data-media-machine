@@ -1,14 +1,14 @@
 """
-DMM_NarrationRefiner -- AI-polishes template narration via Phi-3-mini.
+DMM_NarrationRefiner -- AI-polishes template narration via Qwen2.5.
 
 Takes the ~60-word template narration from NarrationDistiller and rewrites
 it to sound like a real broadcast anchor.  All facts are preserved exactly;
 only phrasing, flow, and cadence are improved.
 
-Phi-3-mini pattern borrowed from ComfyUI-Goofer/goofer_prompt_gen.py:
-  - Lazy-loads microsoft/Phi-3-mini-4k-instruct in float16
+Qwen2.5 pattern borrowed from ComfyUI-UCLA-News-Video/nodes/ucla_video_prompt_gen.py:
+  - Lazy-loads Qwen/Qwen2.5-3B-Instruct or 7B in float16
   - Unloads VRAM after generation so downstream nodes have full headroom
-  - Graceful fallback: returns original text if Phi-3 fails or is unavailable
+  - Graceful fallback: returns original text if Qwen fails or is unavailable
 
 Author: Jeffrey A. Brick
 """
@@ -18,48 +18,64 @@ import time
 
 log = logging.getLogger("media_machine.narration_refiner")
 
-# -- Phi-3-mini lazy loader (same pattern as Goofer) --------------------------
-_phi3_model = None
-_phi3_tok = None
+# -- Qwen lazy loader (same pattern as UCLA News Video / Goofer) --------------
+_qwen_model = None
+_qwen_tok = None
+_qwen_loaded_id = None
 
 
-def _get_phi3():
-    """Lazy-load microsoft/Phi-3-mini-4k-instruct in float16."""
-    global _phi3_model, _phi3_tok
-    if _phi3_model is not None:
-        return _phi3_model, _phi3_tok
+def _get_qwen(model_id):
+    """Lazy-load a Qwen2.5-Instruct model in float16 on CUDA."""
+    global _qwen_model, _qwen_tok, _qwen_loaded_id
+
+    if _qwen_model is not None and _qwen_loaded_id == model_id:
+        return _qwen_model, _qwen_tok
+
+    if _qwen_model is not None:
+        _unload_qwen()
+
     try:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
-        model_id = "microsoft/Phi-3-mini-4k-instruct"
-        log.info("[NarrationRefiner] Loading Phi-3-mini (~4 GB first run)...")
-        _phi3_tok = AutoTokenizer.from_pretrained(model_id)
-        _phi3_model = AutoModelForCausalLM.from_pretrained(
+
+        log.info("[NarrationRefiner] Loading %s ...", model_id)
+        print(f"[DMM] Loading {model_id} (first run downloads model)...")
+
+        _qwen_tok = AutoTokenizer.from_pretrained(model_id)
+        _qwen_model = AutoModelForCausalLM.from_pretrained(
             model_id,
-            torch_dtype=torch.float16,
+            dtype=torch.float16,
         ).to("cuda").eval()
-        log.info("[NarrationRefiner] Phi-3-mini loaded on CUDA")
+
+        _qwen_loaded_id = model_id
+        log.info("[NarrationRefiner] %s loaded on CUDA", model_id)
+        print(f"[DMM] {model_id} loaded on CUDA")
     except Exception as exc:
-        log.exception("[NarrationRefiner] Phi-3-mini failed to load: %s", exc)
-        _phi3_model = None
-        _phi3_tok = None
-    return _phi3_model, _phi3_tok
+        log.exception("[NarrationRefiner] %s failed to load: %s", model_id, exc)
+        print(f"[DMM] Qwen load failed: {exc}")
+        _qwen_model = None
+        _qwen_tok = None
+        _qwen_loaded_id = None
+
+    return _qwen_model, _qwen_tok
 
 
-def _unload_phi3():
+def _unload_qwen():
     """Free VRAM after refinement so TTS/MusicGen/video nodes have headroom."""
-    global _phi3_model, _phi3_tok
-    if _phi3_model is None:
+    global _qwen_model, _qwen_tok, _qwen_loaded_id
+    if _qwen_model is None:
         return
     try:
         import torch
-        del _phi3_model, _phi3_tok
-        _phi3_model = None
-        _phi3_tok = None
+        del _qwen_model, _qwen_tok
+        _qwen_model = None
+        _qwen_tok = None
+        _qwen_loaded_id = None
         torch.cuda.empty_cache()
-        log.info("[NarrationRefiner] Phi-3-mini unloaded from VRAM")
+        log.info("[NarrationRefiner] Qwen unloaded from VRAM")
+        print("[DMM] Qwen unloaded from VRAM")
     except Exception as exc:
-        log.debug("[NarrationRefiner] Phi-3 unload: %s", exc)
+        log.debug("[NarrationRefiner] Qwen unload: %s", exc)
 
 
 # -- System prompt for narration rewriting ------------------------------------
@@ -93,7 +109,7 @@ _BAD_OUTPUTS = ["i cannot", "i can't", "i'm sorry", "i apologize", "as an ai",
 
 
 def _refine_text(model, tok, narration: str, style: str) -> str:
-    """Run Phi-3-mini refinement on narration text. Returns '' on failure."""
+    """Run Qwen2.5 refinement on narration text. Returns '' on failure."""
     import torch
 
     msg = _REFINE_USER_TMPL.format(narration=narration, style=style)
@@ -116,7 +132,7 @@ def _refine_text(model, tok, narration: str, style: str) -> str:
     new_tok = out[0][inputs["input_ids"].shape[1]:]
     result = tok.decode(new_tok, skip_special_tokens=True).strip()
 
-    # Strip wrapping quotes if Phi-3 adds them
+    # Strip wrapping quotes if Qwen adds them
     if result.startswith('"') and result.endswith('"'):
         result = result[1:-1].strip()
 
@@ -132,14 +148,22 @@ def _refine_text(model, tok, narration: str, style: str) -> str:
     return result
 
 
+# -- Model size → HuggingFace ID mapping --------------------------------------
+
+_MODEL_MAP = {
+    "Qwen2.5-3B-Instruct": "Qwen/Qwen2.5-3B-Instruct",
+    "Qwen2.5-7B-Instruct": "Qwen/Qwen2.5-7B-Instruct",
+}
+
+
 # -- ComfyUI Node -------------------------------------------------------------
 
 class DMMNarrationRefiner:
-    """AI-polishes template narration text via Phi-3-mini.
+    """AI-polishes template narration text via Qwen2.5.
 
     Insert between NarrationDistiller and Kokoro TTS.
-    Phi-3 is lazy-loaded and unloaded after each run to free VRAM.
-    Falls back to original text if Phi-3 is unavailable.
+    Qwen is lazy-loaded and unloaded after each run to free VRAM.
+    Falls back to original text if Qwen is unavailable.
     """
 
     CATEGORY = "Data Media Machine"
@@ -158,11 +182,12 @@ class DMMNarrationRefiner:
                 }),
             },
             "optional": {
-                "refine_mode": (["Phi-3-mini", "Passthrough"], {
-                    "default": "Phi-3-mini",
+                "refine_mode": (["Qwen2.5-3B-Instruct", "Qwen2.5-7B-Instruct", "Passthrough"], {
+                    "default": "Qwen2.5-3B-Instruct",
                     "tooltip": (
-                        "Phi-3-mini: AI rewrites for broadcast quality (~4 GB VRAM, "
-                        "unloads after). Passthrough: returns text unchanged."
+                        "Qwen2.5-3B: AI rewrites for broadcast quality (~6 GB VRAM, faster). "
+                        "Qwen2.5-7B: higher quality (~14 GB VRAM). "
+                        "Passthrough: returns text unchanged."
                     ),
                 }),
                 "style": (["late_night_radio", "morning_news", "calm_documentary",
@@ -170,10 +195,15 @@ class DMMNarrationRefiner:
                     "default": "late_night_radio",
                     "tooltip": "Broadcast style for the AI rewrite",
                 }),
+                "unload_after": ("BOOLEAN", {
+                    "default": True,
+                    "tooltip": "Free VRAM after generation. Disable if chaining multiple AI nodes.",
+                }),
             },
         }
 
-    def refine(self, narration_text, refine_mode="Phi-3-mini", style="late_night_radio"):
+    def refine(self, narration_text, refine_mode="Qwen2.5-3B-Instruct",
+               style="late_night_radio", unload_after=True):
         if not narration_text or not narration_text.strip():
             log.warning("[NarrationRefiner] Empty input, returning empty string")
             return ("",)
@@ -183,22 +213,24 @@ class DMMNarrationRefiner:
                      len(narration_text.split()))
             return (narration_text,)
 
-        # --- Phi-3-mini refinement ---
+        # --- Qwen2.5 refinement ---
         t0 = time.time()
-        model, tok = _get_phi3()
+        model_id = _MODEL_MAP.get(refine_mode, "Qwen/Qwen2.5-3B-Instruct")
+        model, tok = _get_qwen(model_id)
 
         if model is None:
-            log.warning("[NarrationRefiner] Phi-3-mini unavailable, returning original")
+            log.warning("[NarrationRefiner] %s unavailable, returning original", refine_mode)
             return (narration_text,)
 
         style_label = style.replace("_", " ")
         refined = _refine_text(model, tok, narration_text, style_label)
 
-        # Unload Phi-3 to free VRAM for TTS / MusicGen / video nodes
-        _unload_phi3()
+        # Unload Qwen to free VRAM for TTS / MusicGen / video nodes
+        if unload_after:
+            _unload_qwen()
 
         if not refined:
-            log.info("[NarrationRefiner] Phi-3 output rejected, using original")
+            log.info("[NarrationRefiner] Qwen output rejected, using original")
             return (narration_text,)
 
         elapsed = time.time() - t0

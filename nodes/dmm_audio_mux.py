@@ -23,22 +23,22 @@ def _get_video_components(video_obj):
     if hasattr(video_obj, "get_components"):
         comp = video_obj.get_components()
         if isinstance(comp, dict):
-            return (comp.get("images"), comp.get("audio"), comp.get("fps", 25))
+            return (comp.get("images"), comp.get("audio"), comp.get("fps", 35))
         if hasattr(comp, "images"):
             return (comp.images, getattr(comp, "audio", None),
-                    getattr(comp, "fps", 25))
+                    getattr(comp, "fps", 35))
 
     # Try direct attributes (_ConcatVideo style)
     if hasattr(video_obj, "_images"):
         return (video_obj._images, getattr(video_obj, "_audio", None),
-                getattr(video_obj, "_fps", 25))
+                getattr(video_obj, "_fps", 35))
 
     # Try dict-style
     if isinstance(video_obj, dict):
         return (video_obj.get("images"), video_obj.get("audio"),
-                video_obj.get("fps", 25))
+                video_obj.get("fps", 35))
 
-    return (None, None, 25)
+    return (None, None, 35)
 
 
 def _build_video(images, audio, fps, original_video):

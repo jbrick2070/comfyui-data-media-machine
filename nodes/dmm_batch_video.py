@@ -209,7 +209,7 @@ class DMMBatchVideoGenerator:
                 "height": ("INT", {"default": 512, "min": 64, "max": 2048, "step": 32}),
                 "length": ("INT", {"default": 61, "min": 9, "max": 257, "step": 8,
                                    "tooltip": "Number of frames (pixel-space)"}),
-                "fps": ("INT", {"default": 25, "min": 1, "max": 60}),
+                "fps": ("INT", {"default": 35, "min": 1, "max": 60}),
                 "cfg": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 30.0, "step": 0.1}),
                 "seed": ("INT", {"default": 42, "min": 0, "max": 0xFFFFFFFF,
                                 "tooltip": "Base seed — each clip increments by 1"}),
