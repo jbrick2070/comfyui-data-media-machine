@@ -81,20 +81,40 @@ def _unload_qwen():
 # -- System prompt for narration rewriting ------------------------------------
 
 _REFINE_SYSTEM = (
-    "You are a veteran Los Angeles radio broadcast editor. "
-    "Your job is to rewrite data narration scripts so they sound natural, "
-    "warm, and professional — like a real late-night radio host reading the "
-    "city report.\n\n"
+    "You are a veteran Los Angeles radio broadcast editor and voice writer. "
+    "Your job is to rewrite raw data narration scripts so they sound natural, "
+    "warm, and professional — like a beloved late-night LA radio host reading "
+    "the city report to listeners who trust you.\n\n"
+    "The narration has FIVE parts you must preserve, in this order:\n"
+    "  A) OPENING — the date, time, sunrise, and sunset info\n"
+    "  B) LA COLOR — a fun fact or cultural tidbit about Los Angeles or today's date. "
+    "Weave this naturally into the broadcast — it should feel like the host sharing "
+    "local knowledge, not reading a Wikipedia entry.\n"
+    "  C) BODY — weather, air quality, seismic, transit data\n"
+    "  D) EVENT — a free public event happening nearby in the next 24 hours. "
+    "This comes AFTER the data, as a 'before I go' local tip. "
+    "Mention the event name, time, and venue naturally — like a friend letting you know "
+    "about something cool happening tonight. If no event is present, skip this section.\n"
+    "  E) CLOSING — a friendly, data-driven personal statement at the end "
+    "(advice like 'bring sunscreen', 'grab a jacket', 'enjoy the sunset'). "
+    "This closing statement is the emotional heart of the broadcast. "
+    "It must feel like a genuine sign-off from someone who cares.\n\n"
     "Rules you MUST follow:\n"
-    "1. Keep ALL facts, numbers, temperatures, times, and data EXACTLY as given. "
-    "Do NOT change, round, or omit any data point.\n"
+    "1. Keep ALL facts, numbers, temperatures, times, sunrise/sunset, and data "
+    "EXACTLY as given. Do NOT change, round, or omit any data point.\n"
     "2. Output ONLY the rewritten narration — no preamble, no explanation, no quotes.\n"
-    "3. Keep the word count close to the original (within +/- 10 words). "
-    "The narration must fit in ~24 seconds of speech.\n"
+    "3. Keep the word count close to the original (within +/- 25 words). "
+    "The narration must fit in ~40 seconds of speech.\n"
     "4. Use natural broadcast cadence — vary sentence length, add brief pauses "
     "(commas, ellipses) where a real anchor would breathe.\n"
     "5. Do NOT add fictional details, opinions, or editorializing.\n"
     "6. Do NOT use exclamation marks or overly enthusiastic language.\n"
+    "7. The CLOSING statement must:\n"
+    "   - Appear at the END of the narration as a warm sign-off\n"
+    "   - Reference the specific data point it's based on (temp, UV, sunset time, etc.)\n"
+    "   - Feel personal and conversational, like a friend giving advice\n"
+    "   - Be at least 2-3 sentences long — don't shorten it to a throwaway line\n"
+    "   - End the broadcast with warmth. The listener should smile.\n"
 )
 
 _REFINE_USER_TMPL = (
@@ -112,18 +132,19 @@ def _refine_text(model, tok, narration: str, style: str) -> str:
     """Run Qwen2.5 refinement on narration text. Returns '' on failure."""
     import torch
 
+    input_word_count = len(narration.split())
     msg = _REFINE_USER_TMPL.format(narration=narration, style=style)
     messages = [
         {"role": "system", "content": _REFINE_SYSTEM},
         {"role": "user",   "content": msg},
     ]
     text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    inputs = tok(text, return_tensors="pt", truncation=True, max_length=512).to(model.device)
+    inputs = tok(text, return_tensors="pt", truncation=True, max_length=1536).to(model.device)
 
     with torch.no_grad():
         out = model.generate(
             **inputs,
-            max_new_tokens=150,
+            max_new_tokens=400,
             temperature=0.6,
             do_sample=True,
             top_p=0.9,
@@ -136,10 +157,12 @@ def _refine_text(model, tok, narration: str, style: str) -> str:
     if result.startswith('"') and result.endswith('"'):
         result = result[1:-1].strip()
 
-    # Validate output
+    # Validate output — reject if too short or catastrophically reduced
     word_count = len(result.split())
-    if word_count < 10:
-        log.warning("[NarrationRefiner] Output too short (%d words), using original", word_count)
+    min_words = max(10, int(input_word_count * 0.40))  # at least 40% of input
+    if word_count < min_words:
+        log.warning("[NarrationRefiner] Output too short (%d words, need >= %d), using original",
+                    word_count, min_words)
         return ""
     if any(b in result.lower()[:50] for b in _BAD_OUTPUTS):
         log.warning("[NarrationRefiner] Refusal/preamble detected, using original")
@@ -166,7 +189,7 @@ class DMMNarrationRefiner:
     Falls back to original text if Qwen is unavailable.
     """
 
-    CATEGORY = "Data Media Machine"
+    CATEGORY = "DataMediaMachine"
     FUNCTION = "refine"
     RETURN_TYPES = ("STRING",)
     RETURN_NAMES = ("narration_text",)

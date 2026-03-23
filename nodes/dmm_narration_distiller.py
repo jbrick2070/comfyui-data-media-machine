@@ -7,11 +7,16 @@ Inputs:  5 optional STRING slots (weather_summary, quake_summary, aq_summary,
 Output:  STRING — natural-language narration ready for KokoroTTS.
 
 v1.0  2026-03-14  Initial release.
+v1.1  2026-03-22  Added date, sunrise/sunset, and friendly statement.
+v1.2  2026-03-22  Added live event lookup and LA city facts.
 """
 
 import logging
 import re
 import time
+
+from .dmm_sun_utils import get_sun_info, get_nice_statement, get_date_fact
+from .dmm_event_utils import get_upcoming_event
 
 log = logging.getLogger("DMM")
 
@@ -199,12 +204,73 @@ class DMMNarrationDistiller:
         am_pm = "AM" if now.tm_hour < 12 else "PM"
         exact_time = f"{hour_12}:{now.tm_min:02d} {am_pm}"
 
+        # Sun info — date, sunrise, sunset, friendly statement
+        sun = get_sun_info()
+
+        # Build data dicts from raw summary strings so the nice statement
+        # is driven by real data, not generic fallbacks.
+        w_dict = None
+        if weather_summary:
+            w_dict = {"temp_f": 72, "wind_speed_mph": 5, "humidity": 50,
+                      "rain_1h_mm": 0, "description": ""}
+            _t = re.search(r"(\d+)\s*°?\s*F", weather_summary, re.IGNORECASE)
+            if _t:
+                w_dict["temp_f"] = int(_t.group(1))
+            _w = re.search(r"[Ww]ind\s*:?\s*(\d+)\s*mph", weather_summary, re.IGNORECASE)
+            if _w:
+                w_dict["wind_speed_mph"] = int(_w.group(1))
+            _h = re.search(r"[Hh]umidity\s*:?\s*(\d+)", weather_summary, re.IGNORECASE)
+            if _h:
+                w_dict["humidity"] = int(_h.group(1))
+            _r = re.search(r"[Rr]ain\s*:?\s*([\d.]+)", weather_summary, re.IGNORECASE)
+            if _r:
+                w_dict["rain_1h_mm"] = float(_r.group(1))
+            _d = re.search(r":\s*([^|]+)", weather_summary)
+            if _d:
+                w_dict["description"] = _d.group(1).strip()
+
+        aq_dict = None
+        if aq_summary:
+            aq_dict = {"us_aqi": 50, "uv_index": 3}
+            _a = re.search(r"AQI\s*:?\s*(\d+)", aq_summary, re.IGNORECASE)
+            if _a:
+                aq_dict["us_aqi"] = int(_a.group(1))
+            _u = re.search(r"UV\s*:?\s*(\d+)", aq_summary, re.IGNORECASE)
+            if _u:
+                aq_dict["uv_index"] = int(_u.group(1))
+
+        nice = get_nice_statement(w_dict, aq_dict, sun)
+
+        # Extract city from weather summary for event search
+        city = "Los Angeles"
+        if weather_summary:
+            city_match = re.match(r"^([A-Za-z\s]+?)(?:\s*\[)", weather_summary)
+            if city_match:
+                city = city_match.group(1).strip()
+
         # Combine all parts directly
         # The DMM_NarrationRefiner (Qwen2.5) will rewrite this into a proper broadcast.
         # We just need to ensure all the raw facts are present and legible.
-        intro = f"The current LA time is {exact_time}."
-        sections = [s for s in [intro, alerts, weather, quake, aq, transit] if s]
-        
+        intro = (f"It is {sun['date_str']}. The current {city} time is {exact_time}. "
+                 f"Sunrise at {sun['sunrise_str']}, sunset at {sun['sunset_str']}. "
+                 f"Next {sun['next_event']} at {sun['next_time_str']}.")
+
+        # Date/day-of-week color — interesting facts about today
+        date_fact = get_date_fact()
+
+        # Live event — free public event happening in the next 24 hours
+        event_line = get_upcoming_event(city)
+
+        sections = [s for s in [intro, date_fact, alerts, weather, quake, aq, transit] if s]
+        # Live event comes after all data, right before the closing
+        if event_line:
+            sections.append(event_line)
+            log.info("DMM_NarrationDistiller: event_line = %s", event_line)
+        else:
+            log.info("DMM_NarrationDistiller: no event returned for %s", city)
+        # Friendly closing statement is always last
+        sections.append(nice)
+
         narration = " ".join(sections)
 
         word_count = len(narration.split())

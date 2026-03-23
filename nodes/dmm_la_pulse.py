@@ -8,11 +8,15 @@ the full gamut of what's happening in LA.
 Outputs a radio-broadcast-quality narration ready for Kokoro TTS.
 
 Think: NPR morning report meets old-time radio meets data art.
+
+v3.7: Added date, sunrise/sunset, and friendly data-based closing statements.
 """
 
 import random
 import json
 import time
+
+from .dmm_sun_utils import get_sun_info, get_nice_statement
 
 
 class DMMLAPulseNarrative:
@@ -68,11 +72,14 @@ class DMMLAPulseNarrative:
         rng = random.Random(config["seed"])
         city = config["city"]
 
+        # Sun info (date, sunrise, sunset)
+        sun = get_sun_info()
+
         # Determine which segments we have data for
         segments = []
 
-        # 1. OPENING
-        segments.append(self._opening(broadcast_style, city, weather_data, rng))
+        # 1. OPENING (now includes date and sunrise/sunset)
+        segments.append(self._opening(broadcast_style, city, weather_data, rng, sun))
 
         # 2. ALERTS (highest priority — goes first if present)
         if alerts_data and alerts_data.get("count", 0) > 0:
@@ -97,8 +104,9 @@ class DMMLAPulseNarrative:
             if seg:
                 segments.append(seg)
 
-        # 7. CLOSING
-        segments.append(self._closing(broadcast_style, city, weather_data, rng))
+        # 7. CLOSING (now with nice data-based statements)
+        nice_line = get_nice_statement(weather_data, aq_data, sun)
+        segments.append(self._closing(broadcast_style, city, weather_data, rng, sun, nice_line))
 
         # Join with natural pauses (period-space for TTS pacing)
         full_narrative = " ".join(s.strip() for s in segments if s.strip())
@@ -135,7 +143,7 @@ class DMMLAPulseNarrative:
 
     # ---- OPENING ----
 
-    def _opening(self, style, city, weather, rng):
+    def _opening(self, style, city, weather, rng, sun=None):
         temp = weather.get("temp_f", 72)
         live = weather.get("live", False)
         live_str = "live" if live else "simulated"
@@ -143,7 +151,7 @@ class DMMLAPulseNarrative:
         # Fetch current time and determine the time of day
         current_time = time.strftime("%I:%M %p").lstrip("0")
         hour = time.localtime().tm_hour
-        
+
         if hour < 12:
             greeting = "Good morning"
         elif hour < 17:
@@ -151,49 +159,62 @@ class DMMLAPulseNarrative:
         else:
             greeting = "Good evening"
 
+        # Sun/date info
+        date_str = sun["date_str"] if sun else ""
+        sunrise = sun["sunrise_str"] if sun else ""
+        sunset = sun["sunset_str"] if sun else ""
+        next_ev = sun["next_event"] if sun else ""
+        next_t = sun["next_time_str"] if sun else ""
+
         if style == "la_morning_report":
             greetings = [
-                f"{greeting}, {city}. It is {current_time}. This is your city pulse report.",
-                f"{greeting}, {city}. The time is {current_time}. Here's what's happening across the basin.",
-                f"{greeting}. It is {current_time}. You're listening to the {city} Pulse, your {live_str} city data feed.",
+                f"{greeting}, {city}. It's {date_str}, {current_time}. This is your city pulse report. Sunrise at {sunrise}, sunset at {sunset}.",
+                f"{greeting}, {city}. {date_str}, {current_time}. Here's what's happening across the basin. Next {next_ev} at {next_t}.",
+                f"{greeting}. It's {date_str}. You're listening to the {city} Pulse, your {live_str} city data feed. Sunrise today at {sunrise}, sunset at {sunset}.",
             ]
             return rng.choice(greetings)
 
         elif style == "noir_city_pulse":
             return (
-                f"The time is {current_time}. The city breathes at {temp:.0f} degrees. "
-                f"{city}. Ten million stories, and this is what the data says right now."
+                f"{date_str}. The time is {current_time}. The city breathes at {temp:.0f} degrees. "
+                f"{city}. Ten million stories, and this is what the data says right now. "
+                f"The sun {'already set' if next_ev == 'sunrise' else f'sets at {sunset}'}."
             )
 
         elif style == "old_time_radio_hour":
             return (
-                f"{greeting}, ladies and gentlemen. The time is exactly {current_time}. "
+                f"{greeting}, ladies and gentlemen. The date is {date_str}. The time is exactly {current_time}. "
                 f"You're tuned to the {city} Information Hour, "
-                f"bringing you the latest reports from across the metropolitan area."
+                f"bringing you the latest reports from across the metropolitan area. "
+                f"Today's sunrise at {sunrise}, sunset at {sunset}."
             )
 
         elif style == "cyberpunk_city_scan":
             return (
-                f"SYSTEM ONLINE. Temporal sync: {current_time}. Initiating {city} metropolitan scan. "
-                f"All sensor arrays active. Data feed: {live_str}."
+                f"SYSTEM ONLINE. Date: {sun['date_short'] if sun else ''}. Temporal sync: {current_time}. "
+                f"Initiating {city} metropolitan scan. "
+                f"All sensor arrays active. Data feed: {live_str}. "
+                f"Solar: rise {sunrise}, set {sunset}."
             )
 
         elif style == "calm_documentary":
             return (
-                f"The time is {current_time}. "
+                f"It is {date_str}, {current_time}. "
                 f"{city} stretches across the basin under a sky that reads {temp:.0f} degrees. "
+                f"The sun rises at {sunrise} and sets at {sunset}. "
                 f"Here is what the city is telling us right now."
             )
 
         elif style == "surreal_dispatch":
             return (
-                f"The clocks agree that it is {current_time}. "
+                f"The calendar reads {date_str}. The clocks agree that it is {current_time}. "
                 f"Somewhere between the mountains and the ocean, "
                 f"{city} remembers that it is {temp:.0f} degrees. "
+                f"The sun promises to arrive at {sunrise} and depart at {sunset}. "
                 f"The data begins to speak."
             )
 
-        return f"This is the {city} Pulse at {current_time}."
+        return f"It's {date_str}. This is the {city} Pulse at {current_time}."
 
     # ---- ALERTS ----
 
@@ -534,40 +555,44 @@ class DMMLAPulseNarrative:
 
     # ---- CLOSING ----
 
-    def _closing(self, style, city, weather, rng):
+    def _closing(self, style, city, weather, rng, sun=None, nice_statement=""):
+        next_ev = sun["next_event"] if sun else ""
+        next_t = sun["next_time_str"] if sun else ""
+        nice = nice_statement or "Have a nice day."
+
         if style == "la_morning_report":
             closings = [
-                f"That's your {city} Pulse for now. Stay safe, stay informed.",
-                f"This has been the {city} Pulse. We'll be back with the next update.",
-                f"That's the latest from the {city} data feed. Have a good one.",
+                f"That's your {city} Pulse for now. Next {next_ev} at {next_t}. {nice}",
+                f"This has been the {city} Pulse. {nice} We'll be back with the next update.",
+                f"That's the latest from the {city} data feed. {nice}",
             ]
             return rng.choice(closings)
 
         elif style == "noir_city_pulse":
             closings = [
-                f"That's the city tonight. Same as always. Different as always.",
-                f"The data never lies. But the city does. Stay sharp.",
-                f"End of report. The city keeps talking, whether you listen or not.",
+                f"That's the city tonight. Next {next_ev} at {next_t}. {nice}",
+                f"The data never lies. But the city does. {nice}",
+                f"End of report. {nice} The city keeps talking, whether you listen or not.",
             ]
             return rng.choice(closings)
 
         elif style == "old_time_radio_hour":
             return (
                 f"And that concludes our {city} Information Hour. "
-                f"We return you now to your regularly scheduled programming. "
-                f"Good night."
+                f"Next {next_ev} at {next_t}. {nice} "
+                f"We return you now to your regularly scheduled programming."
             )
 
         elif style == "cyberpunk_city_scan":
-            return f"Scan complete. All systems nominal. End transmission."
+            return f"Scan complete. All systems nominal. Next solar event: {next_ev} at {next_t}. {nice} End transmission."
 
         elif style == "calm_documentary":
-            return f"And so {city} continues. Always moving, always changing."
+            return f"And so {city} continues. {nice} Always moving, always changing."
 
         elif style == "surreal_dispatch":
             return (
-                f"The data has finished dreaming. "
+                f"The data has finished dreaming. {nice} "
                 f"{city} returns to the space between measurements."
             )
 
-        return f"End of {city} Pulse."
+        return f"End of {city} Pulse. {nice}"

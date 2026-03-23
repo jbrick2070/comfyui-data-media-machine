@@ -23,7 +23,7 @@ Author: Jeffrey A. Brick
 Hardware target: Lenovo Legion Pro 7i Gen 10 (RTX 5080 / Win11)
 """
 
-DMM_VERSION = "3.6"
+DMM_VERSION = "3.7"
 
 import os
 import traceback
@@ -68,6 +68,9 @@ _NODE_MODULES = {
     "DMM_ProceduralClip":      (".nodes.dmm_procedural_clip", "DMMProceduralClip"),
     # v3.4.1 background music (MIDI synth)
     "DMM_BackgroundMusic":     (".nodes.dmm_background_music", "DMMBackgroundMusic"),
+    # v3.5-beta music enhancer (MusicGen-melody)
+    "DMM_MusicEnhancer":       (".nodes.dmm_music_enhancer", "DMM_MusicEnhancer"),
+    "DMM_MusicEnhancerBypass": (".nodes.dmm_music_enhancer", "DMM_MusicEnhancerBypass"),
     # v3.5 energy grid (CAISO)
     "DMM_EnergyGrid":          (".nodes.dmm_energy_grid", "DMMEnergyGrid"),
     # v3.6 narration AI refiner (Qwen2.5)
@@ -106,6 +109,9 @@ _DISPLAY_NAMES = {
     "DMM_ProceduralClip":      "\U0001f3ac DMM: Procedural Clip (LA Style)",
     # v3.4.1 background music
     "DMM_BackgroundMusic":     "\U0001f3b5 DMM: Background Music (MIDI)",
+    # v3.5-beta music enhancer
+    "DMM_MusicEnhancer":       "\U0001f3b6 DMM: Music Enhancer (MusicGen)",
+    "DMM_MusicEnhancerBypass": "\U0001f3b6 DMM: Music Enhancer Bypass",
     # v3.5 energy grid
     "DMM_EnergyGrid":          "\u26a1 DMM: Energy Grid (CAISO Live)",
     # v3.6 narration AI refiner

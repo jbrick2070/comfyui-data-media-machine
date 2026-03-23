@@ -3,10 +3,16 @@ DMMDataToTTS — Generates narration scripts from live data.
 Output feeds directly into Kokoro TTS nodes.
 
 No heavy imports — pure string generation.
+
+v3.7: Added date, sunrise/sunset times, and friendly data-based statements
+      to all narrator styles.
 """
 
 import random
 import json
+import time
+
+from .dmm_sun_utils import get_sun_info, get_nice_statement
 
 
 class DMMDataToTTS:
@@ -72,6 +78,9 @@ class DMMDataToTTS:
         vis = weather_data.get("visibility_m", 10000)
         is_live = weather_data.get("live", False)
 
+        # Sun info (date, sunrise, sunset)
+        sun = get_sun_info()
+
         # Optional data snippets
         aq_line = ""
         if aq_data:
@@ -87,10 +96,14 @@ class DMMDataToTTS:
             transit_line = self._transit_narration(
                 narrator_style, avg_spd, cong, flow, rng)
 
+        # Friendly data-based statement
+        nice_line = get_nice_statement(weather_data, aq_data, sun)
+
         # Main narration
         narration = self._build_narration(
             narrator_style, city, temp, desc, condition, wind,
-            humidity, rain_mm, vis, aq_line, transit_line, is_live, rng
+            humidity, rain_mm, vis, aq_line, transit_line, is_live, rng,
+            sun_info=sun, nice_statement=nice_line
         )
 
         # Voice selection
@@ -158,12 +171,20 @@ class DMMDataToTTS:
 
     def _build_narration(self, style, city, temp, desc, condition, wind,
                           humidity, rain_mm, vis, aq_line, transit_line,
-                          is_live, rng):
+                          is_live, rng, sun_info=None, nice_statement=""):
         live_note = " Live conditions." if is_live else ""
+
+        # Sun/date helpers
+        date_str = sun_info["date_str"] if sun_info else ""
+        sunrise = sun_info["sunrise_str"] if sun_info else ""
+        sunset = sun_info["sunset_str"] if sun_info else ""
+        next_ev = sun_info["next_event"] if sun_info else ""
+        next_t = sun_info["next_time_str"] if sun_info else ""
 
         if style == "news_anchor":
             parts = [
-                f"Good evening. This is your live data feed for {city}.{live_note}",
+                f"Good evening. It's {date_str}.",
+                f"This is your live data feed for {city}.{live_note}",
                 f"Currently {temp:.0f} degrees with {desc.lower()}.",
                 f"Winds {'calm' if wind < 5 else f'at {wind:.0f} miles per hour'}.",
                 f"Humidity at {humidity:.0f} percent.",
@@ -176,11 +197,15 @@ class DMMDataToTTS:
                 parts.append(aq_line)
             if transit_line:
                 parts.append(transit_line)
-            parts.append("Stay safe out there.")
+            parts.append(f"Sunrise today at {sunrise}, sunset at {sunset}.")
+            if next_ev and next_t:
+                parts.append(f"Next {next_ev} at {next_t}.")
+            if nice_statement:
+                parts.append(nice_statement)
 
         elif style == "noir_detective":
             parts = [
-                f"The city doesn't sleep. {city}, {temp:.0f} degrees.",
+                f"{date_str}. The city doesn't sleep. {city}, {temp:.0f} degrees.",
                 f"{'The sky was weeping. ' if rain_mm > 0 else ''}{desc}.",
                 f"{'The wind howled through concrete canyons,' if wind > 20 else 'The air was still,'} "
                 f"humidity thick at {humidity:.0f} percent.",
@@ -191,10 +216,16 @@ class DMMDataToTTS:
                 parts.append(aq_line)
             if transit_line:
                 parts.append(transit_line)
-            parts.append("Just another night in the city of angels.")
+            parts.append(f"The sun {'rose' if next_ev == 'sunset' else 'sets'} — "
+                         f"next {next_ev} at {next_t}.")
+            if nice_statement:
+                parts.append(nice_statement)
+            else:
+                parts.append("Just another night in the city of angels.")
 
         elif style == "surreal_poet":
             parts = [
+                f"The calendar whispers {date_str}.",
                 f"The temperature remembers itself at {temp:.0f}.",
                 f"In {city}, the sky speaks in {desc.lower()}.",
                 f"The wind carries {wind:.0f} whispers per hour,",
@@ -206,11 +237,15 @@ class DMMDataToTTS:
                 parts.append(aq_line)
             if transit_line:
                 parts.append(transit_line)
-            parts.append("The data becomes a dream.")
+            parts.append(f"The sun remembers to rise at {sunrise} and forget at {sunset}.")
+            if nice_statement:
+                parts.append(nice_statement)
+            else:
+                parts.append("The data becomes a dream.")
 
         elif style == "radio_dj":
             parts = [
-                f"What is UP {city}!",
+                f"What is UP {city}! Happy {date_str.split(',')[0] if date_str else 'day'}!",
                 f"We're sitting at {temp:.0f} degrees, {desc.lower()} outside.",
             ]
             if wind > 15:
@@ -221,10 +256,15 @@ class DMMDataToTTS:
                 parts.append(aq_line)
             if transit_line:
                 parts.append(transit_line)
-            parts.append("Now back to the music!")
+            parts.append(f"Sunrise was at {sunrise}, sunset at {sunset}.")
+            if nice_statement:
+                parts.append(nice_statement)
+            else:
+                parts.append("Now back to the music!")
 
         elif style == "calm_documentary":
             parts = [
+                f"It is {date_str}.",
                 f"In {city}, the temperature rests at {temp:.0f} degrees Fahrenheit.",
                 f"The sky presents {desc.lower()}.",
                 f"Wind moves at {wind:.0f} miles per hour.",
@@ -233,11 +273,15 @@ class DMMDataToTTS:
                 parts.append(aq_line)
             if transit_line:
                 parts.append(transit_line)
-            parts.append("The city continues its quiet rhythm.")
+            parts.append(f"Today the sun rises at {sunrise} and sets at {sunset}.")
+            if nice_statement:
+                parts.append(nice_statement)
+            else:
+                parts.append("The city continues its quiet rhythm.")
 
         elif style == "old_time_radio":
             parts = [
-                f"Good evening, ladies and gentlemen.",
+                f"Good evening, ladies and gentlemen. The date is {date_str}.",
                 f"Broadcasting live from the heart of {city}.",
                 f"The thermometer reads {temp:.0f} degrees,",
                 f"with reports of {desc.lower()} across the metropolitan area.",
@@ -247,11 +291,15 @@ class DMMDataToTTS:
                 parts.append(aq_line)
             if transit_line:
                 parts.append(transit_line)
-            parts.append("And now, back to our regularly scheduled program.")
+            parts.append(f"Sunrise is at {sunrise}, and sunset at {sunset}.")
+            if nice_statement:
+                parts.append(nice_statement)
+            else:
+                parts.append("And now, back to our regularly scheduled program.")
 
         elif style == "cyberpunk_dispatch":
             parts = [
-                f"SYSTEM: {city} environmental scan.",
+                f"SYSTEM: {city} environmental scan. Date: {sun_info['date_short'] if sun_info else ''}.",
                 f"Temperature: {temp:.0f}F. Condition: {condition}.",
                 f"Wind vector: {wind:.0f} MPH. Humidity: {humidity:.0f}.",
                 f"Visibility: {vis} meters.",
@@ -262,14 +310,18 @@ class DMMDataToTTS:
                 parts.append(aq_line)
             if transit_line:
                 parts.append(transit_line)
-            parts.append("End dispatch.")
+            parts.append(f"Solar: rise {sunrise}, set {sunset}. Next {next_ev}: {next_t}.")
+            if nice_statement:
+                parts.append(nice_statement)
+            else:
+                parts.append("End dispatch.")
 
         elif style == "haiku_minimalist":
             parts = [
                 f"{city}. {temp:.0f} degrees.",
                 f"{condition.lower()}.",
                 f"Wind, {wind:.0f}.",
-                "Silence.",
+                f"Sun sets {sunset}.",
             ]
 
         else:

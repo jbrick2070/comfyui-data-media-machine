@@ -2,7 +2,7 @@
   "id": "c35a0af8-5080-437e-8c4a-b14e321bd288",
   "revision": 0,
   "last_node_id": 47,
-  "last_link_id": 83,
+  "last_link_id": 84,
   "nodes": [
     {
       "id": 1,
@@ -123,7 +123,8 @@
           "name": "weather_summary",
           "type": "STRING",
           "links": [
-            68
+            68,
+            84
           ],
           "slot_index": 1
         }
@@ -1693,11 +1694,11 @@
       ],
       "widgets_values": [
         "euler",
-        "1., 0.9875, 0.975, 0.725, 0.0",
+        "1., 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0",
         512,
         288,
-        97,
-        25,
+        193,
+        35,
         1.0,
         42,
         "fixed",
@@ -1769,9 +1770,9 @@
         }
       ],
       "widgets_values": [
-        "disabled",
+        "enabled",
         "1080",
-        "HIGH",
+        "ULTRA",
         12
       ],
       "properties": {
@@ -1817,14 +1818,14 @@
       ],
       "outputs": [],
       "widgets_values": [
-        "LA_DATA_REPORT_v3.6_LITE",
+        "LA_DATA_REPORT_v3.7",
         "auto",
         "auto"
       ],
       "properties": {
         "Node name for S&R": "SaveVideo"
       },
-      "title": "Save: LA Data Report v3.6-beta"
+      "title": "Save: LA Data Report v3.7-beta"
     },
     {
       "id": 35,
@@ -2212,8 +2213,8 @@
         "",
         512,
         288,
-        24.0,
-        25,
+        35.0,
+        35,
         "la_neon"
       ]
     },
@@ -2288,6 +2289,14 @@
           "type": "FLOAT",
           "widget": {
             "name": "mix"
+          }
+        },
+        {
+          "name": "weather_summary",
+          "type": "STRING",
+          "link": 84,
+          "widget": {
+            "name": "weather_summary"
           }
         }
       ],
@@ -3002,6 +3011,14 @@
       0,
       41,
       0,
+      "STRING"
+    ],
+    [
+      84,
+      3,
+      1,
+      46,
+      3,
       "STRING"
     ]
   ],

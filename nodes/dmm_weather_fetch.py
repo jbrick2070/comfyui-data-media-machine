@@ -299,10 +299,13 @@ class DMMWeatherFetch:
 
     def _build_summary(self, data, city):
         live_tag = " [LIVE]" if data.get("live") else " [DEMO]"
+        rain_mm = data.get("rain_1h_mm", 0) or 0
+        rain_part = f" | Rain {rain_mm:.1f}mm" if rain_mm > 0 else " | Rain 0.0mm"
         return (
             f"{city}{live_tag}: {data['description']} | "
             f"{data['temp_f']:.0f}\u00b0F | "
             f"Humidity {data['humidity']}% | "
             f"Wind {data['wind_speed_mph']:.0f} mph | "
             f"Clouds {data['clouds_pct']}%"
+            f"{rain_part}"
         )

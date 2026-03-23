@@ -1,10 +1,11 @@
-﻿"""
-DMM Music Enhancer â€” MusicGen-melody audio-to-audio music enhancement.
+"""
+DMM Music Enhancer -- MusicGen-melody audio-to-audio music enhancement.
 
 Takes the background music track from BackgroundMusic and runs it through
 Meta's MusicGen-melody for music-to-music style transfer via chroma/melody
-conditioning. Each run randomly selects one of 12 LA-themed style prompts
-and generates music that follows the harmonic contour of the original.
+conditioning. Each run selects one of 40 diverse LA-community style prompts using
+data-driven scoring (time of day + weather conditions) and generates
+music that follows the harmonic contour of the original.
 
 Architecture:
   BackgroundMusic (48kHz stereo) -> MusicEnhancer -> AudioMux -> SaveVideo
@@ -16,9 +17,9 @@ at the specified mix ratio.
 
 Strength widget maps to MusicGen guidance_scale (how strongly the text
 prompt drives the output vs the input melody):
-  Low  (0.05-0.20): Melody leads â€” output closely follows input harmony
-  Mid  (0.30-0.50): Balanced â€” style prompt and melody co-guide output
-  High (0.60-0.95): Prompt dominates â€” melody is a loose reference
+  Low  (0.05-0.20): Melody leads -- output closely follows input harmony
+  Mid  (0.30-0.50): Balanced -- style prompt and melody co-guide output
+  High (0.60-0.95): Prompt dominates -- melody is a loose reference
 
 num_inference_steps widget = seconds of audio to generate (5-30s).
 Output is looped (with raised-cosine crossfade) or trimmed to match input.
@@ -36,7 +37,7 @@ VRAM Budget:
   - Safe on RTX 5080 (24GB), RTX 4070+ (12GB+), RTX 3060 (12GB)
 
 Author: Jeffrey A. Brick
-Version: 3.5-beta (rewrite: MusicGen-melody, no external API)
+Version: 3.7 (data-driven prompt selection, 40 LA styles, no external API)
 """
 
 import gc
@@ -61,69 +62,386 @@ MUSICGEN_SR = 32000
 # References real synthesizer models and instruments native to LA 80s
 # culture and LA indigenous culture.
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# Tagged LA style prompts -- each has mood + energy for data-driven selection
+#   mood:   calm, warm, moody, intense, spiritual, bright
+#   energy: low (0.0-0.3), mid (0.3-0.6), high (0.6-1.0)
+# ---------------------------------------------------------------------------
 LA_STYLE_PROMPTS = [
-    # 80s LA synthpop â€” Oberheim OB-Xa + Sequential Prophet-5
-    "Los Angeles 1984 synthpop, Oberheim OB-Xa polyphonic pad wash, "
-    "Sequential Prophet-5 lead arpeggio, Roland TR-808 drum machine, "
-    "Sunset Strip neon, cold-wave pulse",
+    # (prompt_text, mood, energy)
 
-    # West Coast G-funk â€” TR-808 + Moog Minimoog
-    "West coast G-funk, Roland TR-808 bass thump, Moog Minimoog sliding bassline, "
-    "talk box melody over pentatonic chords, Parliament-Funkadelic groove, "
-    "Compton summer heat",
+    # ── BLACK LA ─────────────────────────────────────────────────────
+    ("West coast G-funk, Roland TR-808 bass thump, Moog Minimoog sliding bassline, "
+     "talk box melody over pentatonic chords, Parliament-Funkadelic groove, "
+     "Compton summer heat", "warm", 0.6),
 
-    # 80s LA R&B â€” Yamaha DX7 + Linn LM-1
-    "Los Angeles 1986 R&B slow jam, Yamaha DX7 electric piano, Linn LM-1 snare crack, "
-    "Fender Rhodes chord stabs, velvet reverb tail, late-night studio session",
+    ("Los Angeles Central Avenue jazz 1948, upright bass walking line, wire brushed snare, "
+     "Dexter Gordon tenor saxophone blue note improvisation, Steinway grand chord stabs, "
+     "after-hours glow, Dunbar Hotel midnight session", "moody", 0.3),
 
-    # Synthwave â€” Roland Jupiter-8 + Juno-106
-    "Los Angeles synthwave, Roland Jupiter-8 sweeping pads, Roland Juno-106 chorus shimmer, "
-    "analog sequencer pulse, Pacific Coast Highway midnight drive, neon rain reflection",
+    ("Los Angeles Black church gospel, Hammond B3 organ full drawbar swell, "
+     "soulful soprano lead over four-part choir, tambourine on the two and four, "
+     "congregation clap-back, sanctified reverb, West Adams Sunday morning", "bright", 0.7),
 
-    # Aztec / East LA indigenous â€” huehuetl + teponaztli + conchero
-    "East Los Angeles Aztec ceremony fusion, huehuetl heartbeat drum, teponaztli log drum "
-    "call-and-response, conchero shell rattle cascade, copal smoke and street murals, "
-    "Boyle Heights dusk ritual",
+    ("Los Angeles 1986 R&B slow jam, Yamaha DX7 electric piano, Linn LM-1 snare crack, "
+     "Fender Rhodes chord stabs, velvet reverb tail, late-night studio session", "warm", 0.3),
 
-    # Tongva indigenous LA â€” elderberry flute + deer-hoof rattle + clapstick
-    "Tongva Gabrielino indigenous soundscape, elderberry flute breathy melody, "
-    "deer-hoof rattle shimmer, clapstick rhythm over basket drum pulse, "
-    "coastal sage and salt wind, Ballona Creek ceremony",
+    ("Leimert Park spoken word jazz, upright bass ostinato, djembe pulse, "
+     "alto saxophone melody floating over brushed snare, "
+     "World Stage open mic, Crenshaw evening breeze", "calm", 0.3),
 
-    # Central Avenue jazz â€” upright bass + saxophone
-    "Los Angeles Central Avenue jazz 1948, upright bass walking line, wire brushed snare, "
-    "Dexter Gordon tenor saxophone blue note improvisation, Steinway grand chord stabs, "
-    "after-hours glow and cigarette smoke",
+    ("Watts street funk, Hohner Clavinet D6 wah stabs, slap bass groove, "
+     "tight horn section staccato hits, Roland TR-707 snare, "
+     "Simon Rodia tower silhouette at golden hour", "bright", 0.7),
 
-    # LA gospel â€” Hammond B3 + choir
-    "Los Angeles Black church gospel, Hammond B3 organ full drawbar swell, "
-    "soulful soprano lead over four-part choir, tambourine on the two and four, "
-    "congregation clap-back, sanctified reverb",
+    ("Los Angeles underground hip-hop, E-mu SP-1200 crunchy drum chops, "
+     "Akai MPC 3000 swing quantize, dusty jazz vinyl sample, "
+     "Project Blowed freestyle cipher, Leimert Park after dark", "moody", 0.5),
 
-    # Lowrider / Chicano soul â€” Fender Strat + marimba + doo-wop
-    "East LA lowrider soul, Fender Stratocaster clean-tone chord strum, "
-    "marimba counter-melody, smooth doo-wop harmonies, light conga groove, "
-    "cruising Whittier Boulevard on a warm Sunday evening",
+    # ── CHICANO / LATIN LA ───────────────────────────────────────────
+    ("East Los Angeles Chicano punk rock, Fender Telecaster overdriven power chords, "
+     "fast snare blast beat, shouted bilingual vocals, "
+     "Thee Midniters garage energy, backyard show in Boyle Heights", "intense", 0.9),
 
-    # Chumash coastal indigenous â€” bone whistle + gourd rattle + split-stick clapper
-    "Chumash coastal California ceremonial, bone whistle ascending melody, "
-    "gourd rattle wash, split-stick clapper steady pulse, ocean drum resonance, "
-    "Santa Monica Mountains morning mist and wild sage",
+    ("East LA lowrider soul, Fender Stratocaster clean-tone chord strum, "
+     "marimba counter-melody, smooth doo-wop harmonies, light conga groove, "
+     "cruising Whittier Boulevard on a warm Sunday evening", "warm", 0.3),
 
-    # LA ambient / Blade Runner â€” Roland SH-101 + Prophet-VS
-    "Los Angeles late-night ambient, Roland SH-101 sub-bass drone, "
-    "Sequential Circuits Prophet-VS granular shimmer pad, freeway overpass texture, "
-    "Blade Runner 2019 skyline, slow evolving resonance",
+    ("South Central Chicano rap, Roland TR-808 deep kick, "
+     "nylon string acoustic guitar picked melody, slow tempo cruiser beat, "
+     "Eazy-E era swagger, Lincoln Heights street corner twilight", "moody", 0.4),
 
-    # Hollywood cinematic score â€” strings + French horn + Steinway
-    "Hollywood cinematic score, sweeping string orchestra swell, French horn heroic motif, "
-    "Steinway grand piano cascading runs, deep timpani roll, "
-    "Bernard Herrmann tension and release, wide-screen grandeur",
+    ("Los Angeles cumbia sonidera, Korg bass synth wobble, guira scrape rhythm, "
+     "button accordion melodic lead, crowd echo chant, "
+     "MacArthur Park Sunday dance, Pico-Union block party energy", "bright", 0.7),
+
+    ("Banda sinaloense brass, tuba oom-pah bassline, trumpet melodic fanfare, "
+     "clarinet counter-melody, tarola snare roll, "
+     "mariachi brass warmth, Olvera Street evening celebration", "bright", 0.6),
+
+    ("East Los Angeles Aztec ceremony fusion, huehuetl heartbeat drum, teponaztli log drum "
+     "call-and-response, conchero shell rattle cascade, copal smoke and street murals, "
+     "Boyle Heights dusk ritual", "spiritual", 0.4),
+
+    # ── ASIAN LA ─────────────────────────────────────────────────────
+    ("Thai Town luk thung pop, phin electric guitar twangy melody, "
+     "khaen mouth organ sustained chord, ching finger cymbals on the beat, "
+     "ramwong dance rhythm, Hollywood and Western neon glow, warm night air", "warm", 0.5),
+
+    ("Little Saigon Vietnamese bolero, dan tranh zither tremolo melody, "
+     "nylon string guitar arpeggio, soft brushed snare, "
+     "Saigon cafe nostalgia, Westminster evening, jasmine tea steam", "calm", 0.2),
+
+    ("Koreatown fusion, gayageum plucked melody over electronic beat, "
+     "janggu hourglass drum rhythmic pattern, synth pad shimmer, "
+     "pansori vocal intensity meets neon pop, Olympic Boulevard midnight", "intense", 0.6),
+
+    ("Little Tokyo taiko fusion, odaiko thundering bass drum, shime-daiko sharp crack, "
+     "shamisen plucked melody, electronic sub-bass undertow, "
+     "Nisei Week festival energy, First Street lantern glow", "intense", 0.8),
+
+    ("Historic Filipinotown kulintang ensemble, tuned gong cascade melody, "
+     "rondalla string pluck harmony, bamboo percussion, "
+     "bandurria tremolo, Temple Street evening warmth, ocean memory", "calm", 0.3),
+
+    ("Chinatown erhu and pipa duet, erhu bowed melody legato, "
+     "pipa rapid tremolo pluck, woodblock steady pulse, "
+     "Cantonese opera fragment, Broadway and Hill Street, red lantern glow", "moody", 0.3),
+
+    ("Little India Artesia fusion, tabla rhythmic cycle teental, "
+     "sitar melodic raga phrase, tanpura drone, electronic bass pulse, "
+     "Pioneer Boulevard spice market evening, Bollywood meets LA bass music", "warm", 0.5),
+
+    # ── INDIGENOUS LA ────────────────────────────────────────────────
+    ("Tongva Gabrielino indigenous soundscape, elderberry flute breathy melody, "
+     "deer-hoof rattle shimmer, clapstick rhythm over basket drum pulse, "
+     "coastal sage and salt wind, Ballona Creek ceremony", "spiritual", 0.2),
+
+    ("Chumash coastal California ceremonial, bone whistle ascending melody, "
+     "gourd rattle wash, split-stick clapper steady pulse, ocean drum resonance, "
+     "Santa Monica Mountains morning mist and wild sage", "spiritual", 0.2),
+
+    # ── LA PUNK / HARDCORE ───────────────────────────────────────────
+    ("Hollywood 1977 punk rock, buzzing Gibson Les Paul power chords, "
+     "snare on every beat, shouted vocal aggression, "
+     "The Masque basement reverb, Cherokee Avenue grit and sweat", "intense", 0.9),
+
+    ("Hermosa Beach hardcore punk, Marshall amp full distortion, "
+     "blast beat double-time drums, palm-muted breakdowns, "
+     "Church on York energy, all-ages show in a garage, Redondo heat", "intense", 1.0),
+
+    ("Los Angeles ska-punk, upstroke guitar rhythm, walking bass line, "
+     "trumpet and trombone unison riff, fast hi-hat, "
+     "Sublime Long Beach vibes, backyard party under string lights", "bright", 0.8),
+
+    # ── PERSIAN / ARMENIAN / MIDDLE EASTERN LA ───────────────────────
+    ("Tehrangeles Persian pop, tar plucked melodic ornament, tombak goblet drum rhythm, "
+     "Yamaha DX7 string pad, santour hammered dulcimer shimmer, "
+     "Westwood evening, pomegranate sweetness, Farsi love ballad warmth", "warm", 0.4),
+
+    ("Glendale Armenian folk fusion, duduk reedy sustained melody, "
+     "dhol hand drum driving rhythm, oud ornamental run, "
+     "zurna bright call, Brand Boulevard evening, apricot blossom memory", "moody", 0.4),
+
+    # ── CARIBBEAN / CENTRAL AMERICAN LA ──────────────────────────────
+    ("South LA Belizean punta rock, turtle shell percussion scrape, "
+     "segunda bass guitar groove, primera lead guitar melody, "
+     "paranda acoustic rhythm, Garifuna celebration, palm tree sway", "bright", 0.7),
+
+    ("Inglewood dancehall riddim, deep sub-bass wobble, "
+     "digital snare crack, hi-hat triplet roll, "
+     "ragga vocal energy, Crenshaw cruise, palm-lined boulevard bass bounce", "intense", 0.7),
+
+    ("Pico-Union Salvadoran xuc dance, marimba wooden key melody, "
+     "acoustic guitar rasgueado strum, light percussion shaker, "
+     "pupusa stand Saturday night, Central American warmth in LA", "warm", 0.5),
+
+    # ── ELECTRONIC / MODERN LA ───────────────────────────────────────
+    ("Los Angeles 1984 synthpop, Oberheim OB-Xa polyphonic pad wash, "
+     "Sequential Prophet-5 lead arpeggio, Roland TR-808 drum machine, "
+     "Sunset Strip neon, cold-wave pulse", "moody", 0.5),
+
+    ("Los Angeles synthwave, Roland Jupiter-8 sweeping pads, Roland Juno-106 chorus shimmer, "
+     "analog sequencer pulse, Pacific Coast Highway midnight drive, neon rain reflection",
+     "moody", 0.4),
+
+    ("Los Angeles late-night ambient, Roland SH-101 sub-bass drone, "
+     "Sequential Circuits Prophet-VS granular shimmer pad, freeway overpass texture, "
+     "Blade Runner 2019 skyline, slow evolving resonance", "calm", 0.1),
+
+    ("Low End Theory beat scene, Roland SP-404 warped sample chop, "
+     "modular synthesizer generative bleeps, broken beat rhythm, "
+     "Lincoln Heights warehouse, projector glow, head-nod bass weight", "moody", 0.5),
+
+    # ── HOLLYWOOD / CINEMATIC ────────────────────────────────────────
+    ("Hollywood cinematic score, sweeping string orchestra swell, French horn heroic motif, "
+     "Steinway grand piano cascading runs, deep timpani roll, "
+     "Bernard Herrmann tension and release, wide-screen grandeur", "intense", 0.6),
+
+    ("Laurel Canyon 1969 folk rock, Rickenbacker 12-string jangle, "
+     "three-part vocal harmony, upright bass warm pulse, "
+     "tambourine on the offbeat, canyon creek and eucalyptus breeze", "calm", 0.3),
+
+    ("Venice Beach sunset drum circle, djembe lead rhythm, "
+     "conga call and response, shekere shaker wash, "
+     "ocean wave texture underneath, boardwalk chatter fade, golden hour glow", "warm", 0.5),
+
+    ("Boyle Heights mariachi, vihuela rhythmic strum, guitarron bass pulse, "
+     "dual trumpet melodic fanfare, violin lyrical counter-melody, "
+     "Mariachi Plaza at dusk, son jalisciense dignity and pride", "bright", 0.6),
 ]
 
 
 # ---------------------------------------------------------------------------
-# Model cache (singleton â€” loads once, reuses across executions)
+# Data-driven prompt selector -- picks style based on weather + time of day
+# ---------------------------------------------------------------------------
+# Time-of-day -> preferred moods (weighted)
+_TOD_MOOD_MAP = {
+    "early_morning": ["calm", "spiritual", "warm"],        # 5-8 AM
+    "morning":       ["bright", "warm", "calm"],            # 8-11 AM
+    "midday":        ["bright", "intense", "warm"],         # 11 AM-2 PM
+    "afternoon":     ["warm", "bright", "moody"],           # 2-5 PM
+    "evening":       ["moody", "warm", "intense"],          # 5-8 PM
+    "night":         ["moody", "calm", "intense"],          # 8-11 PM
+    "late_night":    ["calm", "moody", "spiritual"],        # 11 PM-5 AM
+}
+
+# Weather condition -> mood + energy modifiers
+_WEATHER_MOOD = {
+    "clear":        ("bright", 0.1),
+    "sunny":        ("bright", 0.1),
+    "clouds":       ("moody", -0.05),
+    "overcast":     ("moody", -0.1),
+    "rain":         ("moody", -0.15),
+    "drizzle":      ("calm", -0.1),
+    "thunderstorm": ("intense", 0.2),
+    "snow":         ("calm", -0.2),
+    "fog":          ("calm", -0.15),
+    "mist":         ("calm", -0.1),
+    "haze":         ("moody", -0.05),
+    "wind":         ("intense", 0.1),
+}
+
+# Data-driven tempo/feel modifiers appended to the selected prompt
+_TEMPO_MODIFIERS = {
+    "slow":   "slow tempo, relaxed pace, breathing room between notes",
+    "mid":    "moderate tempo, steady groove, natural rhythm",
+    "fast":   "uptempo, driving rhythm, energetic pace",
+}
+
+_FEEL_MODIFIERS = {
+    "rain":         "rain texture in the background, wet reverb, muted highs",
+    "thunderstorm": "thunder rumble undertone, storm energy, electric tension",
+    "wind":         "wind noise wash, gusting dynamics, restless motion",
+    "fog":          "foggy atmosphere, distant sounds, muted clarity",
+    "clear":        "crisp clarity, open air, bright presence",
+    "hot":          "hazy heat shimmer, slow heavy bass, sun-baked groove",
+    "cold":         "crystalline high frequencies, brittle textures, frosty air",
+}
+
+
+def _get_time_of_day_detailed():
+    """Return detailed time-of-day bucket."""
+    from datetime import datetime
+    hour = datetime.now().hour
+    if hour < 5:
+        return "late_night"
+    elif hour < 8:
+        return "early_morning"
+    elif hour < 11:
+        return "morning"
+    elif hour < 14:
+        return "midday"
+    elif hour < 17:
+        return "afternoon"
+    elif hour < 20:
+        return "evening"
+    elif hour < 23:
+        return "night"
+    else:
+        return "late_night"
+
+
+def _parse_weather_for_music(weather_str):
+    """Extract condition, temp, wind from weather summary string.
+
+    Returns dict with keys: condition, temp_f, wind_mph
+    """
+    import re
+    result = {"condition": "", "temp_f": 72, "wind_mph": 5}
+    if not weather_str:
+        return result
+
+    # Condition from first segment after colon
+    desc = re.search(r":\s*([^|]+)", weather_str)
+    if desc:
+        result["condition"] = desc.group(1).strip().lower()
+
+    # Temperature
+    temp = re.search(r"(\d+)\s*[°*]?\s*F", weather_str, re.IGNORECASE)
+    if temp:
+        result["temp_f"] = int(temp.group(1))
+
+    # Wind
+    wind = re.search(r"[Ww]ind\s*:?\s*(\d+)\s*mph", weather_str, re.IGNORECASE)
+    if wind:
+        result["wind_mph"] = int(wind.group(1))
+
+    return result
+
+
+def select_data_driven_prompt(rng, weather_summary=""):
+    """Pick an LA style prompt based on time of day and weather conditions.
+
+    Returns (final_prompt_string, selection_info_string).
+    The prompt is the base LA style + data-driven tempo/feel modifiers.
+    """
+    tod = _get_time_of_day_detailed()
+    weather = _parse_weather_for_music(weather_summary)
+    condition = weather["condition"]
+    temp_f = weather["temp_f"]
+    wind_mph = weather["wind_mph"]
+
+    # ── 1. Score each prompt by mood + energy fit ────────────────────
+    preferred_moods = _TOD_MOOD_MAP.get(tod, ["warm", "moody", "calm"])
+
+    # Weather mood influence
+    weather_mood = None
+    energy_shift = 0.0
+    for key, (mood, shift) in _WEATHER_MOOD.items():
+        if key in condition:
+            weather_mood = mood
+            energy_shift = shift
+            break
+
+    # Target energy from wind + time
+    base_energy = 0.4
+    if tod in ("late_night", "early_morning"):
+        base_energy = 0.2
+    elif tod in ("midday", "afternoon"):
+        base_energy = 0.5
+    elif tod == "evening":
+        base_energy = 0.45
+
+    # Wind pushes energy up
+    if wind_mph > 15:
+        base_energy += 0.15
+    elif wind_mph > 25:
+        base_energy += 0.25
+
+    # Temperature extremes push energy
+    if temp_f > 90:
+        base_energy -= 0.1  # heat slows things down
+    elif temp_f < 50:
+        base_energy -= 0.05
+
+    target_energy = max(0.0, min(1.0, base_energy + energy_shift))
+
+    # Score each prompt
+    scored = []
+    for prompt_text, mood, energy in LA_STYLE_PROMPTS:
+        score = 0.0
+
+        # Mood match: primary preferred mood = 3pts, secondary = 2pts, tertiary = 1pt
+        if mood in preferred_moods:
+            idx = preferred_moods.index(mood)
+            score += (3 - idx)  # 3, 2, or 1
+
+        # Weather mood bonus — nudges toward weather mood without locking it in
+        if weather_mood and mood == weather_mood:
+            score += 1.0  # was 2.0: reduced so jitter can still break through
+
+        # Energy proximity (closer = better, max 3pts)
+        energy_dist = abs(energy - target_energy)
+        score += max(0, 3.0 - energy_dist * 5.0)
+
+        # Jitter — large enough to let non-dominant moods occasionally win
+        score += rng.random() * 3.0  # was 1.5: wider window for variety
+
+        scored.append((score, prompt_text, mood, energy))
+
+    # Sort by score descending, pick from top 8 to keep variety across runs
+    scored.sort(key=lambda x: -x[0])
+    top_n = scored[:8]  # was 5: wider pool gives non-moody styles a path in
+    pick = rng.choice(top_n)
+    base_prompt = pick[1]
+    picked_mood = pick[2]
+    picked_energy = pick[3]
+
+    # ── 2. Append data-driven modifiers ──────────────────────────────
+    modifiers = []
+
+    # Tempo feel based on target energy
+    if target_energy < 0.3:
+        modifiers.append(_TEMPO_MODIFIERS["slow"])
+    elif target_energy > 0.65:
+        modifiers.append(_TEMPO_MODIFIERS["fast"])
+    else:
+        modifiers.append(_TEMPO_MODIFIERS["mid"])
+
+    # Weather feel
+    for key, feel in _FEEL_MODIFIERS.items():
+        if key in condition:
+            modifiers.append(feel)
+            break
+    else:
+        # Temperature-based feel
+        if temp_f > 90:
+            modifiers.append(_FEEL_MODIFIERS["hot"])
+        elif temp_f < 50:
+            modifiers.append(_FEEL_MODIFIERS["cold"])
+
+    final_prompt = base_prompt + ", " + ", ".join(modifiers)
+
+    info = (f"tod={tod} | condition={condition or 'n/a'} | temp={temp_f}F | "
+            f"wind={wind_mph}mph | target_energy={target_energy:.2f} | "
+            f"picked_mood={picked_mood} picked_energy={picked_energy:.1f}")
+
+    return final_prompt, info
+
+
+# ---------------------------------------------------------------------------
+# Model cache (singleton -- loads once, reuses across executions)
 # ---------------------------------------------------------------------------
 _model_cache = {
     "processor": None,
@@ -250,7 +568,7 @@ def _resample_tensor(tensor: torch.Tensor, from_sr: int, to_sr: int) -> torch.Te
 
 
 # ---------------------------------------------------------------------------
-# Crossfade loop â€” for generated clips shorter than the input timeline
+# Crossfade loop -- for generated clips shorter than the input timeline
 # ---------------------------------------------------------------------------
 def crossfade_loop(
     audio: torch.Tensor,
@@ -357,13 +675,13 @@ def mix_audio(dry: torch.Tensor, wet: torch.Tensor, mix_val: float) -> torch.Ten
     wet_ch = wet.shape[-2] if wet.ndim >= 2 else 1
 
     if dry_ch != wet_ch:
-        log.info("  Channel mismatch: dry=%dch wet=%dch â€” adjusting wet", dry_ch, wet_ch)
+        log.info("  Channel mismatch: dry=%dch wet=%dch -- adjusting wet", dry_ch, wet_ch)
         if dry_ch == 2 and wet_ch == 1:
             wet = wet.repeat(*(1,) * (wet.ndim - 2), 2, 1)
         elif dry_ch == 1 and wet_ch == 2:
             wet = wet[:, :1, :] if wet.ndim == 3 else wet[:1, :]
         else:
-            log.warning("  Unusual channel mismatch (%d vs %d) â€” truncating wet", dry_ch, wet_ch)
+            log.warning("  Unusual channel mismatch (%d vs %d) -- truncating wet", dry_ch, wet_ch)
             wet = wet[..., :dry_ch, :]
 
     dry_len = dry.shape[-1]
@@ -399,7 +717,7 @@ class DMM_MusicEnhancer:
                             looped or trimmed to match input length
     """
 
-    CATEGORY = "DMM/Audio"
+    CATEGORY = "DataMediaMachine"
     FUNCTION = "enhance"
     RETURN_TYPES = ("AUDIO",)
     RETURN_NAMES = ("enhanced_audio",)
@@ -466,6 +784,16 @@ class DMM_MusicEnhancer:
                         ),
                     },
                 ),
+                "weather_summary": (
+                    "STRING",
+                    {
+                        "forceInput": True,
+                        "tooltip": (
+                            "Weather summary string from WeatherFetch. "
+                            "Drives data-aware style/mood/tempo selection."
+                        ),
+                    },
+                ),
             },
         }
 
@@ -477,6 +805,7 @@ class DMM_MusicEnhancer:
         prompt_override: str = "",
         seed: int = -1,
         num_inference_steps: int = 20,
+        weather_summary: str = "",
     ) -> tuple:
         """Main enhancement function called by ComfyUI."""
 
@@ -494,8 +823,8 @@ class DMM_MusicEnhancer:
             prompt = prompt_override.strip()
             log.info("DMM_MusicEnhancer: Using custom prompt")
         else:
-            prompt = rng.choice(LA_STYLE_PROMPTS)
-            log.info("DMM_MusicEnhancer: Random LA style selected")
+            prompt, selection_info = select_data_driven_prompt(rng, weather_summary)
+            log.info("DMM_MusicEnhancer: Data-driven LA style | %s", selection_info)
 
         # Map strength (0.05-0.95) -> guidance_scale (1.5-9.55)
         # MusicGen default is 3.0; strength=0.20 -> ~3.3 (close to default)
@@ -512,7 +841,7 @@ class DMM_MusicEnhancer:
         # -------------------------------------------------------------------
         if isinstance(audio, dict):
             if "waveform" not in audio:
-                log.warning("Audio dict missing 'waveform' key â€” passing through unchanged")
+                log.warning("Audio dict missing 'waveform' key -- passing through unchanged")
                 return (audio,)
             audio_tensor = audio["waveform"]
             sample_rate = audio.get("sample_rate", 48000)
@@ -521,13 +850,13 @@ class DMM_MusicEnhancer:
             sample_rate = 48000
         else:
             log.warning(
-                "Unexpected audio type %s â€” passing through unchanged",
+                "Unexpected audio type %s -- passing through unchanged",
                 type(audio).__name__,
             )
             return (audio,)
 
         if audio_tensor is None or audio_tensor.numel() == 0:
-            log.warning("Empty audio input â€” passing through unchanged")
+            log.warning("Empty audio input -- passing through unchanged")
             return (audio,)
 
         original_tensor = audio_tensor.clone()
@@ -560,7 +889,7 @@ class DMM_MusicEnhancer:
 
         if model is None:
             log.warning(
-                "MusicGen-melody not available â€” passing through unchanged\n"
+                "MusicGen-melody not available -- passing through unchanged\n"
                 "  Install: pip install transformers"
             )
             return (
@@ -651,7 +980,7 @@ class DMM_MusicEnhancer:
 
             except Exception as e:
                 log.error(
-                    "MusicGen generation failed on batch %d: %s â€” using original", b, e
+                    "MusicGen generation failed on batch %d: %s -- using original", b, e
                 )
                 enhanced_batches.append(clip.unsqueeze(0))
 
@@ -686,7 +1015,7 @@ class DMM_MusicEnhancerBypass:
     without enhancement.
     """
 
-    CATEGORY = "DMM/Audio"
+    CATEGORY = "DataMediaMachine"
     FUNCTION = "passthrough"
     RETURN_TYPES = ("AUDIO",)
     RETURN_NAMES = ("audio",)

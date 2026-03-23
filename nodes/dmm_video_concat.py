@@ -44,7 +44,7 @@ def _extract_components(video_obj):
     Pull (images_tensor, audio_obj, fps) from a VIDEO / VideoFromComponents.
     Returns (images, audio, fps).
     """
-    fps = 30.0
+    fps = 35.0
 
     # --- Primary: VideoFromComponents API ---
     if hasattr(video_obj, "get_components"):
@@ -119,7 +119,7 @@ def _extract_components(video_obj):
         if images is None:
             images = video_obj.get("frames")
         audio = video_obj.get("audio")
-        fps = float(video_obj.get("fps", 30.0))
+        fps = float(video_obj.get("fps", 35.0))
         if images is not None:
             return images, audio, fps
 
@@ -351,11 +351,18 @@ def _rtx_upscale(images, target_resolution=2160, quality="ULTRA"):
                 batch_outputs = []
                 for j in range(batch_cuda.shape[0]):
                     dlpack_out = sr.run(batch_cuda[j]).image
-                    batch_outputs.append(torch.from_dlpack(dlpack_out).clone())
-                batch_out = torch.stack(batch_outputs, dim=0).permute(0, 2, 3, 1).cpu()
+                    # Accumulate as uint8 to keep CPU RAM at ~13GB instead of ~53GB
+                    frame_f32 = torch.from_dlpack(dlpack_out).permute(1, 2, 0)
+                    frame_u8 = (frame_f32.clamp(0.0, 1.0) * 255).byte().cpu()
+                    batch_outputs.append(frame_u8)
+                batch_out = torch.stack(batch_outputs, dim=0)  # uint8 NHWC
                 upscaled_batches.append(batch_out)
+                del batch_cuda, batch_outputs
+                torch.cuda.empty_cache()
 
-        result = torch.cat(upscaled_batches, dim=0)
+        # cat uint8 (~13GB peak), then convert to float32 expected by caller
+        result = torch.cat(upscaled_batches, dim=0).float() / 255.0
+        del upscaled_batches
         torch.cuda.empty_cache()
 
         elapsed = time.time() - t0
@@ -408,9 +415,9 @@ def _rtx_upscale(images, target_resolution=2160, quality="ULTRA"):
 
             output_bgr, _ = upsampler.enhance(frame_bgr, outscale=scale)
 
-            # uint8 BGR -> float [0,1] RGB
-            output_rgb = output_bgr[:, :, ::-1].copy().astype(np.float32) / 255.0
-            upscaled_frames.append(torch.from_numpy(output_rgb))
+            # Store as uint8 RGB to keep accumulation at ~13GB instead of ~53GB
+            output_rgb_u8 = output_bgr[:, :, ::-1].copy()  # uint8 BGR -> uint8 RGB
+            upscaled_frames.append(torch.from_numpy(output_rgb_u8))
 
             if (i + 1) % 20 == 0 or i == n_frames - 1:
                 logger.info("  Real-ESRGAN progress: %d/%d frames", i + 1, n_frames)
@@ -419,7 +426,9 @@ def _rtx_upscale(images, target_resolution=2160, quality="ULTRA"):
         del upsampler
         torch.cuda.empty_cache()
 
-        result = torch.stack(upscaled_frames, dim=0)
+        # stack uint8 (~13GB), then convert to float32 expected by caller
+        result = torch.stack(upscaled_frames, dim=0).float() / 255.0
+        del upscaled_frames
 
         # Real-ESRGAN outscale can produce approximate dimensions;
         # resize to exact target so output matches nvvfx/bicubic paths.
@@ -708,7 +717,7 @@ class DMMVideoConcat:
     Connect the LTX-2 subgraph outputs directly – no ffmpeg needed.
     """
 
-    CATEGORY = "Data Media Machine"
+    CATEGORY = "DataMediaMachine"
     FUNCTION = "concatenate"
     RETURN_TYPES = ("VIDEO",)
     RETURN_NAMES = ("VIDEO",)
@@ -746,7 +755,7 @@ class DMMVideoConcat:
 
         all_images = []
         all_audio = []
-        fps = 30.0
+        fps = 35.0
 
         for i, clip in enumerate(clips):
             images, audio, clip_fps = _extract_components(clip)

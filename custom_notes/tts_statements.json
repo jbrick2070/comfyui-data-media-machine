@@ -1,0 +1,99 @@
+{
+  "_description": "Data-driven friendly statements for TTS narration. Organized by trigger condition. Used by dmm_sun_utils.get_nice_statement(). Edit this file to add/remove/customize statements.",
+  "_version": "1.0",
+  "_updated": "2026-03-22",
+
+  "temperature": {
+    "scorching_above_95": [
+      "Stay hydrated out there — it's scorching today.",
+      "It's a hot one. Maybe save the outdoor run for later."
+    ],
+    "warm_85_to_95": [
+      "You better bring sunscreen — it's warm out there!",
+      "Perfect pool weather if you can find one.",
+      "Don't forget the water bottle today."
+    ],
+    "pleasant_72_to_85": [
+      "Beautiful day to be outside. Enjoy it!",
+      "The kind of day that makes you glad you're in LA.",
+      "Great weather for a walk today."
+    ],
+    "cool_58_to_72": [
+      "Grab a light layer — it's pleasant but cool.",
+      "Nice and comfortable out there right now."
+    ],
+    "chilly_45_to_58": [
+      "Grab a jacket, it's cooler than you think out there.",
+      "Layer up before you head out — it's brisk."
+    ],
+    "cold_below_45": [
+      "Bundle up! It's unusually cold for LA.",
+      "Definitely a hot coffee kind of morning."
+    ]
+  },
+
+  "rain": [
+    "Don't forget your umbrella today!",
+    "Rainy day in LA — drive carefully out there."
+  ],
+
+  "wind": {
+    "strong_above_25": [
+      "Hold onto your hat — it's seriously windy."
+    ],
+    "breezy_15_to_25": [
+      "It's breezy out there — might want to skip the hairspray."
+    ]
+  },
+
+  "humidity": {
+    "high_above_80": [
+      "It's humid out there — the air feels thick today."
+    ],
+    "low_below_15": [
+      "The air is bone dry — stay moisturized, LA."
+    ]
+  },
+
+  "air_quality": {
+    "unhealthy_above_150": [
+      "Air quality is rough — maybe keep it indoors today."
+    ],
+    "moderate_100_to_150": [
+      "Air quality is a bit iffy — sensitive folks take it easy."
+    ]
+  },
+
+  "uv_index": {
+    "extreme_above_10": [
+      "UV is extreme today — sunscreen is non-negotiable!",
+      "You BETTER bring sunscreen. UV index is off the charts."
+    ],
+    "high_7_to_10": [
+      "You better bring sunscreen — UV is high today!",
+      "SPF 50 kind of day. Don't skip it."
+    ]
+  },
+
+  "sunset_proximity": {
+    "within_90_minutes": [
+      "Golden hour is coming — sunset's at {next_time}.",
+      "Beautiful evening ahead — sunset at {next_time}."
+    ]
+  },
+
+  "sunrise_proximity": {
+    "within_60_minutes": [
+      "Early bird? Sunrise is at {next_time}.",
+      "The sun's almost up — {next_time}. New day, new data."
+    ]
+  },
+
+  "fallback": [
+    "Have a wonderful day out there, LA.",
+    "Another day in the City of Angels. Make it count.",
+    "All systems looking good. Have a great one.",
+    "LA's doing its thing. Enjoy the ride.",
+    "Stay safe and have a nice day."
+  ]
+}
