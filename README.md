@@ -177,8 +177,8 @@ If you want to set up your own machine to run this, you will need to configure O
 
 - [OBS Studio](https://obsproject.com/download)
 - [Python 3.11.9](https://www.python.org/downloads/release/python-3119/) (3.11.x confirmed to work)
-- [Media Playlist Source Plugin](https://obsproject.com/forum/resources/media-playlist-source.1524/)
-- [Directory Sorter for OBS Script](https://obsproject.com/forum/resources/directory-watch-media-sorter.1767/)
+- [Media Playlist Source Plugin]([https://obsproject.com/forum/resources/media-playlist-source.1765/)]
+- [Directory Sorter for OBS Script](https://github.com/CodeYan01/directory_sorter_for_obs)] 
 
 ### Installation & Setup
 
